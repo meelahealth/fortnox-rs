@@ -388,18 +388,17 @@ pub async fn get_many(
         local_var_req_builder = match "multi" {
             "multi" => local_var_req_builder.query(
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| ("ids".to_owned(), p.to_string()))
                     .collect::<Vec<(std::string::String, std::string::String)>>(),
             ),
             _ => local_var_req_builder.query(&[(
                 "ids",
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| p.to_string())
                     .collect::<Vec<String>>()
-                    .join(",")
-                    .to_string(),
+                    .join(","),
             )]),
         };
     }

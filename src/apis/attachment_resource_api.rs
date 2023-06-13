@@ -221,8 +221,7 @@ pub async fn get_attachments(
                 .into_iter()
                 .map(|p| p.to_string())
                 .collect::<Vec<String>>()
-                .join(",")
-                .to_string(),
+                .join(","),
         )]),
     };
     local_var_req_builder = local_var_req_builder.query(&[("entitytype", &entitytype.to_string())]);
@@ -283,8 +282,7 @@ pub async fn get_number_of_attachments_for_entity(
                 .into_iter()
                 .map(|p| p.to_string())
                 .collect::<Vec<String>>()
-                .join(",")
-                .to_string(),
+                .join(","),
         )]),
     };
     local_var_req_builder = local_var_req_builder.query(&[("entitytype", &entitytype.to_string())]);

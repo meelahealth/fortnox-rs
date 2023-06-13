@@ -329,18 +329,17 @@ pub async fn add_stock_taking_rows_by_filter(
         local_var_req_builder = match "multi" {
             "multi" => local_var_req_builder.query(
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| ("itemIds".to_owned(), p.to_string()))
                     .collect::<Vec<(std::string::String, std::string::String)>>(),
             ),
             _ => local_var_req_builder.query(&[(
                 "itemIds",
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| p.to_string())
                     .collect::<Vec<String>>()
-                    .join(",")
-                    .to_string(),
+                    .join(","),
             )]),
         };
     }
@@ -348,18 +347,17 @@ pub async fn add_stock_taking_rows_by_filter(
         local_var_req_builder = match "multi" {
             "multi" => local_var_req_builder.query(
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| ("supplierNumbers".to_owned(), p.to_string()))
                     .collect::<Vec<(std::string::String, std::string::String)>>(),
             ),
             _ => local_var_req_builder.query(&[(
                 "supplierNumbers",
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| p.to_string())
                     .collect::<Vec<String>>()
-                    .join(",")
-                    .to_string(),
+                    .join(","),
             )]),
         };
     }
@@ -367,18 +365,17 @@ pub async fn add_stock_taking_rows_by_filter(
         local_var_req_builder = match "multi" {
             "multi" => local_var_req_builder.query(
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| ("stockPointIds".to_owned(), p.to_string()))
                     .collect::<Vec<(std::string::String, std::string::String)>>(),
             ),
             _ => local_var_req_builder.query(&[(
                 "stockPointIds",
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| p.to_string())
                     .collect::<Vec<String>>()
-                    .join(",")
-                    .to_string(),
+                    .join(","),
             )]),
         };
     }
@@ -386,18 +383,17 @@ pub async fn add_stock_taking_rows_by_filter(
         local_var_req_builder = match "multi" {
             "multi" => local_var_req_builder.query(
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| ("stockLocationIds".to_owned(), p.to_string()))
                     .collect::<Vec<(std::string::String, std::string::String)>>(),
             ),
             _ => local_var_req_builder.query(&[(
                 "stockLocationIds",
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| p.to_string())
                     .collect::<Vec<String>>()
-                    .join(",")
-                    .to_string(),
+                    .join(","),
             )]),
         };
     }
@@ -549,9 +545,9 @@ pub async fn delete_stock_taking_row(
 
     let local_var_client = &local_var_configuration.client;
 
-    let rowId = crate::apis::urlencode(row_id);
+    let row_id = crate::apis::urlencode(row_id);
     let local_var_uri_str = format!(
-        "{}/api/warehouse/stocktaking-v1/{id}/rows/{rowId}",
+        "{}/api/warehouse/stocktaking-v1/{id}/rows/{row_id}",
         local_var_configuration.base_path,
     );
     let mut local_var_req_builder =
@@ -614,18 +610,17 @@ pub async fn delete_stock_taking_row_by_filter(
         local_var_req_builder = match "multi" {
             "multi" => local_var_req_builder.query(
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| ("itemIds".to_owned(), p.to_string()))
                     .collect::<Vec<(std::string::String, std::string::String)>>(),
             ),
             _ => local_var_req_builder.query(&[(
                 "itemIds",
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| p.to_string())
                     .collect::<Vec<String>>()
-                    .join(",")
-                    .to_string(),
+                    .join(","),
             )]),
         };
     }
@@ -633,18 +628,17 @@ pub async fn delete_stock_taking_row_by_filter(
         local_var_req_builder = match "multi" {
             "multi" => local_var_req_builder.query(
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| ("supplierNumbers".to_owned(), p.to_string()))
                     .collect::<Vec<(std::string::String, std::string::String)>>(),
             ),
             _ => local_var_req_builder.query(&[(
                 "supplierNumbers",
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| p.to_string())
                     .collect::<Vec<String>>()
-                    .join(",")
-                    .to_string(),
+                    .join(","),
             )]),
         };
     }
@@ -652,18 +646,17 @@ pub async fn delete_stock_taking_row_by_filter(
         local_var_req_builder = match "multi" {
             "multi" => local_var_req_builder.query(
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| ("stockPointIds".to_owned(), p.to_string()))
                     .collect::<Vec<(std::string::String, std::string::String)>>(),
             ),
             _ => local_var_req_builder.query(&[(
                 "stockPointIds",
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| p.to_string())
                     .collect::<Vec<String>>()
-                    .join(",")
-                    .to_string(),
+                    .join(","),
             )]),
         };
     }
@@ -671,18 +664,17 @@ pub async fn delete_stock_taking_row_by_filter(
         local_var_req_builder = match "multi" {
             "multi" => local_var_req_builder.query(
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| ("stockLocationIds".to_owned(), p.to_string()))
                     .collect::<Vec<(std::string::String, std::string::String)>>(),
             ),
             _ => local_var_req_builder.query(&[(
                 "stockLocationIds",
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| p.to_string())
                     .collect::<Vec<String>>()
-                    .join(",")
-                    .to_string(),
+                    .join(","),
             )]),
         };
     }
@@ -813,18 +805,17 @@ pub async fn get_candidate_rows(
         local_var_req_builder = match "multi" {
             "multi" => local_var_req_builder.query(
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| ("itemIds".to_owned(), p.to_string()))
                     .collect::<Vec<(std::string::String, std::string::String)>>(),
             ),
             _ => local_var_req_builder.query(&[(
                 "itemIds",
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| p.to_string())
                     .collect::<Vec<String>>()
-                    .join(",")
-                    .to_string(),
+                    .join(","),
             )]),
         };
     }
@@ -832,18 +823,17 @@ pub async fn get_candidate_rows(
         local_var_req_builder = match "multi" {
             "multi" => local_var_req_builder.query(
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| ("supplierNumbers".to_owned(), p.to_string()))
                     .collect::<Vec<(std::string::String, std::string::String)>>(),
             ),
             _ => local_var_req_builder.query(&[(
                 "supplierNumbers",
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| p.to_string())
                     .collect::<Vec<String>>()
-                    .join(",")
-                    .to_string(),
+                    .join(","),
             )]),
         };
     }
@@ -851,18 +841,17 @@ pub async fn get_candidate_rows(
         local_var_req_builder = match "multi" {
             "multi" => local_var_req_builder.query(
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| ("stockPointIds".to_owned(), p.to_string()))
                     .collect::<Vec<(std::string::String, std::string::String)>>(),
             ),
             _ => local_var_req_builder.query(&[(
                 "stockPointIds",
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| p.to_string())
                     .collect::<Vec<String>>()
-                    .join(",")
-                    .to_string(),
+                    .join(","),
             )]),
         };
     }
@@ -870,18 +859,17 @@ pub async fn get_candidate_rows(
         local_var_req_builder = match "multi" {
             "multi" => local_var_req_builder.query(
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| ("stockLocationIds".to_owned(), p.to_string()))
                     .collect::<Vec<(std::string::String, std::string::String)>>(),
             ),
             _ => local_var_req_builder.query(&[(
                 "stockLocationIds",
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| p.to_string())
                     .collect::<Vec<String>>()
-                    .join(",")
-                    .to_string(),
+                    .join(","),
             )]),
         };
     }
@@ -966,18 +954,17 @@ pub async fn get_rows(
         local_var_req_builder = match "multi" {
             "multi" => local_var_req_builder.query(
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| ("itemIds".to_owned(), p.to_string()))
                     .collect::<Vec<(std::string::String, std::string::String)>>(),
             ),
             _ => local_var_req_builder.query(&[(
                 "itemIds",
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| p.to_string())
                     .collect::<Vec<String>>()
-                    .join(",")
-                    .to_string(),
+                    .join(","),
             )]),
         };
     }
@@ -985,18 +972,17 @@ pub async fn get_rows(
         local_var_req_builder = match "multi" {
             "multi" => local_var_req_builder.query(
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| ("supplierNumbers".to_owned(), p.to_string()))
                     .collect::<Vec<(std::string::String, std::string::String)>>(),
             ),
             _ => local_var_req_builder.query(&[(
                 "supplierNumbers",
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| p.to_string())
                     .collect::<Vec<String>>()
-                    .join(",")
-                    .to_string(),
+                    .join(","),
             )]),
         };
     }
@@ -1004,18 +990,17 @@ pub async fn get_rows(
         local_var_req_builder = match "multi" {
             "multi" => local_var_req_builder.query(
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| ("stockPointIds".to_owned(), p.to_string()))
                     .collect::<Vec<(std::string::String, std::string::String)>>(),
             ),
             _ => local_var_req_builder.query(&[(
                 "stockPointIds",
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| p.to_string())
                     .collect::<Vec<String>>()
-                    .join(",")
-                    .to_string(),
+                    .join(","),
             )]),
         };
     }
@@ -1023,18 +1008,17 @@ pub async fn get_rows(
         local_var_req_builder = match "multi" {
             "multi" => local_var_req_builder.query(
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| ("stockLocationIds".to_owned(), p.to_string()))
                     .collect::<Vec<(std::string::String, std::string::String)>>(),
             ),
             _ => local_var_req_builder.query(&[(
                 "stockLocationIds",
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| p.to_string())
                     .collect::<Vec<String>>()
-                    .join(",")
-                    .to_string(),
+                    .join(","),
             )]),
         };
     }

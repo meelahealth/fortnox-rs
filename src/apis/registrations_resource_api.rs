@@ -95,18 +95,17 @@ pub async fn list_registrations_resource(
         local_var_req_builder = match "multi" {
             "multi" => local_var_req_builder.query(
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| ("customerIds".to_owned(), p.to_string()))
                     .collect::<Vec<(std::string::String, std::string::String)>>(),
             ),
             _ => local_var_req_builder.query(&[(
                 "customerIds",
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| p.to_string())
                     .collect::<Vec<String>>()
-                    .join(",")
-                    .to_string(),
+                    .join(","),
             )]),
         };
     }
@@ -114,18 +113,17 @@ pub async fn list_registrations_resource(
         local_var_req_builder = match "multi" {
             "multi" => local_var_req_builder.query(
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| ("projectIds".to_owned(), p.to_string()))
                     .collect::<Vec<(std::string::String, std::string::String)>>(),
             ),
             _ => local_var_req_builder.query(&[(
                 "projectIds",
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| p.to_string())
                     .collect::<Vec<String>>()
-                    .join(",")
-                    .to_string(),
+                    .join(","),
             )]),
         };
     }
@@ -133,18 +131,17 @@ pub async fn list_registrations_resource(
         local_var_req_builder = match "multi" {
             "multi" => local_var_req_builder.query(
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| ("serviceIds".to_owned(), p.to_string()))
                     .collect::<Vec<(std::string::String, std::string::String)>>(),
             ),
             _ => local_var_req_builder.query(&[(
                 "serviceIds",
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| p.to_string())
                     .collect::<Vec<String>>()
-                    .join(",")
-                    .to_string(),
+                    .join(","),
             )]),
         };
     }
@@ -152,18 +149,17 @@ pub async fn list_registrations_resource(
         local_var_req_builder = match "multi" {
             "multi" => local_var_req_builder.query(
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| ("costCenterIds".to_owned(), p.to_string()))
                     .collect::<Vec<(std::string::String, std::string::String)>>(),
             ),
             _ => local_var_req_builder.query(&[(
                 "costCenterIds",
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| p.to_string())
                     .collect::<Vec<String>>()
-                    .join(",")
-                    .to_string(),
+                    .join(","),
             )]),
         };
     }
@@ -171,18 +167,17 @@ pub async fn list_registrations_resource(
         local_var_req_builder = match "multi" {
             "multi" => local_var_req_builder.query(
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| ("regCodes".to_owned(), p.to_string()))
                     .collect::<Vec<(std::string::String, std::string::String)>>(),
             ),
             _ => local_var_req_builder.query(&[(
                 "regCodes",
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| p.to_string())
                     .collect::<Vec<String>>()
-                    .join(",")
-                    .to_string(),
+                    .join(","),
             )]),
         };
     }
@@ -190,18 +185,17 @@ pub async fn list_registrations_resource(
         local_var_req_builder = match "multi" {
             "multi" => local_var_req_builder.query(
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| ("userIds".to_owned(), p.to_string()))
                     .collect::<Vec<(std::string::String, std::string::String)>>(),
             ),
             _ => local_var_req_builder.query(&[(
                 "userIds",
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| p.to_string())
                     .collect::<Vec<String>>()
-                    .join(",")
-                    .to_string(),
+                    .join(","),
             )]),
         };
     }
