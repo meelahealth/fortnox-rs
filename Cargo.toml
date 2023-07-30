@@ -1,18 +1,28 @@
 [package]
-name = "openapi"
-version = "1.0.0"
-authors = ["OpenAPI Generator team and contributors"]
-description = "# Documentation   The Fortnox API is organized around REST. This means that we’ve designed it to have resource-oriented URLs and be as predictable as possible for you as developer.  It also means that we use HTTP status codes when something goes wrong and HTTP verbs understod by many API clients around the web.  We use a modified version of OAuth2 for authentication to offer a secure way for both you and our users to interact.  The API is generally built to support both XML and JSON but in this documentation all the examples will be in JSON.  We encourage you to read all the articles in the [general information section](https://developer.fortnox.se/general/)</a> first, before going forward and learning about the different resources.  This to ensure you get an understanding of some of the shared components of the API such as parameters and error handling.  ## Rate limits  The limit is 4 requests per second per access-token. This equals to a bit more than 200 requests per minute.  [Read more about this here.](https://developer.fortnox.se/general/regarding-fortnox-api-rate-limits/)  ## Query parameters  Use query parameters with the ?-character and separate parameters with the &-character.   **Example:**  GET - https://api.fortnox.se/3/invoices?accountnumberfrom=3000&accountnumberto=4000 Read more about our parameters [here](https://developer.fortnox.se/general/parameters/)   Search the documentation using the search field in the top left corner."
-# Override this license by providing a License Object in the OpenAPI.
-license = "Unlicense"
-edition = "2018"
+name = "fortnox"
+version = "0.1.0+20230613"
+authors = []
+description = "The Fortnox API"
+license = "CC0-1.0"
+edition = "2021"
 
 [dependencies]
-serde = "^1.0"
+anyhow = "1.0.71"
+chrono = { version = "0.4.26", features = ["serde"] }
+lexical = { version = "6.1.1", features = ["radix", "std", "integers", "parse", "format", "write-integers"] }
+oauth2 = "4.4.1"
+poem = "1.3.56"
+rust_decimal = "1.31.0"
+serde = { version = "^1.0", features = ["derive"] }
 serde_derive = "^1.0"
 serde_json = "^1.0"
+serde_path_to_error = "0.1.14"
+thiserror = "1.0.44"
+tokio = { version = "1.28.2", features = ["full"] }
 url = "^2.2"
-uuid = { version = "^1.0", features = ["serde"] }
+uuid = { version = "^1.0", features = ["serde", "v4"] }
+
 [dependencies.reqwest]
 version = "^0.11"
-features = ["json", "multipart"]
+default-features = false
+features = ["json", "multipart", "rustls", "rustls-tls", "gzip"]
