@@ -8,20 +8,20 @@ pub mod id;
 use std::path::{Path, PathBuf};
 
 use chrono::{DateTime, NaiveDate, Utc};
-use http::apis::configuration::Configuration;
+use http::apis::configuration::{self, Configuration};
 use http::apis::customers_resource_api::{
     CreateCustomersResourceError, CreateCustomersResourceParams, GetCustomersResourceError,
     GetCustomersResourceParams, UpdateCustomersResourceError, UpdateCustomersResourceParams,
 };
 use http::apis::invoices_resource_api::{
     BookkeepInvoicesResourceError, BookkeepInvoicesResourceParams, CreateInvoicesResourceError,
-    CreateInvoicesResourceParams, CreditError, CreditParams, GetInvoicesResourceError,
-    GetInvoicesResourceParams, ListInvoicesResourceError, ListInvoicesResourceParams, PrintError,
-    PrintParams,
+    CreateInvoicesResourceParams, CreditError, CreditParams, EmailError, EmailParams,
+    GetInvoicesResourceError, GetInvoicesResourceParams, ListInvoicesResourceError,
+    ListInvoicesResourceParams, PrintError, PrintParams,
 };
 use http::models::{
-    Customer, CustomerWrap, Invoice, InvoiceListItem, InvoicePayload, InvoicePayloadInvoiceRow,
-    InvoicePayloadWrap,
+    document_reference, Customer, CustomerWrap, Invoice, InvoiceListItem, InvoicePayload,
+    InvoicePayloadInvoiceRow, InvoicePayloadWrap,
 };
 use id::CustomerId;
 use oauth2::basic::{BasicClient, BasicErrorResponseType, BasicTokenType};
@@ -224,9 +224,23 @@ impl Client {
         Ok(*result.customer)
     }
 
+    pub async fn create_or_update_customer<const P: char>(
+        &self,
+        customer_id: CustomerId<P>,
+        details: UpdateCustomer,
+    ) -> Result<Customer, http::apis::Error<CreateCustomersResourceError>> {
+        match self.update_customer(customer_id, details.clone()).await {
+            Ok(v) => return Ok(v),
+            Err(_e) => {}
+        }
+
+        self.create_customer(customer_id, details).await
+    }
+
     pub async fn create_customer<const P: char>(
         &self,
-        details: CreateCustomer<P>,
+        customer_id: CustomerId<P>,
+        details: UpdateCustomer,
     ) -> Result<Customer, http::apis::Error<CreateCustomersResourceError>> {
         self.check_bearer_token().await?;
 
@@ -235,22 +249,21 @@ impl Client {
             CreateCustomersResourceParams {
                 customer: Some(CustomerWrap {
                     customer: Box::new(Customer {
-                        customer_number: Some(details.id.to_string()),
-                        name: Some(details.name),
-                        organisation_number: Some(details.org_nr),
-                        address1: Some(details.address1),
-                        address2: details.address2,
-                        city: Some(details.city),
-                        zip_code: Some(details.post_code),
-                        email_invoice: Some(
-                            details
-                                .email_invoice
-                                .unwrap_or_else(|| details.email.clone()),
-                        ),
-                        email: Some(details.email),
-                        country_code: Some(details.country_code),
-                        external_reference: details.external_reference,
-                        active: Some(details.active),
+                        customer_number: customer_id.to_string().into(),
+                        organisation_number: details.org_nr.into(),
+                        name: details.name.into(),
+                        address1: details.address1.into(),
+                        address2: details.address2.into(),
+                        city: details.city.into(),
+                        zip_code: details.post_code.into(),
+                        country_code: details.country_code.into(),
+                        active: details.active.into(),
+                        email_invoice: details
+                            .email_invoice
+                            .or_else(|| details.email.clone())
+                            .into(),
+                        email: details.email.into(),
+                        external_reference: details.external_reference.into(),
                         ..Default::default()
                     }),
                 }),
@@ -282,8 +295,12 @@ impl Client {
                         zip_code: details.post_code.into(),
                         country_code: details.country_code.into(),
                         active: details.active.into(),
+                        email_invoice: details
+                            .email_invoice
+                            .or_else(|| details.email.clone())
+                            .into(),
                         email: details.email.into(),
-                        email_invoice: details.email_invoice.into(),
+                        external_reference: details.external_reference.into(),
                         ..Default::default()
                     }),
                 },
@@ -395,6 +412,20 @@ impl Client {
         Ok(invoices)
     }
 
+    pub async fn send_invoice(
+        &self,
+        invoice_id: &str,
+    ) -> Result<Invoice, http::apis::Error<EmailError>> {
+        Ok(*http::apis::invoices_resource_api::email(
+            &*self.config.read().await,
+            EmailParams {
+                document_number: invoice_id.to_string(),
+            },
+        )
+        .await?
+        .invoice)
+    }
+
     pub async fn create_invoice<const P: char>(
         &self,
         details: CreateInvoice<P>,
@@ -438,28 +469,24 @@ impl Client {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct CreateCustomer<const P: char> {
-    pub id: CustomerId<P>,
-    pub org_nr: String,
-    pub name: String,
-    pub address1: String,
-    pub address2: Option<String>,
-    pub city: String,
-    pub post_code: String,
-    pub country_code: String,
-    pub active: bool,
-    pub email: String,
-    pub email_invoice: Option<String>,
-    pub external_reference: Option<String>,
-}
-
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 pub enum Update<T> {
     #[default]
     Unchanged,
     Null,
     Value(T),
+}
+
+impl<T> Update<T> {
+    pub fn or_else<F>(self, f: F) -> Update<T>
+    where
+        F: FnOnce() -> Update<T>,
+    {
+        match self {
+            Update::Unchanged | Update::Null => (f)(),
+            Update::Value(v) => Update::Value(v),
+        }
+    }
 }
 
 impl<T> From<T> for Update<T> {
