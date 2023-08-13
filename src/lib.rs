@@ -487,6 +487,13 @@ impl<T> Update<T> {
             Update::Value(v) => Update::Value(v),
         }
     }
+
+    pub fn from_option(v: Option<T>) -> Update<T> {
+        match v {
+            Some(v) => Update::Value(v),
+            None => Update::Null,
+        }
+    }
 }
 
 impl<T> From<T> for Update<T> {
