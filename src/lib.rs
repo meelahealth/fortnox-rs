@@ -1,8 +1,7 @@
 #[macro_use]
 extern crate serde_derive;
 
-mod http;
-
+pub mod http;
 pub mod id;
 
 use std::path::{Path, PathBuf};
@@ -11,7 +10,8 @@ use chrono::{DateTime, NaiveDate, Utc};
 use http::apis::configuration::{self, Configuration};
 use http::apis::customers_resource_api::{
     CreateCustomersResourceError, CreateCustomersResourceParams, GetCustomersResourceError,
-    GetCustomersResourceParams, UpdateCustomersResourceError, UpdateCustomersResourceParams,
+    GetCustomersResourceParams, ListCustomersResourceError, UpdateCustomersResourceError,
+    UpdateCustomersResourceParams,
 };
 use http::apis::invoices_resource_api::{
     BookkeepInvoicesResourceError, BookkeepInvoicesResourceParams, CreateInvoicesResourceError,
@@ -19,9 +19,10 @@ use http::apis::invoices_resource_api::{
     GetInvoicesResourceError, GetInvoicesResourceParams, ListInvoicesResourceError,
     ListInvoicesResourceParams, PrintError, PrintParams,
 };
+pub use http::apis::Error;
 use http::models::{
-    document_reference, Customer, CustomerWrap, Invoice, InvoiceListItem, InvoicePayload,
-    InvoicePayloadInvoiceRow, InvoicePayloadWrap,
+    document_reference, Customer, CustomerListItem, CustomerWrap, Invoice, InvoiceListItem,
+    InvoicePayload, InvoicePayloadInvoiceRow, InvoicePayloadWrap,
 };
 use id::CustomerId;
 use oauth2::basic::{BasicClient, BasicErrorResponseType, BasicTokenType};
@@ -35,6 +36,8 @@ use reqwest::header;
 use rust_decimal::Decimal;
 use tokio::sync::RwLock;
 use url::Url;
+
+use crate::http::apis::customers_resource_api::ListCustomersResourceParams;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Scope {
@@ -207,16 +210,34 @@ impl Client {
         }
     }
 
-    pub async fn customer<const P: char>(
+    pub async fn list_customers(
         &self,
-        id: CustomerId<P>,
-    ) -> Result<Customer, http::apis::Error<GetCustomersResourceError>> {
+    ) -> Result<Vec<CustomerListItem>, Error<ListCustomersResourceError>> {
+        self.check_bearer_token().await?;
+
+        let result = http::apis::customers_resource_api::list_customers_resource(
+            &*self.config.read().await,
+            ListCustomersResourceParams { filter: None },
+        )
+        .await?;
+
+        Ok(result
+            .customers
+            .unwrap_or_default()
+            .into_iter()
+            .collect::<Vec<_>>())
+    }
+
+    pub async fn customer(
+        &self,
+        id: impl AsRef<str>,
+    ) -> Result<Customer, Error<GetCustomersResourceError>> {
         self.check_bearer_token().await?;
 
         let result = http::apis::customers_resource_api::get_customers_resource(
             &*self.config.read().await,
             GetCustomersResourceParams {
-                customer_number: id.to_string(),
+                customer_number: id.as_ref().to_string(),
             },
         )
         .await?;
@@ -224,12 +245,15 @@ impl Client {
         Ok(*result.customer)
     }
 
-    pub async fn create_or_update_customer<const P: char>(
+    pub async fn create_or_update_customer(
         &self,
-        customer_id: CustomerId<P>,
+        customer_id: impl AsRef<str>,
         details: UpdateCustomer,
-    ) -> Result<Customer, http::apis::Error<CreateCustomersResourceError>> {
-        match self.update_customer(customer_id, details.clone()).await {
+    ) -> Result<Customer, Error<CreateCustomersResourceError>> {
+        match self
+            .update_customer(customer_id.as_ref(), details.clone())
+            .await
+        {
             Ok(v) => return Ok(v),
             Err(_e) => {}
         }
@@ -237,19 +261,28 @@ impl Client {
         self.create_customer(customer_id, details).await
     }
 
-    pub async fn create_customer<const P: char>(
+    pub async fn create_customer(
         &self,
-        customer_id: CustomerId<P>,
+        customer_id: impl AsRef<str>,
         details: UpdateCustomer,
-    ) -> Result<Customer, http::apis::Error<CreateCustomersResourceError>> {
+    ) -> Result<Customer, Error<CreateCustomersResourceError>> {
         self.check_bearer_token().await?;
+
+        let vat_type = match details.vat_type {
+            Update::Unchanged => Update::Unchanged,
+            Update::Null => Update::Null,
+            Update::Value(x) => Update::Value(match x {
+                VatType::Sweden => http::models::customer::VatType::Sevat,
+                VatType::ReverseEu => http::models::customer::VatType::Eureversedvat,
+            })
+        };
 
         let result = http::apis::customers_resource_api::create_customers_resource(
             &*self.config.read().await,
             CreateCustomersResourceParams {
                 customer: Some(CustomerWrap {
                     customer: Box::new(Customer {
-                        customer_number: customer_id.to_string().into(),
+                        customer_number: customer_id.as_ref().to_string().into(),
                         organisation_number: details.org_nr.into(),
                         name: details.name.into(),
                         address1: details.address1.into(),
@@ -264,6 +297,7 @@ impl Client {
                             .into(),
                         email: details.email.into(),
                         external_reference: details.external_reference.into(),
+                        vat_type: vat_type.into(),
                         ..Default::default()
                     }),
                 }),
@@ -274,17 +308,26 @@ impl Client {
         Ok(*result.customer)
     }
 
-    pub async fn update_customer<const P: char>(
+    pub async fn update_customer(
         &self,
-        id: CustomerId<P>,
+        id: impl AsRef<str>,
         details: UpdateCustomer,
-    ) -> Result<Customer, http::apis::Error<UpdateCustomersResourceError>> {
+    ) -> Result<Customer, Error<UpdateCustomersResourceError>> {
         self.check_bearer_token().await?;
+
+        let vat_type = match details.vat_type {
+            Update::Unchanged => Update::Unchanged,
+            Update::Null => Update::Null,
+            Update::Value(x) => Update::Value(match x {
+                VatType::Sweden => http::models::customer::VatType::Sevat,
+                VatType::ReverseEu => http::models::customer::VatType::Eureversedvat,
+            })
+        };
 
         let result = http::apis::customers_resource_api::update_customers_resource(
             &*self.config.read().await,
             UpdateCustomersResourceParams {
-                customer_number: id.to_string(),
+                customer_number: id.as_ref().to_string(),
                 customer: CustomerWrap {
                     customer: Box::new(Customer {
                         organisation_number: details.org_nr.into(),
@@ -301,6 +344,7 @@ impl Client {
                             .into(),
                         email: details.email.into(),
                         external_reference: details.external_reference.into(),
+                        vat_type: vat_type.into(),
                         ..Default::default()
                     }),
                 },
@@ -314,7 +358,7 @@ impl Client {
     pub async fn book_invoice(
         &self,
         invoice_id: &str,
-    ) -> Result<Invoice, http::apis::Error<BookkeepInvoicesResourceError>> {
+    ) -> Result<Invoice, Error<BookkeepInvoicesResourceError>> {
         self.check_bearer_token().await?;
 
         let result = http::apis::invoices_resource_api::bookkeep_invoices_resource(
@@ -331,7 +375,7 @@ impl Client {
     pub async fn invoice(
         &self,
         invoice_id: &str,
-    ) -> Result<Invoice, http::apis::Error<GetInvoicesResourceError>> {
+    ) -> Result<Invoice, Error<GetInvoicesResourceError>> {
         self.check_bearer_token().await?;
 
         let result = http::apis::invoices_resource_api::get_invoices_resource(
@@ -345,10 +389,7 @@ impl Client {
         Ok(*result.invoice)
     }
 
-    pub async fn refund_invoice(
-        &self,
-        invoice_id: &str,
-    ) -> Result<Invoice, http::apis::Error<CreditError>> {
+    pub async fn refund_invoice(&self, invoice_id: &str) -> Result<Invoice, Error<CreditError>> {
         self.check_bearer_token().await?;
 
         let result = http::apis::invoices_resource_api::credit(
@@ -365,7 +406,7 @@ impl Client {
     pub async fn download_invoice_pdf(
         &self,
         invoice_id: &str,
-    ) -> Result<Vec<u8>, http::apis::Error<PrintError>> {
+    ) -> Result<Vec<u8>, Error<PrintError>> {
         self.check_bearer_token().await?;
 
         let result = http::apis::invoices_resource_api::print(
@@ -379,16 +420,16 @@ impl Client {
         Ok(result)
     }
 
-    pub async fn list_invoices<const P: char>(
+    pub async fn list_invoices(
         &self,
-        customer_id: CustomerId<P>,
-    ) -> Result<Vec<InvoiceListItem>, http::apis::Error<ListInvoicesResourceError>> {
+        customer_id: impl AsRef<str>,
+    ) -> Result<Vec<InvoiceListItem>, Error<ListInvoicesResourceError>> {
         self.check_bearer_token().await?;
 
         let result = http::apis::invoices_resource_api::list_invoices_resource(
             &*self.config.read().await,
             ListInvoicesResourceParams {
-                customernumber: Some(customer_id.to_string()),
+                customernumber: Some(customer_id.as_ref().to_string()),
                 ..Default::default()
             },
         )
@@ -412,10 +453,7 @@ impl Client {
         Ok(invoices)
     }
 
-    pub async fn send_invoice(
-        &self,
-        invoice_id: &str,
-    ) -> Result<Invoice, http::apis::Error<EmailError>> {
+    pub async fn send_invoice(&self, invoice_id: &str) -> Result<Invoice, Error<EmailError>> {
         Ok(*http::apis::invoices_resource_api::email(
             &*self.config.read().await,
             EmailParams {
@@ -426,10 +464,10 @@ impl Client {
         .invoice)
     }
 
-    pub async fn create_invoice<const P: char>(
+    pub async fn create_invoice(
         &self,
-        details: CreateInvoice<P>,
-    ) -> Result<Invoice, http::apis::Error<CreateInvoicesResourceError>> {
+        details: CreateInvoice,
+    ) -> Result<Invoice, Error<CreateInvoicesResourceError>> {
         self.check_bearer_token().await?;
 
         let result = http::apis::invoices_resource_api::create_invoices_resource(
@@ -525,11 +563,12 @@ pub struct UpdateCustomer {
     pub email: Update<String>,
     pub email_invoice: Update<String>,
     pub external_reference: Update<String>,
+    pub vat_type: Update<VatType>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct CreateInvoice<const P: char> {
-    pub customer_id: CustomerId<P>,
+pub struct CreateInvoice {
+    pub customer_id: String,
     pub due_date: Option<NaiveDate>,
     pub invoice_date: Option<NaiveDate>,
     pub payment_terms: Option<String>,
@@ -543,6 +582,13 @@ pub struct InvoiceItem {
     pub description: String,
     pub price: Decimal,
     pub vat: VatSE,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default)]
+pub enum VatType {
+    #[default]
+    Sweden,
+    ReverseEu,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default)]
