@@ -1,14 +1,27 @@
+use std::collections::BTreeMap;
+
 use chrono::NaiveDate;
 use fortnox::{
-    id::CustomerId, Client, CreateCustomer, CreateInvoice, InvoiceItem, OAuthClient,
-    OAuthCredentials, UpdateCustomer,
+    http::models::{Customer, Invoice, InvoiceListItem},
+    id::CustomerId,
+    Client, CreateInvoice, InvoiceItem, OAuthClient, OAuthCredentials, UpdateCustomer,
 };
 
 use rust_decimal::Decimal;
+use serde_derive::Serialize;
+use uuid::Uuid;
 
 #[tokio::main]
 async fn main() {
     run().await.unwrap()
+}
+
+// type Dump = BTreeMap<String, >
+
+#[derive(Serialize)]
+struct CustomerDump {
+    pub customer: Customer,
+    pub invoices: Vec<Invoice>,
 }
 
 async fn run() -> anyhow::Result<()> {
@@ -43,76 +56,172 @@ async fn run() -> anyhow::Result<()> {
 
     // creds.save().unwrap();
 
-    let client = Client::new(client, OAuthCredentials::load("./uhoh.json").unwrap());
+    let client = Client::new(
+        client,
+        OAuthCredentials::load("./uhoh2.json") //"/Users/brendan/git/meela/meelasrv-static/fortnox-creds.json")
+            .unwrap(),
+    );
 
-    let customer_id = CustomerId::<'T'>::random();
+    let raw_customers = client.list_customers().await.unwrap();
 
-    let details = CreateCustomer {
-        id: customer_id,
-        org_nr: "1234567890".to_string(),
-        name: "Test test".into(),
-        address1: "boop 123".into(),
-        address2: None,
-        city: "Town".into(),
-        post_code: "AE1234".into(),
-        country_code: "SE".into(),
-        active: true,
-        email: "boop@invalid.example".into(),
-        email_invoice: None,
-        external_reference: None,
-    };
+    // eprintln!("{:#?}", &customers);
+    let mut customers = vec![];
 
-    let result = client.create_customer(details.clone()).await?;
+    'customer: for c in raw_customers {
+        let id = c.customer_number.unwrap();
+        println!("Customer: {}", &id);
 
-    let details = CreateInvoice {
-        customer_id: details.id,
-        due_date: None,
-        invoice_date: Some(NaiveDate::from_ymd_opt(2023, 06, 01).unwrap()),
-        payment_terms: Some("30".into()),
-        items: vec![InvoiceItem {
-            account_number: 3001,
-            count: 31,
-            description: "Potato".into(),
-            price: Decimal::new(10025, 2),
-            vat: Default::default(),
-        }],
-    };
+        let c = loop {
+            match client.customer(&id).await {
+                Ok(v) => break v,
+                Err(e) => match e {
+                    fortnox::Error::ResponseError(e) => {
+                        if e.status == 429 {
+                            tokio::time::sleep(std::time::Duration::from_secs(1)).await;
+                            continue;
+                        }
+                        panic!("{:#?}", e);
+                    }
+                    other => {
+                        eprintln!("{:#?}", other);
+                        continue 'customer;
+                    }
+                },
+            }
+        };
 
-    let result = client.create_invoice(details.clone()).await?;
-    client
-        .book_invoice(&result.document_number.as_ref().unwrap())
-        .await?;
+        println!("List invoices");
+        let x = loop {
+            match client.list_invoices(&id).await {
+                Ok(v) => break v,
+                Err(e) => match e {
+                    fortnox::Error::ResponseError(e) => {
+                        if e.status == 429 {
+                            tokio::time::sleep(std::time::Duration::from_secs(1)).await;
+                            continue;
+                        }
+                        panic!("{:#?}", e);
+                    }
+                    other => {
+                        eprintln!("{:#?}", other);
+                        continue 'customer;
+                    }
+                },
+            }
+        };
 
-    let result = client.create_invoice(details.clone()).await?;
+        let mut invoices = vec![];
+
+        for inv in x {
+            let iid = inv.document_number.unwrap();
+            println!("Invoice: {}", &iid);
+            let i = loop {
+                match client.invoice(&iid).await {
+                    Ok(v) => break v,
+                    Err(e) => match e {
+                        fortnox::Error::ResponseError(e) => {
+                            if e.status == 429 {
+                                tokio::time::sleep(std::time::Duration::from_secs(1)).await;
+                                continue;
+                            }
+                            panic!("{:#?}", e);
+                        }
+                        other => {
+                            eprintln!("{:#?}", other);
+                            continue 'customer;
+                        }
+                    },
+                }
+            };
+
+            invoices.push(i);
+            // eprintln!("{} {}: {:?}", &id, &iid, &i.invoice_rows.unwrap_or_default());
+        }
+
+        customers.push(CustomerDump {
+            customer: c,
+            invoices,
+        });
+    }
+
+    let s = serde_json::to_string_pretty(&customers).unwrap();
+    std::fs::write("./fortnox-dump.json", s).unwrap();
+
+    // let customer_id = CustomerId::<'T'>::from_uuid(
+    //     Uuid::parse_str("B0EE201C-2A4F-4C9E-BF3B-717FEE561615").unwrap(),
+    // );
+
+    // let details = UpdateCustomer {
+    //     org_nr: "1234567890".to_string().into(),
+    //     name: "Test test".to_string().into(),
+    //     address1: "boop 1234".to_string().into(),
+    //     address2: fortnox::Update::Null,
+    //     city: "Town".to_string().into(),
+    //     post_code: "AE1234".to_string().into(),
+    //     country_code: "SE".to_string().into(),
+    //     active: true.into(),
+    //     email: "brendan@meelahealth.com".to_string().into(),
+    //     email_invoice: fortnox::Update::Null,
+    //     external_reference: fortnox::Update::Null,
+    // };
+
+    // let result = client
+    //     .create_or_update_customer(customer_id, details.clone())
+    //     .await?;
+
+    // let details = CreateInvoice {
+    //     customer_id,
+    //     due_date: None,
+    //     invoice_date: Some(NaiveDate::from_ymd_opt(2023, 06, 01).unwrap()),
+    //     payment_terms: Some("30".into()),
+    //     items: vec![InvoiceItem {
+    //         account_number: 3001,
+    //         count: 31,
+    //         description: "Potato".into(),
+    //         price: Decimal::new(10025, 2),
+    //         vat: Default::default(),
+    //     }],
+    // };
+
+    // let result = client.create_invoice(details.clone()).await?;
     // client
     //     .book_invoice(&result.document_number.as_ref().unwrap())
     //     .await?;
 
-    let result = client.create_invoice(details.clone()).await?;
-    client
-        .book_invoice(&result.document_number.as_ref().unwrap())
-        .await?;
+    // client
+    //     .send_invoice(&result.document_number.as_ref().unwrap())
+    //     .await?;
 
-    let update = UpdateCustomer {
-        org_nr: "1231231231".to_string().into(),
-        name: "New Name AB".to_string().into(),
-        email_invoice: fortnox::Update::Null,
-        ..Default::default()
-    };
+    // let result = client.create_invoice(details.clone()).await?;
+    // // client
+    // //     .book_invoice(&result.document_number.as_ref().unwrap())
+    // //     .await?;
 
-    client.update_customer(customer_id, update).await?;
+    // let result = client.create_invoice(details.clone()).await?;
+    // client
+    //     .book_invoice(&result.document_number.as_ref().unwrap())
+    //     .await?;
 
-    let invoice_pdf_data = client
-        .download_invoice_pdf(&result.document_number.as_ref().unwrap())
-        .await?;
-    let result = client
-        .refund_invoice(&result.document_number.unwrap())
-        .await?;
-    let credit_id = result.credit_invoice_reference.unwrap();
-    let credit_pdf_data = client.download_invoice_pdf(&credit_id).await?;
+    // let update = UpdateCustomer {
+    //     org_nr: "1231231231".to_string().into(),
+    //     name: "New Name AB".to_string().into(),
+    //     email_invoice: fortnox::Update::Null,
+    //     ..Default::default()
+    // };
 
-    let results = client.list_invoices(customer_id).await?;
-    println!("{:#?}", results);
+    // client.update_customer(customer_id, update).await?;
+
+    // let invoice_pdf_data = client
+    //     .download_invoice_pdf(&result.document_number.as_ref().unwrap())
+    //     .await?;
+    // let result = client
+    //     .refund_invoice(&result.document_number.unwrap())
+    //     .await?;
+    // let credit_id = result.credit_invoice_reference.unwrap();
+    // let credit_pdf_data = client.download_invoice_pdf(&credit_id).await?;
+
+    // let results = client.list_invoices(customer_id).await?;
+    // println!("{:#?}", results);
 
     Ok(())
 }

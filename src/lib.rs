@@ -7,7 +7,7 @@ pub mod id;
 use std::path::{Path, PathBuf};
 
 use chrono::{DateTime, NaiveDate, Utc};
-use http::apis::configuration::{self, Configuration};
+use http::apis::configuration::Configuration;
 use http::apis::customers_resource_api::{
     CreateCustomersResourceError, CreateCustomersResourceParams, GetCustomersResourceError,
     GetCustomersResourceParams, ListCustomersResourceError, UpdateCustomersResourceError,
@@ -21,10 +21,9 @@ use http::apis::invoices_resource_api::{
 };
 pub use http::apis::Error;
 use http::models::{
-    document_reference, Customer, CustomerListItem, CustomerWrap, Invoice, InvoiceListItem,
-    InvoicePayload, InvoicePayloadInvoiceRow, InvoicePayloadWrap,
+    Customer, CustomerListItem, CustomerWrap, Invoice, InvoiceListItem, InvoicePayload,
+    InvoicePayloadInvoiceRow, InvoicePayloadWrap,
 };
-use id::CustomerId;
 use oauth2::basic::{BasicClient, BasicErrorResponseType, BasicTokenType};
 use oauth2::reqwest::async_http_client;
 use oauth2::{
@@ -131,12 +130,15 @@ pub struct Client {
     creds: RwLock<OAuthCredentials>,
 }
 
-fn make_http_client(access_token: &AccessToken) -> reqwest::Client {
+fn make_http_client(access_token: Option<&AccessToken>) -> reqwest::Client {
     let mut headers = header::HeaderMap::new();
-    headers.insert(
-        "Authorization",
-        header::HeaderValue::from_str(&format!("Bearer {}", access_token.secret())).unwrap(),
-    );
+
+    if let Some(access_token) = access_token.as_ref() {
+        headers.insert(
+            "Authorization",
+            header::HeaderValue::from_str(&format!("Bearer {}", access_token.secret())).unwrap(),
+        );
+    }
 
     reqwest::Client::builder()
         .default_headers(headers)
@@ -149,6 +151,9 @@ impl Client {
         // If the configuration is locked, it means the tokens are being refreshed right now.
         let current_refresh_token = {
             let creds = self.creds.read().await;
+            let Some(creds) = creds.data.as_ref() else {
+                return Ok(());
+            };
 
             let Some(expires_at) = creds.expires_at.as_ref() else {
                 return Ok(());
@@ -165,7 +170,10 @@ impl Client {
             }
         };
 
-        let mut creds = self.creds.write().await;
+        let mut creds_parent = self.creds.write().await;
+        let Some(creds) = creds_parent.data.as_mut() else {
+            return Ok(());
+        };
 
         // It was updated by another task.
         let Some(refresh_token) = creds.refresh_token.take() else {
@@ -182,16 +190,16 @@ impl Client {
             .exchange_refresh_token(&refresh_token)
             .await?;
 
-        self.config.write().await.client = make_http_client(res.access_token());
+        self.config.write().await.client = make_http_client(Some(res.access_token()));
 
-        creds.access_token = res.access_token().clone();
+        creds.access_token = Some(res.access_token().clone());
         creds.refresh_token = res.refresh_token().cloned();
         creds.expires_at = res
             .expires_in()
             .map(|x| chrono::Duration::seconds(x.as_secs() as i64 - 90))
             .map(|x| Utc::now() + x);
 
-        creds.save().unwrap();
+        creds_parent.save().unwrap();
 
         Ok(())
     }
@@ -200,7 +208,7 @@ impl Client {
         let config = Configuration {
             base_path: "https://api.fortnox.se".to_string(),
             user_agent: Some(format!("fortnox-rs/{}", env!("CARGO_PKG_VERSION"))),
-            client: make_http_client(&creds.access_token),
+            client: make_http_client(creds.data.as_ref().and_then(|x| x.access_token.as_ref())),
         };
 
         Self {
@@ -208,6 +216,13 @@ impl Client {
             config: RwLock::from(config),
             creds: RwLock::from(creds),
         }
+    }
+
+    pub async fn set_credentials(&self, creds: OAuthCredentialsData) -> Result<(), std::io::Error> {
+        let mut guard = self.creds.write().await;
+        guard.data = Some(creds);
+        guard.save()?;
+        Ok(())
     }
 
     pub async fn list_customers(
@@ -274,7 +289,7 @@ impl Client {
             Update::Value(x) => Update::Value(match x {
                 VatType::Sweden => http::models::customer::VatType::Sevat,
                 VatType::ReverseEu => http::models::customer::VatType::Eureversedvat,
-            })
+            }),
         };
 
         let result = http::apis::customers_resource_api::create_customers_resource(
@@ -321,7 +336,7 @@ impl Client {
             Update::Value(x) => Update::Value(match x {
                 VatType::Sweden => http::models::customer::VatType::Sevat,
                 VatType::ReverseEu => http::models::customer::VatType::Eureversedvat,
-            })
+            }),
         };
 
         let result = http::apis::customers_resource_api::update_customers_resource(
@@ -611,26 +626,46 @@ impl From<VatSE> for i32 {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone)]
 pub struct OAuthCredentials {
-    #[serde(default)]
     pub persistence_path: PathBuf,
+    pub data: Option<OAuthCredentialsData>,
+}
 
-    pub access_token: AccessToken,
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct OAuthCredentialsData {
+    pub access_token: Option<AccessToken>,
     pub refresh_token: Option<RefreshToken>,
     pub expires_at: Option<DateTime<Utc>>,
 }
 
 impl OAuthCredentials {
     pub fn save(&self) -> Result<(), std::io::Error> {
-        let file = std::fs::File::create(&self.persistence_path)?;
-        serde_json::to_writer_pretty(file, &self)?;
+        if let Some(data) = self.data.as_ref() {
+            let file = std::fs::File::create(&self.persistence_path)?;
+            serde_json::to_writer_pretty(file, data)?;
+        }
         Ok(())
     }
 
     pub fn load<P: AsRef<Path>>(path: P) -> Result<Self, std::io::Error> {
-        let mut x: Self = serde_json::from_reader(std::fs::File::open(path.as_ref())?)?;
-        x.persistence_path = path.as_ref().to_path_buf();
-        Ok(x)
+        let file = match std::fs::File::open(path.as_ref()) {
+            Ok(v) => v,
+            Err(e) => match e.kind() {
+                std::io::ErrorKind::NotFound => {
+                    return Ok(OAuthCredentials {
+                        persistence_path: path.as_ref().to_path_buf(),
+                        data: None,
+                    })
+                }
+                _ => return Err(e),
+            },
+        };
+        
+        let data: OAuthCredentialsData = serde_json::from_reader(file)?;
+        Ok(OAuthCredentials {
+            persistence_path: path.as_ref().to_path_buf(),
+            data: Some(data),
+        })
     }
 }
