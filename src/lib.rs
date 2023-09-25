@@ -529,7 +529,7 @@ impl Client {
                         ),
                         invoice_type: Some(http::models::invoice_payload::InvoiceType::Invoice),
                         terms_of_payment: details.payment_terms,
-                        comments: details.comment,
+                        remarks: details.comment,
                         ..Default::default()
                     })),
                 }),
