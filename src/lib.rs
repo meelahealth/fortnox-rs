@@ -16,8 +16,8 @@ use http::apis::customers_resource_api::{
 use http::apis::invoices_resource_api::{
     BookkeepInvoicesResourceError, BookkeepInvoicesResourceParams, CreateInvoicesResourceError,
     CreateInvoicesResourceParams, CreditError, CreditParams, EmailError, EmailParams,
-    GetInvoicesResourceError, GetInvoicesResourceParams, ListInvoicesResourceError,
-    ListInvoicesResourceParams, PrintError, PrintParams,
+    ExternalPrintError, ExternalPrintParams, GetInvoicesResourceError, GetInvoicesResourceParams,
+    ListInvoicesResourceError, ListInvoicesResourceParams, PrintError, PrintParams,
 };
 pub use http::apis::Error;
 use http::models::{
@@ -418,6 +418,22 @@ impl Client {
         Ok(*result.invoice)
     }
 
+    pub async fn mark_invoice_sent(
+        &self,
+        invoice_id: &str,
+    ) -> Result<Invoice, Error<ExternalPrintError>> {
+        self.check_bearer_token().await?;
+
+        Ok(*http::apis::invoices_resource_api::external_print(
+            &*self.config.read().await,
+            ExternalPrintParams {
+                document_number: invoice_id.to_string(),
+            },
+        )
+        .await?
+        .invoice)
+    }
+
     pub async fn download_invoice_pdf(
         &self,
         invoice_id: &str,
@@ -469,6 +485,8 @@ impl Client {
     }
 
     pub async fn send_invoice(&self, invoice_id: &str) -> Result<Invoice, Error<EmailError>> {
+        self.check_bearer_token().await?;
+
         Ok(*http::apis::invoices_resource_api::email(
             &*self.config.read().await,
             EmailParams {
@@ -511,6 +529,7 @@ impl Client {
                         ),
                         invoice_type: Some(http::models::invoice_payload::InvoiceType::Invoice),
                         terms_of_payment: details.payment_terms,
+                        comments: details.comment,
                         ..Default::default()
                     })),
                 }),
@@ -588,6 +607,7 @@ pub struct CreateInvoice {
     pub invoice_date: Option<NaiveDate>,
     pub payment_terms: Option<String>,
     pub items: Vec<InvoiceItem>,
+    pub comment: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -661,7 +681,7 @@ impl OAuthCredentials {
                 _ => return Err(e),
             },
         };
-        
+
         let data: OAuthCredentialsData = serde_json::from_reader(file)?;
         Ok(OAuthCredentials {
             persistence_path: path.as_ref().to_path_buf(),
