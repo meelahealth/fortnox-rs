@@ -342,6 +342,7 @@ impl Client {
                             email: details.email.clone().into(),
                             external_reference: details.external_reference.clone().into(),
                             vat_type: vat_type.clone().into(),
+                            vat_number: details.org_nr.clone().into(),
                             ..Default::default()
                         }),
                     }),
@@ -393,6 +394,7 @@ impl Client {
                             email: details.email.clone().into(),
                             external_reference: details.external_reference.clone().into(),
                             vat_type: vat_type.clone().into(),
+                            vat_number: details.org_nr.clone().into(),
                             ..Default::default()
                         }),
                     },
