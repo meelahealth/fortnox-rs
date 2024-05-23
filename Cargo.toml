@@ -1,6 +1,6 @@
 [package]
 name = "fortnox"
-version = "0.1.0+20230613"
+version = "0.1.1+20230613"
 authors = []
 description = "The Fortnox API"
 license = "CC0-1.0"

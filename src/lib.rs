@@ -315,6 +315,7 @@ impl Client {
             Update::Value(x) => Update::Value(match x {
                 VatType::Sweden => http::models::customer::VatType::Sevat,
                 VatType::ReverseEu => http::models::customer::VatType::Eureversedvat,
+                VatType::Export => http::models::customer::VatType::Export,
             }),
         };
 
@@ -366,6 +367,7 @@ impl Client {
             Update::Value(x) => Update::Value(match x {
                 VatType::Sweden => http::models::customer::VatType::Sevat,
                 VatType::ReverseEu => http::models::customer::VatType::Eureversedvat,
+                VatType::Export => http::models::customer::VatType::Export,
             }),
         };
 
@@ -675,6 +677,7 @@ pub enum VatType {
     #[default]
     Sweden,
     ReverseEu,
+    Export,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default)]
