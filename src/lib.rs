@@ -672,6 +672,7 @@ pub struct InvoiceItem {
     pub description: String,
     pub price: Decimal,
     pub vat: VatSE,
+    pub currency: String,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default)]
