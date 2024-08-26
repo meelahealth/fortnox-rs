@@ -20,6 +20,7 @@ use http::apis::invoices_resource_api::{
     ListInvoicesResourceError, ListInvoicesResourceParams, PrintError, PrintParams,
 };
 pub use http::apis::Error;
+pub use http::models::invoice_payload::Language;
 use http::models::{
     Customer, CustomerListItem, CustomerWrap, Invoice, InvoiceListItem, InvoicePayload,
     InvoicePayloadInvoiceRow, InvoicePayloadWrap,
@@ -343,6 +344,7 @@ impl Client {
                             email: details.email.clone().into(),
                             external_reference: details.external_reference.clone().into(),
                             vat_type: vat_type.clone().into(),
+                            currency: details.currency.clone().into(),
                             ..Default::default()
                         }),
                     }),
@@ -583,6 +585,8 @@ impl Client {
                             terms_of_payment: details.payment_terms.clone(),
                             remarks: details.comment.clone(),
                             your_reference: details.your_reference.clone(),
+                            language: details.language.clone(),
+                            currency: details.currency.clone(),
                             ..Default::default()
                         })),
                     }),
@@ -652,6 +656,7 @@ pub struct UpdateCustomer {
     pub email_invoice: Update<String>,
     pub external_reference: Update<String>,
     pub vat_type: Update<VatType>,
+    pub currency: Update<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -663,6 +668,8 @@ pub struct CreateInvoice {
     pub items: Vec<InvoiceItem>,
     pub comment: Option<String>,
     pub your_reference: Option<String>,
+    pub language: Option<Language>,
+    pub currency: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
