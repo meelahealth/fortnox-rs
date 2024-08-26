@@ -582,6 +582,7 @@ impl Client {
                             invoice_type: Some(http::models::invoice_payload::InvoiceType::Invoice),
                             terms_of_payment: details.payment_terms.clone(),
                             remarks: details.comment.clone(),
+                            your_reference: details.your_reference.clone(),
                             ..Default::default()
                         })),
                     }),
@@ -661,6 +662,7 @@ pub struct CreateInvoice {
     pub payment_terms: Option<String>,
     pub items: Vec<InvoiceItem>,
     pub comment: Option<String>,
+    pub your_reference: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
