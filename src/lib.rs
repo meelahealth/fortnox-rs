@@ -549,6 +549,27 @@ impl Client {
         .invoice)
     }
 
+    pub async fn create_invoice_raw(
+        &self,
+        payload: InvoicePayload,
+    ) -> Result<Invoice, Error<CreateInvoicesResourceError>> {
+        self.check_bearer_token().await?;
+
+        let result = retry!(
+            http::apis::invoices_resource_api::create_invoices_resource(
+                &*self.config.read().await,
+                CreateInvoicesResourceParams {
+                    invoice_payload: Some(InvoicePayloadWrap {
+                        invoice: Some(Box::new(payload.clone())),
+                    }),
+                },
+            )
+            .await
+        );
+
+        Ok(*result.invoice)
+    }
+
     pub async fn create_invoice(
         &self,
         details: CreateInvoice,
@@ -577,6 +598,7 @@ impl Client {
                                         description: Some(x.description.clone()),
                                         price: Some(x.price.try_into().unwrap()),
                                         vat: Some(x.vat.into()),
+                                        cost_center: x.cost_center.clone(),
                                         ..Default::default()
                                     })
                                     .collect(),
@@ -679,6 +701,7 @@ pub struct InvoiceItem {
     pub description: String,
     pub price: Decimal,
     pub vat: VatSE,
+    pub cost_center: Option<String>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default)]
