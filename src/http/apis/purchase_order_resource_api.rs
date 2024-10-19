@@ -297,6 +297,7 @@ pub async fn batch_update_response_state(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
+        tracing::debug!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<BatchUpdateResponseStateError> =
@@ -341,6 +342,7 @@ pub async fn create_purchase_order_resource(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
+        tracing::debug!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<CreatePurchaseOrderResourceError> =
@@ -418,6 +420,7 @@ pub async fn get_all_purchase_order_resource(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
+        tracing::debug!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<GetAllPurchaseOrderResourceError> =
@@ -463,6 +466,7 @@ pub async fn get_attached_notes(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
+        tracing::debug!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<GetAttachedNotesError> =
@@ -544,6 +548,7 @@ pub async fn get_csv_report(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
+        tracing::debug!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<GetCsvReportError> =
@@ -589,6 +594,7 @@ pub async fn get_matched_documents(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
+        tracing::debug!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<GetMatchedDocumentsError> =
@@ -638,6 +644,7 @@ pub async fn get_purchase_order_resource(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
+        tracing::debug!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<GetPurchaseOrderResourceError> =
@@ -774,6 +781,7 @@ pub async fn set_dropship_manually_completed(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
+        tracing::debug!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<SetDropshipManuallyCompletedError> =
@@ -865,6 +873,7 @@ pub async fn update_purchase_order_resource(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
+        tracing::debug!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<UpdatePurchaseOrderResourceError> =
@@ -911,6 +920,7 @@ pub async fn update_response_state(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
+        tracing::debug!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<UpdateResponseStateError> =

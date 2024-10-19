@@ -126,6 +126,7 @@ pub async fn bookkeep(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
+        tracing::debug!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<BookkeepError> = serde_json::from_str(&local_var_content).ok();
@@ -166,6 +167,7 @@ pub async fn create_invoice_payments_resource(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
+        tracing::debug!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<CreateInvoicePaymentsResourceError> =
@@ -210,6 +212,7 @@ pub async fn get_invoice_payments_resource(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
+        tracing::debug!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<GetInvoicePaymentsResourceError> =
@@ -249,6 +252,7 @@ pub async fn list_invoice_payments_resource(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
+        tracing::debug!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<ListInvoicePaymentsResourceError> =
@@ -339,6 +343,7 @@ pub async fn update_invoice_payments_resource(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
+        tracing::debug!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<UpdateInvoicePaymentsResourceError> =

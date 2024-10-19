@@ -139,6 +139,7 @@ pub async fn create_contracts_resource(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
+        tracing::debug!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<CreateContractsResourceError> =
@@ -183,6 +184,7 @@ pub async fn createinvoice(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
+        tracing::debug!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<CreateinvoiceError> =
@@ -227,6 +229,7 @@ pub async fn finish(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
+        tracing::debug!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<FinishError> = serde_json::from_str(&local_var_content).ok();
@@ -270,6 +273,7 @@ pub async fn get_contracts_resource(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
+        tracing::debug!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<GetContractsResourceError> =
@@ -314,6 +318,7 @@ pub async fn increaseinvoicecount(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
+        tracing::debug!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<IncreaseinvoicecountError> =
@@ -358,6 +363,7 @@ pub async fn list_contracts_resource(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
+        tracing::debug!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<ListContractsResourceError> =
@@ -405,6 +411,7 @@ pub async fn update_contracts_resource(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
+        tracing::debug!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<UpdateContractsResourceError> =

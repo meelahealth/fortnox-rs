@@ -90,6 +90,7 @@ pub async fn create_voucher_series_resource(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
+        tracing::debug!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<CreateVoucherSeriesResourceError> =
@@ -134,6 +135,7 @@ pub async fn get_voucher_series_resource(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
+        tracing::debug!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<GetVoucherSeriesResourceError> =
@@ -173,6 +175,7 @@ pub async fn list_voucher_series_resource(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
+        tracing::debug!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<ListVoucherSeriesResourceError> =
@@ -219,6 +222,7 @@ pub async fn update_voucher_series_resource(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
+        tracing::debug!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<UpdateVoucherSeriesResourceError> =

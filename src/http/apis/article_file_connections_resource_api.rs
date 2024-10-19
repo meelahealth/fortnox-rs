@@ -95,6 +95,7 @@ pub async fn create_article_file_connections_resource(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
+        tracing::debug!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<CreateArticleFileConnectionsResourceError> =
@@ -142,6 +143,7 @@ pub async fn get_article_file_connections_resource(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
+        tracing::debug!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<GetArticleFileConnectionsResourceError> =
@@ -187,6 +189,7 @@ pub async fn list_article_file_connections_resource(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
+        tracing::debug!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<ListArticleFileConnectionsResourceError> =
