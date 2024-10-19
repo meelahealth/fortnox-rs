@@ -184,7 +184,7 @@ pub async fn cancel_offers_resource(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        tracing::debug!("Response: {}", local_var_content);
+        tracing::trace!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<CancelOffersResourceError> =
@@ -227,7 +227,7 @@ pub async fn create_offers_resource(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        tracing::debug!("Response: {}", local_var_content);
+        tracing::trace!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<CreateOffersResourceError> =
@@ -272,7 +272,7 @@ pub async fn createorder(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        tracing::debug!("Response: {}", local_var_content);
+        tracing::trace!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<CreateorderError> =
@@ -318,7 +318,7 @@ pub async fn email_offers_resource(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        tracing::debug!("Response: {}", local_var_content);
+        tracing::trace!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<EmailOffersResourceError> =
@@ -364,7 +364,7 @@ pub async fn externalprint(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        tracing::debug!("Response: {}", local_var_content);
+        tracing::trace!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<ExternalprintError> =
@@ -409,7 +409,7 @@ pub async fn get_offers_resource(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        tracing::debug!("Response: {}", local_var_content);
+        tracing::trace!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<GetOffersResourceError> =
@@ -454,7 +454,7 @@ pub async fn list_offers_resource(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        tracing::debug!("Response: {}", local_var_content);
+        tracing::trace!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<ListOffersResourceError> =
@@ -500,7 +500,7 @@ pub async fn preview_offers_resource(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        tracing::debug!("Response: {}", local_var_content);
+        tracing::trace!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<PreviewOffersResourceError> =
@@ -545,7 +545,7 @@ pub async fn print_offers_resource(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        tracing::debug!("Response: {}", local_var_content);
+        tracing::trace!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<PrintOffersResourceError> =
@@ -593,7 +593,7 @@ pub async fn update_offers_resource(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        tracing::debug!("Response: {}", local_var_content);
+        tracing::trace!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<UpdateOffersResourceError> =

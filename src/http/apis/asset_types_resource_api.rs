@@ -112,7 +112,7 @@ pub async fn create_asset_types_resource(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        tracing::debug!("Response: {}", local_var_content);
+        tracing::trace!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<CreateAssetTypesResourceError> =
@@ -195,7 +195,7 @@ pub async fn get_all_asset_types_resource(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        tracing::debug!("Response: {}", local_var_content);
+        tracing::trace!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<GetAllAssetTypesResourceError> =
@@ -240,7 +240,7 @@ pub async fn get_asset_types_resource(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        tracing::debug!("Response: {}", local_var_content);
+        tracing::trace!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<GetAssetTypesResourceError> =
@@ -287,7 +287,7 @@ pub async fn update_asset_types_resource(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        tracing::debug!("Response: {}", local_var_content);
+        tracing::trace!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<UpdateAssetTypesResourceError> =

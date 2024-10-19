@@ -142,7 +142,7 @@ pub async fn create_finance_invoices_resource(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        tracing::debug!("Response: {}", local_var_content);
+        tracing::trace!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<CreateFinanceInvoicesResourceError> =
@@ -188,7 +188,7 @@ pub async fn get_finance_invoices_resource(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        tracing::debug!("Response: {}", local_var_content);
+        tracing::trace!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<GetFinanceInvoicesResourceError> =
@@ -236,7 +236,7 @@ pub async fn pause(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        tracing::debug!("Response: {}", local_var_content);
+        tracing::trace!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<PauseError> = serde_json::from_str(&local_var_content).ok();
@@ -283,7 +283,7 @@ pub async fn report_payment(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        tracing::debug!("Response: {}", local_var_content);
+        tracing::trace!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<ReportPaymentError> =
@@ -329,7 +329,7 @@ pub async fn stop(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        tracing::debug!("Response: {}", local_var_content);
+        tracing::trace!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<StopError> = serde_json::from_str(&local_var_content).ok();
@@ -374,7 +374,7 @@ pub async fn take_fees(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        tracing::debug!("Response: {}", local_var_content);
+        tracing::trace!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<TakeFeesError> = serde_json::from_str(&local_var_content).ok();
@@ -419,7 +419,7 @@ pub async fn unpause(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        tracing::debug!("Response: {}", local_var_content);
+        tracing::trace!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<UnpauseError> = serde_json::from_str(&local_var_content).ok();

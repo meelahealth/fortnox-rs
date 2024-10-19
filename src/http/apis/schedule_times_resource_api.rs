@@ -94,7 +94,7 @@ pub async fn get_schedule_times_resource(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        tracing::debug!("Response: {}", local_var_content);
+        tracing::trace!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<GetScheduleTimesResourceError> =
@@ -141,7 +141,7 @@ pub async fn reset(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        tracing::debug!("Response: {}", local_var_content);
+        tracing::trace!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<ResetError> = serde_json::from_str(&local_var_content).ok();
@@ -189,7 +189,7 @@ pub async fn update_schedule_times_resource(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        tracing::debug!("Response: {}", local_var_content);
+        tracing::trace!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<UpdateScheduleTimesResourceError> =

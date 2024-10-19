@@ -282,7 +282,7 @@ pub async fn bookkeep_invoices_resource(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        tracing::debug!("Response: {}", local_var_content);
+        tracing::trace!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<BookkeepInvoicesResourceError> =
@@ -327,7 +327,7 @@ pub async fn cancel(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        tracing::debug!("Response: {}", local_var_content);
+        tracing::trace!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<CancelError> = serde_json::from_str(&local_var_content).ok();
@@ -414,7 +414,7 @@ pub async fn credit(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        tracing::debug!("Response: {}", local_var_content);
+        tracing::trace!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<CreditError> = serde_json::from_str(&local_var_content).ok();
@@ -458,7 +458,7 @@ pub async fn e_invoice(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        tracing::debug!("Response: {}", local_var_content);
+        tracing::trace!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<EInvoiceError> = serde_json::from_str(&local_var_content).ok();
@@ -502,7 +502,7 @@ pub async fn e_print(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        tracing::debug!("Response: {}", local_var_content);
+        tracing::trace!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<EPrintError> = serde_json::from_str(&local_var_content).ok();
@@ -547,7 +547,7 @@ pub async fn email(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        tracing::debug!("Response: {}", local_var_content);
+        tracing::trace!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<EmailError> = serde_json::from_str(&local_var_content).ok();
@@ -592,7 +592,7 @@ pub async fn external_print(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        tracing::debug!("Response: {}", local_var_content);
+        tracing::trace!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<ExternalPrintError> =
@@ -637,7 +637,7 @@ pub async fn get_invoices_resource(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        tracing::debug!("Response: {}", local_var_content);
+        tracing::trace!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<GetInvoicesResourceError> =
@@ -817,7 +817,7 @@ pub async fn list_invoices_resource(
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
         parse_json(&local_var_content).map_err(Error::from)
-        // tracing::debug!("Response: {}", local_var_content); serde_json::from_str(&local_var_content).map_err(Error::from)
+        // tracing::trace!("Response: {}", local_var_content); serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<ListInvoicesResourceError> =
             serde_json::from_str(&local_var_content).ok();
@@ -862,7 +862,7 @@ pub async fn preview(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        tracing::debug!("Response: {}", local_var_content);
+        tracing::trace!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<PreviewError> = serde_json::from_str(&local_var_content).ok();
@@ -948,7 +948,7 @@ pub async fn print_reminder(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        tracing::debug!("Response: {}", local_var_content);
+        tracing::trace!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<PrintReminderError> =
@@ -996,7 +996,7 @@ pub async fn update_invoices_resource(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        tracing::debug!("Response: {}", local_var_content);
+        tracing::trace!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<UpdateInvoicesResourceError> =
@@ -1042,7 +1042,7 @@ pub async fn warehouse_ready(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        tracing::debug!("Response: {}", local_var_content);
+        tracing::trace!("Response: {}", local_var_content);
         serde_json::from_str(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<WarehouseReadyError> =
