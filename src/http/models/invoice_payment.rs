@@ -11,17 +11,17 @@ pub struct InvoicePayment {
     #[serde(rename = "@url", skip_serializing_if = "Option::is_none")]
     pub at_url: Option<String>,
     #[serde(rename = "Amount", skip_serializing_if = "Option::is_none")]
-    pub amount: Option<f64>,
+    pub amount: Option<String>,
     #[serde(rename = "AmountCurrency", skip_serializing_if = "Option::is_none")]
-    pub amount_currency: Option<f64>,
+    pub amount_currency: Option<String>,
     #[serde(rename = "Booked", skip_serializing_if = "Option::is_none")]
     pub booked: Option<bool>,
     #[serde(rename = "Currency", skip_serializing_if = "Option::is_none")]
     pub currency: Option<String>,
     #[serde(rename = "CurrencyRate", skip_serializing_if = "Option::is_none")]
-    pub currency_rate: Option<f64>,
+    pub currency_rate: Option<String>,
     #[serde(rename = "CurrencyUnit", skip_serializing_if = "Option::is_none")]
-    pub currency_unit: Option<f64>,
+    pub currency_unit: Option<String>,
     #[serde(
         rename = "ExternalInvoiceReference1",
         skip_serializing_if = "Option::is_none"
