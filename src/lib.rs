@@ -13,6 +13,9 @@ use http::apis::customers_resource_api::{
     GetCustomersResourceParams, ListCustomersResourceError, UpdateCustomersResourceError,
     UpdateCustomersResourceParams,
 };
+use http::apis::invoice_payments_resource_api::{
+    CreateInvoicePaymentsResourceError, CreateInvoicePaymentsResourceParams,
+};
 use http::apis::invoices_resource_api::{
     BookkeepInvoicesResourceError, BookkeepInvoicesResourceParams, CreateInvoicesResourceError,
     CreateInvoicesResourceParams, CreditError, CreditParams, EmailError, EmailParams,
@@ -23,7 +26,7 @@ pub use http::apis::Error;
 pub use http::models::invoice_payload::Language;
 use http::models::{
     Customer, CustomerListItem, CustomerWrap, Invoice, InvoiceListItem, InvoicePayload,
-    InvoicePayloadInvoiceRow, InvoicePayloadWrap,
+    InvoicePayloadInvoiceRow, InvoicePayloadWrap, InvoicePayment, InvoicePaymentWrap,
 };
 use oauth2::basic::{BasicClient, BasicErrorResponseType, BasicTokenType};
 use oauth2::reqwest::async_http_client;
@@ -547,6 +550,27 @@ impl Client {
             .await
         )
         .invoice)
+    }
+
+    pub async fn create_invoice_payment_raw(
+        &self,
+        payload: InvoicePayment,
+    ) -> Result<InvoicePayment, Error<CreateInvoicePaymentsResourceError>> {
+        self.check_bearer_token().await?;
+
+        let result = retry!(
+            http::apis::invoice_payments_resource_api::create_invoice_payments_resource(
+                &*self.config.read().await,
+                CreateInvoicePaymentsResourceParams {
+                    invoice_payment: Some(InvoicePaymentWrap {
+                        invoice_payment: Some(Box::new(payload.clone())),
+                    }),
+                },
+            )
+            .await
+        );
+
+        Ok(*result.invoice_payment.unwrap())
     }
 
     pub async fn create_invoice_raw(
