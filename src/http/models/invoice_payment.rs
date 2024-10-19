@@ -43,7 +43,7 @@ pub struct InvoicePayment {
     )]
     pub invoice_customer_number: Option<String>,
     #[serde(rename = "InvoiceNumber")]
-    pub invoice_number: i32,
+    pub invoice_number: String,
     #[serde(rename = "InvoiceDueDate", skip_serializing_if = "Option::is_none")]
     pub invoice_due_date: Option<String>,
     #[serde(rename = "InvoiceOCR", skip_serializing_if = "Option::is_none")]
@@ -56,17 +56,17 @@ pub struct InvoicePayment {
         rename = "ModeOfPaymentAccount",
         skip_serializing_if = "Option::is_none"
     )]
-    pub mode_of_payment_account: Option<i32>,
+    pub mode_of_payment_account: Option<String>,
     #[serde(rename = "Number", skip_serializing_if = "Option::is_none")]
     pub number: Option<String>,
     #[serde(rename = "PaymentDate", skip_serializing_if = "Option::is_none")]
     pub payment_date: Option<String>,
     #[serde(rename = "VoucherNumber", skip_serializing_if = "Option::is_none")]
-    pub voucher_number: Option<i32>,
+    pub voucher_number: Option<String>,
     #[serde(rename = "VoucherSeries", skip_serializing_if = "Option::is_none")]
     pub voucher_series: Option<String>,
     #[serde(rename = "VoucherYear", skip_serializing_if = "Option::is_none")]
-    pub voucher_year: Option<i32>,
+    pub voucher_year: Option<String>,
     #[serde(rename = "Source", skip_serializing_if = "Option::is_none")]
     pub source: Option<String>,
     #[serde(rename = "WriteOffs", skip_serializing_if = "Option::is_none")]
@@ -74,7 +74,7 @@ pub struct InvoicePayment {
 }
 
 impl InvoicePayment {
-    pub fn new(invoice_number: i32) -> InvoicePayment {
+    pub fn new(invoice_number: String) -> InvoicePayment {
         InvoicePayment {
             at_url: None,
             amount: None,
