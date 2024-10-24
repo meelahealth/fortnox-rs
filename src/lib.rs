@@ -552,6 +552,25 @@ impl Client {
         .invoice)
     }
 
+    pub async fn book_invoice_payment(
+        &self,
+        document_number: &str,
+    ) -> Result<Invoice, Error<BookkeepInvoicesResourceError>> {
+        self.check_bearer_token().await?;
+
+        let result = retry!(
+            http::apis::invoices_resource_api::bookkeep_invoices_resource(
+                &*self.config.read().await,
+                BookkeepInvoicesResourceParams {
+                    document_number: document_number.to_string(),
+                }
+            )
+            .await
+        );
+
+        Ok(*result.invoice)
+    }
+
     pub async fn create_invoice_payment_raw(
         &self,
         payload: InvoicePayment,
