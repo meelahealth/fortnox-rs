@@ -563,7 +563,7 @@ impl Client {
             http::apis::invoice_payments_resource_api::bookkeep(
                 &*self.config.read().await,
                 BookkeepParams {
-                    number: invoice_payment.number.clone().unwrap().to_string(),
+                    number: invoice_payment.invoice_number.clone().unwrap().to_string(),
                     invoice_payment: Some(InvoicePaymentWrap {
                         invoice_payment: Some(Box::new(invoice_payment.clone()))
                     }),

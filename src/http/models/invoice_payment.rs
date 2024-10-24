@@ -61,8 +61,9 @@ pub struct InvoicePayment {
         skip_serializing_if = "Option::is_none"
     )]
     pub mode_of_payment_account: Option<i32>,
-    #[serde(rename = "Number", skip_serializing_if = "Option::is_none")]
-    pub number: Option<i32>,
+    // Pointlessly duplicated field that is sometimes an int and sometimes a string, wtf.
+    // #[serde(rename = "Number", skip_serializing_if = "Option::is_none")]
+    // pub number: Option<i32>,
     #[serde(rename = "PaymentDate", skip_serializing_if = "Option::is_none")]
     pub payment_date: Option<String>,
     #[serde(rename = "VoucherNumber", skip_serializing_if = "Option::is_none")]
