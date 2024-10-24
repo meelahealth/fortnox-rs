@@ -14,7 +14,7 @@ use http::apis::customers_resource_api::{
     UpdateCustomersResourceParams,
 };
 use http::apis::invoice_payments_resource_api::{
-    CreateInvoicePaymentsResourceError, CreateInvoicePaymentsResourceParams,
+    BookkeepParams, CreateInvoicePaymentsResourceError, CreateInvoicePaymentsResourceParams,
 };
 use http::apis::invoices_resource_api::{
     BookkeepInvoicesResourceError, BookkeepInvoicesResourceParams, CreateInvoicesResourceError,
@@ -554,21 +554,24 @@ impl Client {
 
     pub async fn book_invoice_payment(
         &self,
-        document_number: &str,
-    ) -> Result<Invoice, Error<BookkeepInvoicesResourceError>> {
+        invoice_payment: InvoicePayment,
+    ) -> Result<InvoicePayment, Error<BookkeepInvoicesResourceError>> {
         self.check_bearer_token().await?;
 
         let result = retry!(
-            http::apis::invoices_resource_api::bookkeep_invoices_resource(
+            http::apis::invoice_payments_resource_api::bookkeep(
                 &*self.config.read().await,
-                BookkeepInvoicesResourceParams {
-                    document_number: document_number.to_string(),
+                BookkeepParams {
+                    number: invoice_payment.number.unwrap().to_string(),
+                    invoice_payment: Some(InvoicePaymentWrap {
+                        invoice_payment: Some(Box::new(invoice_payment))
+                    }),
                 }
             )
             .await
         );
 
-        Ok(*result.invoice)
+        Ok(*result.invoice_payment.unwrap())
     }
 
     pub async fn create_invoice_payment_raw(
