@@ -133,11 +133,11 @@ pub struct BookedInvoicePayment {
     #[serde(rename = "PaymentDate", skip_serializing_if = "Option::is_none")]
     pub payment_date: Option<String>,
     #[serde(rename = "VoucherNumber", skip_serializing_if = "Option::is_none")]
-    pub voucher_number: Option<String>,
+    pub voucher_number: Option<i32>,
     #[serde(rename = "VoucherSeries", skip_serializing_if = "Option::is_none")]
     pub voucher_series: Option<String>,
     #[serde(rename = "VoucherYear", skip_serializing_if = "Option::is_none")]
-    pub voucher_year: Option<String>,
+    pub voucher_year: Option<i32>,
     #[serde(rename = "Source", skip_serializing_if = "Option::is_none")]
     pub source: Option<String>,
     #[serde(rename = "WriteOffs", skip_serializing_if = "Option::is_none")]
