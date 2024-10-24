@@ -98,7 +98,6 @@ impl InvoicePayment {
             invoice_total: None,
             mode_of_payment: None,
             mode_of_payment_account: None,
-            number: None,
             payment_date: None,
             voucher_number: None,
             voucher_series: None,
