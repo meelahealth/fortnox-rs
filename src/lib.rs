@@ -26,8 +26,7 @@ use http::apis::invoices_resource_api::{
 pub use http::apis::Error;
 pub use http::models::invoice_payload::Language;
 use http::models::{
-    Customer, CustomerListItem, CustomerWrap, Invoice, InvoiceListItem, InvoicePayload,
-    InvoicePayloadInvoiceRow, InvoicePayloadWrap, InvoicePayment, InvoicePaymentWrap,
+    BookedInvoicePayment, Customer, CustomerListItem, CustomerWrap, Invoice, InvoiceListItem, InvoicePayload, InvoicePayloadInvoiceRow, InvoicePayloadWrap, InvoicePayment, InvoicePaymentWrap
 };
 use oauth2::basic::{BasicClient, BasicErrorResponseType, BasicTokenType};
 use oauth2::reqwest::async_http_client;
@@ -556,7 +555,7 @@ impl Client {
     pub async fn book_invoice_payment(
         &self,
         invoice_payment: InvoicePayment,
-    ) -> Result<InvoicePayment, Error<BookkeepError>> {
+    ) -> Result<BookedInvoicePayment, Error<BookkeepError>> {
         self.check_bearer_token().await?;
 
         let result = retry!(

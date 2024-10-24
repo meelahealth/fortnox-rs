@@ -61,9 +61,8 @@ pub struct InvoicePayment {
         skip_serializing_if = "Option::is_none"
     )]
     pub mode_of_payment_account: Option<i32>,
-    // Pointlessly duplicated field that is sometimes an int and sometimes a string, wtf.
-    // #[serde(rename = "Number", skip_serializing_if = "Option::is_none")]
-    // pub number: Option<i32>,
+    #[serde(rename = "Number", skip_serializing_if = "Option::is_none")]
+    pub number: Option<i32>,
     #[serde(rename = "PaymentDate", skip_serializing_if = "Option::is_none")]
     pub payment_date: Option<String>,
     #[serde(rename = "VoucherNumber", skip_serializing_if = "Option::is_none")]
@@ -78,32 +77,69 @@ pub struct InvoicePayment {
     pub write_offs: Option<Vec<crate::http::models::InvoicePaymentWriteOff>>,
 }
 
-impl InvoicePayment {
-    pub fn new(invoice_number: String) -> InvoicePayment {
-        InvoicePayment {
-            at_url: None,
-            amount: None,
-            amount_currency: None,
-            booked: None,
-            currency: None,
-            currency_rate: None,
-            currency_unit: None,
-            external_invoice_reference1: None,
-            external_invoice_reference2: None,
-            invoice_customer_name: None,
-            invoice_customer_number: None,
-            invoice_number,
-            invoice_due_date: None,
-            invoice_ocr: None,
-            invoice_total: None,
-            mode_of_payment: None,
-            mode_of_payment_account: None,
-            payment_date: None,
-            voucher_number: None,
-            voucher_series: None,
-            voucher_year: None,
-            source: None,
-            write_offs: None,
-        }
-    }
+#[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize)]
+pub struct BookedInvoicePayment {
+    #[serde(rename = "@url", skip_serializing_if = "Option::is_none")]
+    pub at_url: Option<String>,
+    #[serde(rename = "Amount", skip_serializing_if = "Option::is_none")]
+    pub amount: Option<i32>,
+    #[serde(rename = "AmountCurrency", skip_serializing_if = "Option::is_none")]
+    pub amount_currency: Option<i32>,
+    #[serde(rename = "Booked", skip_serializing_if = "Option::is_none")]
+    pub booked: Option<bool>,
+    #[serde(rename = "Currency", skip_serializing_if = "Option::is_none")]
+    pub currency: Option<String>,
+    #[serde(rename = "CurrencyRate", skip_serializing_if = "Option::is_none")]
+    pub currency_rate: Option<i32>,
+    #[serde(rename = "CurrencyUnit", skip_serializing_if = "Option::is_none")]
+    pub currency_unit: Option<i32>,
+    #[serde(
+        rename = "ExternalInvoiceReference1",
+        skip_serializing_if = "Option::is_none"
+    )]
+    pub external_invoice_reference1: Option<String>,
+    #[serde(
+        rename = "ExternalInvoiceReference2",
+        skip_serializing_if = "Option::is_none"
+    )]
+    pub external_invoice_reference2: Option<String>,
+    #[serde(
+        rename = "InvoiceCustomerName",
+        skip_serializing_if = "Option::is_none"
+    )]
+    pub invoice_customer_name: Option<String>,
+    #[serde(
+        rename = "InvoiceCustomerNumber",
+        skip_serializing_if = "Option::is_none"
+    )]
+    pub invoice_customer_number: Option<String>,
+    #[serde(rename = "InvoiceNumber")]
+    pub invoice_number: i32,
+    #[serde(rename = "InvoiceDueDate", skip_serializing_if = "Option::is_none")]
+    pub invoice_due_date: Option<String>,
+    #[serde(rename = "InvoiceOCR", skip_serializing_if = "Option::is_none")]
+    pub invoice_ocr: Option<String>,
+    #[serde(rename = "InvoiceTotal", skip_serializing_if = "Option::is_none")]
+    pub invoice_total: Option<i32>,
+    #[serde(rename = "ModeOfPayment", skip_serializing_if = "Option::is_none")]
+    pub mode_of_payment: Option<String>,
+    #[serde(
+        rename = "ModeOfPaymentAccount",
+        skip_serializing_if = "Option::is_none"
+    )]
+    pub mode_of_payment_account: Option<i32>,
+    #[serde(rename = "Number", skip_serializing_if = "Option::is_none")]
+    pub number: Option<String>,
+    #[serde(rename = "PaymentDate", skip_serializing_if = "Option::is_none")]
+    pub payment_date: Option<String>,
+    #[serde(rename = "VoucherNumber", skip_serializing_if = "Option::is_none")]
+    pub voucher_number: Option<String>,
+    #[serde(rename = "VoucherSeries", skip_serializing_if = "Option::is_none")]
+    pub voucher_series: Option<String>,
+    #[serde(rename = "VoucherYear", skip_serializing_if = "Option::is_none")]
+    pub voucher_year: Option<String>,
+    #[serde(rename = "Source", skip_serializing_if = "Option::is_none")]
+    pub source: Option<String>,
+    #[serde(rename = "WriteOffs", skip_serializing_if = "Option::is_none")]
+    pub write_offs: Option<Vec<crate::http::models::InvoicePaymentWriteOff>>,
 }

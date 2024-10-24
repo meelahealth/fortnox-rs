@@ -96,7 +96,7 @@ pub enum UpdateInvoicePaymentsResourceError {
 pub async fn bookkeep(
     configuration: &configuration::Configuration,
     params: BookkeepParams,
-) -> Result<crate::http::models::InvoicePaymentWrap, Error<BookkeepError>> {
+) -> Result<crate::http::models::BookedInvoicePaymentWrap, Error<BookkeepError>> {
     let local_var_configuration = configuration;
 
     // unbox the parameters

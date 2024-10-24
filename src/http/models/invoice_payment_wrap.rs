@@ -12,6 +12,12 @@ pub struct InvoicePaymentWrap {
     pub invoice_payment: Option<Box<crate::http::models::InvoicePayment>>,
 }
 
+#[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize)]
+pub struct BookedInvoicePaymentWrap {
+    #[serde(rename = "InvoicePayment", skip_serializing_if = "Option::is_none")]
+    pub invoice_payment: Option<Box<crate::http::models::BookedInvoicePayment>>,
+}
+
 impl InvoicePaymentWrap {
     pub fn new() -> InvoicePaymentWrap {
         InvoicePaymentWrap {
