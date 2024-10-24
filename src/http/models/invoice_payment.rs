@@ -120,7 +120,7 @@ pub struct BookedInvoicePayment {
     #[serde(rename = "InvoiceOCR", skip_serializing_if = "Option::is_none")]
     pub invoice_ocr: Option<String>,
     #[serde(rename = "InvoiceTotal", skip_serializing_if = "Option::is_none")]
-    pub invoice_total: Option<i32>,
+    pub invoice_total: Option<String>,
     #[serde(rename = "ModeOfPayment", skip_serializing_if = "Option::is_none")]
     pub mode_of_payment: Option<String>,
     #[serde(
