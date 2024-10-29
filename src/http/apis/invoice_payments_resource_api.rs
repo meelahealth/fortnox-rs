@@ -158,6 +158,7 @@ pub async fn create_invoice_payments_resource(
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
     }
+    tracing::trace!("Request: {:?}", invoice_payment);
     local_var_req_builder = local_var_req_builder.json(&invoice_payment);
 
     let local_var_req = local_var_req_builder.build()?;
