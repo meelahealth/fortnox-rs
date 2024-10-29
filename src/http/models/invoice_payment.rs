@@ -17,7 +17,7 @@ pub struct InvoicePayment {
     #[serde(rename = "Amount", skip_serializing_if = "Option::is_none")]
     pub amount: Option<f64>,
     #[serde(rename = "AmountCurrency", skip_serializing_if = "Option::is_none")]
-    pub amount_currency: Option<i32>,
+    pub amount_currency: Option<f64>,
     #[serde(rename = "Booked", skip_serializing_if = "Option::is_none")]
     pub booked: Option<bool>,
     #[serde(rename = "Currency", skip_serializing_if = "Option::is_none")]
@@ -25,7 +25,7 @@ pub struct InvoicePayment {
     #[serde(rename = "CurrencyRate", skip_serializing_if = "Option::is_none")]
     pub currency_rate: Option<f64>,
     #[serde(rename = "CurrencyUnit", skip_serializing_if = "Option::is_none")]
-    pub currency_unit: Option<i32>,
+    pub currency_unit: Option<f64>,
     #[serde(
         rename = "ExternalInvoiceReference1",
         skip_serializing_if = "Option::is_none"
@@ -53,7 +53,7 @@ pub struct InvoicePayment {
     #[serde(rename = "InvoiceOCR", skip_serializing_if = "Option::is_none")]
     pub invoice_ocr: Option<String>,
     #[serde(rename = "InvoiceTotal", skip_serializing_if = "Option::is_none")]
-    pub invoice_total: Option<i32>,
+    pub invoice_total: Option<f64>,
     #[serde(rename = "ModeOfPayment", skip_serializing_if = "Option::is_none")]
     pub mode_of_payment: Option<String>,
     #[serde(
