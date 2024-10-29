@@ -15,7 +15,7 @@ pub struct InvoicePayment {
     #[serde(rename = "@url", skip_serializing_if = "Option::is_none")]
     pub at_url: Option<String>,
     #[serde(rename = "Amount", skip_serializing_if = "Option::is_none")]
-    pub amount: Option<i32>,
+    pub amount: Option<f64>,
     #[serde(rename = "AmountCurrency", skip_serializing_if = "Option::is_none")]
     pub amount_currency: Option<i32>,
     #[serde(rename = "Booked", skip_serializing_if = "Option::is_none")]
@@ -23,7 +23,7 @@ pub struct InvoicePayment {
     #[serde(rename = "Currency", skip_serializing_if = "Option::is_none")]
     pub currency: Option<String>,
     #[serde(rename = "CurrencyRate", skip_serializing_if = "Option::is_none")]
-    pub currency_rate: Option<i32>,
+    pub currency_rate: Option<f64>,
     #[serde(rename = "CurrencyUnit", skip_serializing_if = "Option::is_none")]
     pub currency_unit: Option<i32>,
     #[serde(
