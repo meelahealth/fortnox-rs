@@ -4,6 +4,8 @@ extern crate serde_derive;
 pub mod http;
 pub mod id;
 
+pub use oauth2;
+
 use std::path::{Path, PathBuf};
 
 use chrono::{DateTime, NaiveDate, Utc};
