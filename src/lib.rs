@@ -28,7 +28,9 @@ use http::apis::invoices_resource_api::{
 pub use http::apis::Error;
 pub use http::models::invoice_payload::Language;
 use http::models::{
-    BookedInvoicePayment, Customer, CustomerListItem, CustomerWrap, Invoice, InvoiceListItem, InvoicePayload, InvoicePayloadInvoiceRow, InvoicePayloadWrap, InvoicePayment, InvoicePaymentWrap
+    BookedInvoicePayment, Customer, CustomerListItem, CustomerWrap, Invoice, InvoiceListItem,
+    InvoicePayload, InvoicePayloadInvoiceRow, InvoicePayloadWrap, InvoicePayment,
+    InvoicePaymentWrap,
 };
 use oauth2::basic::{BasicClient, BasicErrorResponseType, BasicTokenType};
 use oauth2::reqwest::async_http_client;
@@ -641,6 +643,7 @@ impl Client {
                                     .items
                                     .iter()
                                     .map(|x| InvoicePayloadInvoiceRow {
+                                        article_number: x.article_number.clone(),
                                         account_number: Some(x.account_number as _),
                                         delivered_quantity: Some(x.count.to_string()),
                                         description: Some(x.description.clone()),
@@ -744,6 +747,7 @@ pub struct CreateInvoice {
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct InvoiceItem {
+    pub article_number: Option<String>,
     pub account_number: u16,
     pub count: u32,
     pub description: String,
