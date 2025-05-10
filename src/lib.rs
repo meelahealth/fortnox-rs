@@ -672,7 +672,7 @@ impl Client {
     }
 }
 
-#[derive(Debug, Default, Clone, PartialEq, Eq)]
+#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Update<T> {
     #[default]
     Unchanged,
@@ -715,7 +715,7 @@ impl<T: Default> From<Update<T>> for Option<T> {
     }
 }
 
-#[derive(Debug, Default, Clone, PartialEq, Eq)]
+#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct UpdateCustomer {
     pub org_nr: Update<String>,
     pub name: Update<String>,
@@ -732,7 +732,7 @@ pub struct UpdateCustomer {
     pub currency: Update<String>,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct CreateInvoice {
     pub customer_id: String,
     pub due_date: Option<NaiveDate>,
@@ -745,7 +745,7 @@ pub struct CreateInvoice {
     pub currency: Option<String>,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct InvoiceItem {
     pub article_number: Option<String>,
     pub account_number: u16,
@@ -756,7 +756,7 @@ pub struct InvoiceItem {
     pub cost_center: Option<String>,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Serialize, Deserialize)]
 pub enum VatType {
     #[default]
     Sweden,
@@ -764,7 +764,7 @@ pub enum VatType {
     Export,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Default, Serialize, Deserialize)]
 pub enum VatSE {
     Vat0,
     Vat6,
