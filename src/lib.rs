@@ -45,7 +45,9 @@ use tokio::sync::RwLock;
 use url::Url;
 
 use crate::http::apis::customers_resource_api::ListCustomersResourceParams;
-use crate::http::apis::invoices_resource_api::{UpdateInvoicesResourceError, UpdateInvoicesResourceParams};
+use crate::http::apis::invoices_resource_api::{
+    UpdateInvoicesResourceError, UpdateInvoicesResourceParams,
+};
 
 macro_rules! retry {
     ($e:expr) => {{
@@ -691,23 +693,7 @@ impl Client {
                             invoice_date: details
                                 .invoice_date
                                 .map(|x| x.format("%Y-%m-%d").to_string()),
-                            invoice_rows: Some(
-                                details
-                                    .clone()
-                                    .items
-                                    .iter()
-                                    .map(|x| InvoicePayloadInvoiceRow {
-                                        article_number: x.article_number.clone(),
-                                        account_number: Some(x.account_number as _),
-                                        delivered_quantity: Some(x.count.to_string()),
-                                        description: Some(x.description.clone()),
-                                        price: Some(x.price.try_into().unwrap()),
-                                        vat: Some(x.vat.into()),
-                                        cost_center: x.cost_center.clone(),
-                                        ..Default::default()
-                                    })
-                                    .collect(),
-                            ),
+                            invoice_rows: Some(details.clone().items.clone(),),
                             invoice_type: Some(http::models::invoice_payload::InvoiceType::Invoice),
                             terms_of_payment: details.payment_terms.clone(),
                             remarks: details.comment.clone(),
@@ -799,13 +785,14 @@ pub struct CreateInvoice {
     pub currency: Option<String>,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct UpdateInvoice {
     pub customer_id: String,
     pub due_date: Option<NaiveDate>,
     pub invoice_date: Option<NaiveDate>,
     pub payment_terms: Option<String>,
-    pub items: Vec<InvoiceItem>,
+    // Account number might not be set because we are adding a line item that is just a comment effectively
+    pub items: Vec<InvoicePayloadInvoiceRow>,
     pub comment: Option<String>,
     pub your_reference: Option<String>,
     pub language: Option<Language>,
@@ -815,6 +802,7 @@ pub struct UpdateInvoice {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct InvoiceItem {
     pub article_number: Option<String>,
+    // TODO: how are we able to deal with the fact that our own is u16 but theirs is i32? Worrying...
     pub account_number: u16,
     pub count: u32,
     pub description: String,
