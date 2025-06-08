@@ -45,6 +45,7 @@ use tokio::sync::RwLock;
 use url::Url;
 
 use crate::http::apis::customers_resource_api::ListCustomersResourceParams;
+use crate::http::apis::invoices_resource_api::{UpdateInvoicesResourceError, UpdateInvoicesResourceParams};
 
 macro_rules! retry {
     ($e:expr) => {{
@@ -670,6 +671,59 @@ impl Client {
 
         Ok(*result.invoice)
     }
+
+    pub async fn update_invoice(
+        &self,
+        invoice_id: &str,
+        details: UpdateInvoice,
+    ) -> Result<Invoice, Error<UpdateInvoicesResourceError>> {
+        self.check_bearer_token().await?;
+
+        let result = retry!(
+            http::apis::invoices_resource_api::update_invoices_resource(
+                &*self.config.read().await,
+                UpdateInvoicesResourceParams {
+                    document_number: invoice_id.to_string(),
+                    invoice_payload: Some(InvoicePayloadWrap {
+                        invoice: Some(Box::new(InvoicePayload {
+                            customer_number: details.customer_id.to_string(),
+                            due_date: details.due_date.map(|x| x.format("%Y-%m-%d").to_string()),
+                            invoice_date: details
+                                .invoice_date
+                                .map(|x| x.format("%Y-%m-%d").to_string()),
+                            invoice_rows: Some(
+                                details
+                                    .clone()
+                                    .items
+                                    .iter()
+                                    .map(|x| InvoicePayloadInvoiceRow {
+                                        article_number: x.article_number.clone(),
+                                        account_number: Some(x.account_number as _),
+                                        delivered_quantity: Some(x.count.to_string()),
+                                        description: Some(x.description.clone()),
+                                        price: Some(x.price.try_into().unwrap()),
+                                        vat: Some(x.vat.into()),
+                                        cost_center: x.cost_center.clone(),
+                                        ..Default::default()
+                                    })
+                                    .collect(),
+                            ),
+                            invoice_type: Some(http::models::invoice_payload::InvoiceType::Invoice),
+                            terms_of_payment: details.payment_terms.clone(),
+                            remarks: details.comment.clone(),
+                            your_reference: details.your_reference.clone(),
+                            language: details.language.clone(),
+                            currency: details.currency.clone(),
+                            ..Default::default()
+                        })),
+                    }),
+                },
+            )
+            .await
+        );
+
+        Ok(*result.invoice)
+    }
 }
 
 #[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -734,6 +788,19 @@ pub struct UpdateCustomer {
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct CreateInvoice {
+    pub customer_id: String,
+    pub due_date: Option<NaiveDate>,
+    pub invoice_date: Option<NaiveDate>,
+    pub payment_terms: Option<String>,
+    pub items: Vec<InvoiceItem>,
+    pub comment: Option<String>,
+    pub your_reference: Option<String>,
+    pub language: Option<Language>,
+    pub currency: Option<String>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct UpdateInvoice {
     pub customer_id: String,
     pub due_date: Option<NaiveDate>,
     pub invoice_date: Option<NaiveDate>,
