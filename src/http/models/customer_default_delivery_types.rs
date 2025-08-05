@@ -35,6 +35,8 @@ pub enum Invoice {
     Email,
     #[serde(rename = "PRINTSERVICE")]
     Printservice,
+    #[serde(rename = "ELECTRONICINVOICE")]
+    Electronicinvoice,
 }
 
 impl Default for Invoice {
