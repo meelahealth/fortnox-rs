@@ -92,7 +92,7 @@ async fn run() -> anyhow::Result<()> {
 
         println!("List invoices");
         let x = loop {
-            match client.list_invoices(&id).await {
+            match client.list_invoices(&id, None).await {
                 Ok(v) => break v,
                 Err(e) => match e {
                     fortnox::Error::ResponseError(e) => {

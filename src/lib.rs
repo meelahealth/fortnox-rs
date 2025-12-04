@@ -511,7 +511,8 @@ impl Client {
 
     pub async fn list_invoices(
         &self,
-        customer_id: impl AsRef<str>,
+        customer_id: &str,
+        external_invoice_reference1: Option<&str>,
     ) -> Result<Vec<InvoiceListItem>, Error<ListInvoicesResourceError>> {
         self.check_bearer_token().await?;
 
@@ -519,7 +520,8 @@ impl Client {
             http::apis::invoices_resource_api::list_invoices_resource(
                 &*self.config.read().await,
                 ListInvoicesResourceParams {
-                    customernumber: Some(customer_id.as_ref().to_string()),
+                    customernumber: Some(customer_id.to_string()),
+                    externalinvoicereference1: external_invoice_reference1.map(str::to_string),
                     ..Default::default()
                 },
             )
@@ -530,11 +532,8 @@ impl Client {
 
         invoices.sort_by(|a, b| {
             if a.invoice_date == b.invoice_date {
-                match (a.total, b.total) {
-                    (Some(x), Some(y)) => {
-                        return x.total_cmp(&y);
-                    }
-                    _ => {}
+                if let (Some(x), Some(y)) = (a.total, b.total) {
+                    return x.total_cmp(&y);
                 }
             }
 
