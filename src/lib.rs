@@ -662,6 +662,9 @@ impl Client {
                             your_reference: details.your_reference.clone(),
                             language: details.language.clone(),
                             currency: details.currency.clone(),
+                            external_invoice_reference1: details
+                                .external_invoice_reference1
+                                .clone(),
                             ..Default::default()
                         })),
                     }),
@@ -782,6 +785,7 @@ pub struct CreateInvoice {
     pub your_reference: Option<String>,
     pub language: Option<Language>,
     pub currency: Option<String>,
+    pub external_invoice_reference1: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
