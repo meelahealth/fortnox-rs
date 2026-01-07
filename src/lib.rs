@@ -443,17 +443,25 @@ impl Client {
     ) -> Result<Invoice, Error<GetInvoicesResourceError>> {
         self.check_bearer_token().await?;
 
-        let result = retry!(
-            http::apis::invoices_resource_api::get_invoices_resource(
-                &*self.config.read().await,
-                GetInvoicesResourceParams {
-                    document_number: invoice_id.to_string(),
-                },
-            )
-            .await
-        );
-
-        Ok(*result.invoice)
+        // let result = retry!(
+        //     http::apis::invoices_resource_api::get_invoices_resource(
+        //         &*self.config.read().await,
+        //         GetInvoicesResourceParams {
+        //             document_number: invoice_id.to_string(),
+        //         },
+        //     )
+        //     .await
+        // );
+        match http::apis::invoices_resource_api::get_invoices_resource(
+            &*self.config.read().await,
+            GetInvoicesResourceParams {
+                document_number: invoice_id.to_string(),
+            },
+        )
+        .await {
+            Ok(result) => Ok(*result.invoice),
+            Err(e) => Err(e)
+        }
     }
 
     pub async fn refund_invoice(&self, invoice_id: &str) -> Result<Invoice, Error<CreditError>> {
