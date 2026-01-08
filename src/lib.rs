@@ -7,6 +7,8 @@ pub mod id;
 pub use oauth2;
 
 use std::path::{Path, PathBuf};
+use std::sync::LazyLock;
+use std::time::Duration;
 
 use chrono::{DateTime, NaiveDate, Utc};
 use http::apis::configuration::Configuration;
@@ -48,28 +50,6 @@ use crate::http::apis::customers_resource_api::ListCustomersResourceParams;
 use crate::http::apis::invoices_resource_api::{
     UpdateInvoicesResourceError, UpdateInvoicesResourceParams,
 };
-
-macro_rules! retry {
-    ($e:expr) => {{
-        loop {
-            match $e {
-                Ok(v) => break v,
-                Err(err) => match err {
-                    Error::ResponseError(ref e) => {
-                        if e.status == 429 {
-                            tokio::time::sleep(std::time::Duration::from_secs(1)).await;
-                            continue;
-                        }
-                        return Err(err);
-                    }
-                    other => {
-                        return Err(other);
-                    }
-                },
-            }
-        }
-    }};
-}
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Scope {
@@ -135,6 +115,7 @@ impl OAuthClient {
     }
 
     pub async fn exchange_code(&self, code: &str) -> Result<TokenResponse, TokenError> {
+        fortnox_ratelimit_wait().await;
         let token_result = self
             .0
             .exchange_code(AuthorizationCode::new(code.to_string()))
@@ -148,9 +129,10 @@ impl OAuthClient {
         &self,
         refresh_token: &RefreshToken,
     ) -> Result<TokenResponse, TokenError> {
+        fortnox_ratelimit_wait().await;
         let result = self
             .0
-            .exchange_refresh_token(&refresh_token)
+            .exchange_refresh_token(refresh_token)
             .request_async(async_http_client)
             .await?;
         Ok(result)
@@ -263,13 +245,12 @@ impl Client {
     ) -> Result<Vec<CustomerListItem>, Error<ListCustomersResourceError>> {
         self.check_bearer_token().await?;
 
-        let result = retry!(
-            http::apis::customers_resource_api::list_customers_resource(
-                &*self.config.read().await,
-                ListCustomersResourceParams { filter: None },
-            )
-            .await
-        );
+        fortnox_ratelimit_wait().await;
+        let result = http::apis::customers_resource_api::list_customers_resource(
+            &*self.config.read().await,
+            ListCustomersResourceParams { filter: None },
+        )
+        .await?;
 
         Ok(result
             .customers
@@ -284,15 +265,14 @@ impl Client {
     ) -> Result<Customer, Error<GetCustomersResourceError>> {
         self.check_bearer_token().await?;
 
-        let result = retry!(
-            http::apis::customers_resource_api::get_customers_resource(
-                &*self.config.read().await,
-                GetCustomersResourceParams {
-                    customer_number: id.as_ref().to_string(),
-                },
-            )
-            .await
-        );
+        fortnox_ratelimit_wait().await;
+        let result = http::apis::customers_resource_api::get_customers_resource(
+            &*self.config.read().await,
+            GetCustomersResourceParams {
+                customer_number: id.as_ref().to_string(),
+            },
+        )
+        .await?;
 
         Ok(*result.customer)
     }
@@ -330,38 +310,37 @@ impl Client {
             }),
         };
 
-        let result = retry!(
-            http::apis::customers_resource_api::create_customers_resource(
-                &*self.config.read().await,
-                CreateCustomersResourceParams {
-                    customer: Some(CustomerWrap {
-                        customer: Box::new(Customer {
-                            customer_number: customer_id.as_ref().to_string().clone().into(),
-                            organisation_number: details.org_nr.clone().into(),
-                            name: details.name.clone().into(),
-                            address1: details.address1.clone().into(),
-                            address2: details.address2.clone().into(),
-                            city: details.city.clone().into(),
-                            zip_code: details.post_code.clone().into(),
-                            country_code: details.country_code.clone().into(),
-                            active: details.active.clone().into(),
-                            email_invoice: details
-                                .email_invoice
-                                .clone()
-                                .or_else(|| details.email.clone())
-                                .clone()
-                                .into(),
-                            email: details.email.clone().into(),
-                            external_reference: details.external_reference.clone().into(),
-                            vat_type: vat_type.clone().into(),
-                            currency: details.currency.clone().into(),
-                            ..Default::default()
-                        }),
+        fortnox_ratelimit_wait().await;
+        let result = http::apis::customers_resource_api::create_customers_resource(
+            &*self.config.read().await,
+            CreateCustomersResourceParams {
+                customer: Some(CustomerWrap {
+                    customer: Box::new(Customer {
+                        customer_number: customer_id.as_ref().to_string().clone().into(),
+                        organisation_number: details.org_nr.clone().into(),
+                        name: details.name.clone().into(),
+                        address1: details.address1.clone().into(),
+                        address2: details.address2.clone().into(),
+                        city: details.city.clone().into(),
+                        zip_code: details.post_code.clone().into(),
+                        country_code: details.country_code.clone().into(),
+                        active: details.active.clone().into(),
+                        email_invoice: details
+                            .email_invoice
+                            .clone()
+                            .or_else(|| details.email.clone())
+                            .clone()
+                            .into(),
+                        email: details.email.clone().into(),
+                        external_reference: details.external_reference.clone().into(),
+                        vat_type: vat_type.clone().into(),
+                        currency: details.currency.clone().into(),
+                        ..Default::default()
                     }),
-                },
-            )
-            .await
-        );
+                }),
+            },
+        )
+        .await?;
 
         Ok(*result.customer)
     }
@@ -383,37 +362,36 @@ impl Client {
             }),
         };
 
-        let result = retry!(
-            http::apis::customers_resource_api::update_customers_resource(
-                &*self.config.read().await,
-                UpdateCustomersResourceParams {
-                    customer_number: id.as_ref().to_string(),
-                    customer: CustomerWrap {
-                        customer: Box::new(Customer {
-                            organisation_number: details.org_nr.clone().into(),
-                            name: details.name.clone().into(),
-                            address1: details.address1.clone().into(),
-                            address2: details.address2.clone().into(),
-                            city: details.city.clone().into(),
-                            zip_code: details.post_code.clone().into(),
-                            country_code: details.country_code.clone().into(),
-                            active: details.active.clone().into(),
-                            email_invoice: details
-                                .email_invoice
-                                .clone()
-                                .or_else(|| details.email.clone())
-                                .clone()
-                                .into(),
-                            email: details.email.clone().into(),
-                            external_reference: details.external_reference.clone().into(),
-                            vat_type: vat_type.clone().into(),
-                            ..Default::default()
-                        }),
-                    },
+        fortnox_ratelimit_wait().await;
+        let result = http::apis::customers_resource_api::update_customers_resource(
+            &*self.config.read().await,
+            UpdateCustomersResourceParams {
+                customer_number: id.as_ref().to_string(),
+                customer: CustomerWrap {
+                    customer: Box::new(Customer {
+                        organisation_number: details.org_nr.clone().into(),
+                        name: details.name.clone().into(),
+                        address1: details.address1.clone().into(),
+                        address2: details.address2.clone().into(),
+                        city: details.city.clone().into(),
+                        zip_code: details.post_code.clone().into(),
+                        country_code: details.country_code.clone().into(),
+                        active: details.active.clone().into(),
+                        email_invoice: details
+                            .email_invoice
+                            .clone()
+                            .or_else(|| details.email.clone())
+                            .clone()
+                            .into(),
+                        email: details.email.clone().into(),
+                        external_reference: details.external_reference.clone().into(),
+                        vat_type: vat_type.clone().into(),
+                        ..Default::default()
+                    }),
                 },
-            )
-            .await
-        );
+            },
+        )
+        .await?;
 
         Ok(*result.customer)
     }
@@ -424,15 +402,14 @@ impl Client {
     ) -> Result<Invoice, Error<BookkeepInvoicesResourceError>> {
         self.check_bearer_token().await?;
 
-        let result = retry!(
-            http::apis::invoices_resource_api::bookkeep_invoices_resource(
-                &*self.config.read().await,
-                BookkeepInvoicesResourceParams {
-                    document_number: invoice_id.to_string(),
-                },
-            )
-            .await
-        );
+        fortnox_ratelimit_wait().await;
+        let result = http::apis::invoices_resource_api::bookkeep_invoices_resource(
+            &*self.config.read().await,
+            BookkeepInvoicesResourceParams {
+                document_number: invoice_id.to_string(),
+            },
+        )
+        .await?;
 
         Ok(*result.invoice)
     }
@@ -443,39 +420,29 @@ impl Client {
     ) -> Result<Invoice, Error<GetInvoicesResourceError>> {
         self.check_bearer_token().await?;
 
-        // let result = retry!(
-        //     http::apis::invoices_resource_api::get_invoices_resource(
-        //         &*self.config.read().await,
-        //         GetInvoicesResourceParams {
-        //             document_number: invoice_id.to_string(),
-        //         },
-        //     )
-        //     .await
-        // );
-        match http::apis::invoices_resource_api::get_invoices_resource(
+        fortnox_ratelimit_wait().await;
+        let result = http::apis::invoices_resource_api::get_invoices_resource(
             &*self.config.read().await,
             GetInvoicesResourceParams {
                 document_number: invoice_id.to_string(),
             },
         )
-        .await {
-            Ok(result) => Ok(*result.invoice),
-            Err(e) => Err(e)
-        }
+        .await?;
+
+        Ok(*result.invoice)
     }
 
     pub async fn refund_invoice(&self, invoice_id: &str) -> Result<Invoice, Error<CreditError>> {
         self.check_bearer_token().await?;
 
-        let result = retry!(
-            http::apis::invoices_resource_api::credit(
-                &*self.config.read().await,
-                CreditParams {
-                    document_number: invoice_id.to_string(),
-                },
-            )
-            .await
-        );
+        fortnox_ratelimit_wait().await;
+        let result = http::apis::invoices_resource_api::credit(
+            &*self.config.read().await,
+            CreditParams {
+                document_number: invoice_id.to_string(),
+            },
+        )
+        .await?;
 
         Ok(*result.invoice)
     }
@@ -486,16 +453,16 @@ impl Client {
     ) -> Result<Invoice, Error<ExternalPrintError>> {
         self.check_bearer_token().await?;
 
-        Ok(*retry!(
-            http::apis::invoices_resource_api::external_print(
-                &*self.config.read().await,
-                ExternalPrintParams {
-                    document_number: invoice_id.to_string(),
-                },
-            )
-            .await
+        fortnox_ratelimit_wait().await;
+        let result = http::apis::invoices_resource_api::external_print(
+            &*self.config.read().await,
+            ExternalPrintParams {
+                document_number: invoice_id.to_string(),
+            },
         )
-        .invoice)
+        .await?;
+
+        Ok(*result.invoice)
     }
 
     pub async fn download_invoice_pdf(
@@ -504,15 +471,14 @@ impl Client {
     ) -> Result<Vec<u8>, Error<PrintError>> {
         self.check_bearer_token().await?;
 
-        let result = retry!(
-            http::apis::invoices_resource_api::print(
-                &*self.config.read().await,
-                PrintParams {
-                    document_number: invoice_id.to_string(),
-                },
-            )
-            .await
-        );
+        fortnox_ratelimit_wait().await;
+        let result = http::apis::invoices_resource_api::print(
+            &*self.config.read().await,
+            PrintParams {
+                document_number: invoice_id.to_string(),
+            },
+        )
+        .await?;
 
         Ok(result)
     }
@@ -524,17 +490,16 @@ impl Client {
     ) -> Result<Vec<InvoiceListItem>, Error<ListInvoicesResourceError>> {
         self.check_bearer_token().await?;
 
-        let result = retry!(
-            http::apis::invoices_resource_api::list_invoices_resource(
-                &*self.config.read().await,
-                ListInvoicesResourceParams {
-                    customernumber: Some(customer_id.to_string()),
-                    externalinvoicereference1: external_invoice_reference1.map(str::to_string),
-                    ..Default::default()
-                },
-            )
-            .await
-        );
+        fortnox_ratelimit_wait().await;
+        let result = http::apis::invoices_resource_api::list_invoices_resource(
+            &*self.config.read().await,
+            ListInvoicesResourceParams {
+                customernumber: Some(customer_id.to_string()),
+                externalinvoicereference1: external_invoice_reference1.map(str::to_string),
+                ..Default::default()
+            },
+        )
+        .await?;
 
         let mut invoices = result.invoices;
 
@@ -554,16 +519,16 @@ impl Client {
     pub async fn send_invoice(&self, invoice_id: &str) -> Result<Invoice, Error<EmailError>> {
         self.check_bearer_token().await?;
 
-        Ok(*retry!(
-            http::apis::invoices_resource_api::email(
-                &*self.config.read().await,
-                EmailParams {
-                    document_number: invoice_id.to_string(),
-                },
-            )
-            .await
+        fortnox_ratelimit_wait().await;
+        let result = http::apis::invoices_resource_api::email(
+            &*self.config.read().await,
+            EmailParams {
+                document_number: invoice_id.to_string(),
+            },
         )
-        .invoice)
+        .await?;
+
+        Ok(*result.invoice)
     }
 
     pub async fn book_invoice_payment(
@@ -572,18 +537,17 @@ impl Client {
     ) -> Result<BookedInvoicePayment, Error<BookkeepError>> {
         self.check_bearer_token().await?;
 
-        let result = retry!(
-            http::apis::invoice_payments_resource_api::bookkeep(
-                &*self.config.read().await,
-                BookkeepParams {
-                    number: invoice_payment.number.clone().unwrap().to_string(),
-                    invoice_payment: Some(InvoicePaymentWrap {
-                        invoice_payment: Some(Box::new(invoice_payment.clone()))
-                    }),
-                }
-            )
-            .await
-        );
+        fortnox_ratelimit_wait().await;
+        let result = http::apis::invoice_payments_resource_api::bookkeep(
+            &*self.config.read().await,
+            BookkeepParams {
+                number: invoice_payment.number.unwrap().to_string(),
+                invoice_payment: Some(InvoicePaymentWrap {
+                    invoice_payment: Some(Box::new(invoice_payment.clone())),
+                }),
+            },
+        )
+        .await?;
 
         Ok(*result.invoice_payment.unwrap())
     }
@@ -594,17 +558,16 @@ impl Client {
     ) -> Result<InvoicePayment, Error<CreateInvoicePaymentsResourceError>> {
         self.check_bearer_token().await?;
 
-        let result = retry!(
-            http::apis::invoice_payments_resource_api::create_invoice_payments_resource(
-                &*self.config.read().await,
-                CreateInvoicePaymentsResourceParams {
-                    invoice_payment: Some(InvoicePaymentWrap {
-                        invoice_payment: Some(Box::new(payload.clone())),
-                    }),
-                },
-            )
-            .await
-        );
+        fortnox_ratelimit_wait().await;
+        let result = http::apis::invoice_payments_resource_api::create_invoice_payments_resource(
+            &*self.config.read().await,
+            CreateInvoicePaymentsResourceParams {
+                invoice_payment: Some(InvoicePaymentWrap {
+                    invoice_payment: Some(Box::new(payload.clone())),
+                }),
+            },
+        )
+        .await?;
 
         Ok(*result.invoice_payment.unwrap())
     }
@@ -615,17 +578,16 @@ impl Client {
     ) -> Result<Invoice, Error<CreateInvoicesResourceError>> {
         self.check_bearer_token().await?;
 
-        let result = retry!(
-            http::apis::invoices_resource_api::create_invoices_resource(
-                &*self.config.read().await,
-                CreateInvoicesResourceParams {
-                    invoice_payload: Some(InvoicePayloadWrap {
-                        invoice: Some(Box::new(payload.clone())),
-                    }),
-                },
-            )
-            .await
-        );
+        fortnox_ratelimit_wait().await;
+        let result = http::apis::invoices_resource_api::create_invoices_resource(
+            &*self.config.read().await,
+            CreateInvoicesResourceParams {
+                invoice_payload: Some(InvoicePayloadWrap {
+                    invoice: Some(Box::new(payload.clone())),
+                }),
+            },
+        )
+        .await?;
 
         Ok(*result.invoice)
     }
@@ -636,50 +598,47 @@ impl Client {
     ) -> Result<Invoice, Error<CreateInvoicesResourceError>> {
         self.check_bearer_token().await?;
 
-        let result = retry!(
-            http::apis::invoices_resource_api::create_invoices_resource(
-                &*self.config.read().await,
-                CreateInvoicesResourceParams {
-                    invoice_payload: Some(InvoicePayloadWrap {
-                        invoice: Some(Box::new(InvoicePayload {
-                            customer_number: details.customer_id.to_string(),
-                            due_date: details.due_date.map(|x| x.format("%Y-%m-%d").to_string()),
-                            invoice_date: details
-                                .invoice_date
-                                .map(|x| x.format("%Y-%m-%d").to_string()),
-                            invoice_rows: Some(
-                                details
-                                    .clone()
-                                    .items
-                                    .iter()
-                                    .map(|x| InvoicePayloadInvoiceRow {
-                                        article_number: x.article_number.clone(),
-                                        account_number: Some(x.account_number as _),
-                                        delivered_quantity: Some(x.count.to_string()),
-                                        description: Some(x.description.clone()),
-                                        price: Some(x.price.try_into().unwrap()),
-                                        vat: Some(x.vat.into()),
-                                        cost_center: x.cost_center.clone(),
-                                        ..Default::default()
-                                    })
-                                    .collect(),
-                            ),
-                            invoice_type: Some(http::models::invoice_payload::InvoiceType::Invoice),
-                            terms_of_payment: details.payment_terms.clone(),
-                            remarks: details.comment.clone(),
-                            your_reference: details.your_reference.clone(),
-                            language: details.language.clone(),
-                            currency: details.currency.clone(),
-                            external_invoice_reference1: details
-                                .external_invoice_reference1
-                                .clone(),
-                            ..Default::default()
-                        })),
-                    }),
-                },
-            )
-            .await
-        );
+        fortnox_ratelimit_wait().await;
+        let result = http::apis::invoices_resource_api::create_invoices_resource(
+            &*self.config.read().await,
+            CreateInvoicesResourceParams {
+                invoice_payload: Some(InvoicePayloadWrap {
+                    invoice: Some(Box::new(InvoicePayload {
+                        customer_number: details.customer_id.to_string(),
+                        due_date: details.due_date.map(|x| x.format("%Y-%m-%d").to_string()),
+                        invoice_date: details
+                            .invoice_date
+                            .map(|x| x.format("%Y-%m-%d").to_string()),
+                        invoice_rows: Some(
+                            details
+                                .clone()
+                                .items
+                                .iter()
+                                .map(|x| InvoicePayloadInvoiceRow {
+                                    article_number: x.article_number.clone(),
+                                    account_number: Some(x.account_number as _),
+                                    delivered_quantity: Some(x.count.to_string()),
+                                    description: Some(x.description.clone()),
+                                    price: Some(x.price.try_into().unwrap()),
+                                    vat: Some(x.vat.into()),
+                                    cost_center: x.cost_center.clone(),
+                                    ..Default::default()
+                                })
+                                .collect(),
+                        ),
+                        invoice_type: Some(http::models::invoice_payload::InvoiceType::Invoice),
+                        terms_of_payment: details.payment_terms.clone(),
+                        remarks: details.comment.clone(),
+                        your_reference: details.your_reference.clone(),
+                        language: details.language.clone(),
+                        currency: details.currency.clone(),
+                        external_invoice_reference1: details.external_invoice_reference1.clone(),
+                        ..Default::default()
+                    })),
+                }),
+            },
+        )
+        .await?;
 
         Ok(*result.invoice)
     }
@@ -691,32 +650,31 @@ impl Client {
     ) -> Result<Invoice, Error<UpdateInvoicesResourceError>> {
         self.check_bearer_token().await?;
 
-        let result = retry!(
-            http::apis::invoices_resource_api::update_invoices_resource(
-                &*self.config.read().await,
-                UpdateInvoicesResourceParams {
-                    document_number: invoice_id.to_string(),
-                    invoice_payload: Some(InvoicePayloadWrap {
-                        invoice: Some(Box::new(InvoicePayload {
-                            customer_number: details.customer_id.to_string(),
-                            due_date: details.due_date.map(|x| x.format("%Y-%m-%d").to_string()),
-                            invoice_date: details
-                                .invoice_date
-                                .map(|x| x.format("%Y-%m-%d").to_string()),
-                            invoice_rows: Some(details.clone().items.clone(),),
-                            invoice_type: Some(http::models::invoice_payload::InvoiceType::Invoice),
-                            terms_of_payment: details.payment_terms.clone(),
-                            remarks: details.comment.clone(),
-                            your_reference: details.your_reference.clone(),
-                            language: details.language.clone(),
-                            currency: details.currency.clone(),
-                            ..Default::default()
-                        })),
-                    }),
-                },
-            )
-            .await
-        );
+        fortnox_ratelimit_wait().await;
+        let result = http::apis::invoices_resource_api::update_invoices_resource(
+            &*self.config.read().await,
+            UpdateInvoicesResourceParams {
+                document_number: invoice_id.to_string(),
+                invoice_payload: Some(InvoicePayloadWrap {
+                    invoice: Some(Box::new(InvoicePayload {
+                        customer_number: details.customer_id.to_string(),
+                        due_date: details.due_date.map(|x| x.format("%Y-%m-%d").to_string()),
+                        invoice_date: details
+                            .invoice_date
+                            .map(|x| x.format("%Y-%m-%d").to_string()),
+                        invoice_rows: Some(details.clone().items.clone()),
+                        invoice_type: Some(http::models::invoice_payload::InvoiceType::Invoice),
+                        terms_of_payment: details.payment_terms.clone(),
+                        remarks: details.comment.clone(),
+                        your_reference: details.your_reference.clone(),
+                        language: details.language.clone(),
+                        currency: details.currency.clone(),
+                        ..Default::default()
+                    })),
+                }),
+            },
+        )
+        .await?;
 
         Ok(*result.invoice)
     }
@@ -891,5 +849,20 @@ impl OAuthCredentials {
             persistence_path: path.as_ref().to_path_buf(),
             data: Some(data),
         })
+    }
+}
+
+/// Wait for available request token
+/// Based on limits at https://www.fortnox.se/developer/guides-and-good-to-know/rate-limits-for-fortnox-api
+pub(crate) async fn fortnox_ratelimit_wait() {
+    static RATELIMIT: LazyLock<ratelimit::Ratelimiter> = LazyLock::new(|| {
+        // Limit slightly below limit
+        ratelimit::Ratelimiter::builder(24, Duration::from_secs(5))
+            .max_tokens(24) // No bursts
+            .build()
+            .expect("Failed to create ratelimit instance")
+    });
+    while let Err(d) = RATELIMIT.try_wait() {
+        tokio::time::sleep(d).await;
     }
 }
