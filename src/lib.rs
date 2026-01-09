@@ -858,7 +858,7 @@ pub(crate) async fn fortnox_ratelimit_wait() {
     static RATELIMIT: LazyLock<ratelimit::Ratelimiter> = LazyLock::new(|| {
         // Limit slightly below limit
         ratelimit::Ratelimiter::builder(20, Duration::from_secs(5))
-            .max_tokens(24) // No bursts
+            .max_tokens(20) // No bursts
             .build()
             .expect("Failed to create ratelimit instance")
     });
