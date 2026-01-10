@@ -856,9 +856,9 @@ impl OAuthCredentials {
 /// Based on limits at https://www.fortnox.se/developer/guides-and-good-to-know/rate-limits-for-fortnox-api
 pub(crate) async fn fortnox_ratelimit_wait() {
     static RATELIMIT: LazyLock<ratelimit::Ratelimiter> = LazyLock::new(|| {
-        // Limit slightly below limit
-        ratelimit::Ratelimiter::builder(20, Duration::from_secs(5))
-            .max_tokens(20) // No bursts
+        // Limit below, trying to compensate for sliding window
+        ratelimit::Ratelimiter::builder(4, Duration::from_secs(1))
+            .max_tokens(4)
             .build()
             .expect("Failed to create ratelimit instance")
     });
