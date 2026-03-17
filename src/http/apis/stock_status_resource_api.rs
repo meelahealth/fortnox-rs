@@ -29,7 +29,7 @@ pub enum GetStockBalanceError {
 
 /// Get stock balance for one or more items for each stockpoint  with (inbound- or outbound-) deliveries.   Returns a list of <code>itemId</code>, <code>stockPointCode</code>,  <code>availableStock</code>, <code>inStock</code>.   (The difference between <code>availableStock</code> and <code>inStock</code>  is the reserved amount.)
 pub async fn get_stock_balance(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetStockBalanceParams,
 ) -> Result<Vec<crate::http::models::StockBalance>, Error<GetStockBalanceError>> {
     let local_var_configuration = configuration;
@@ -83,9 +83,11 @@ pub async fn get_stock_balance(
             )]),
         };
     }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;

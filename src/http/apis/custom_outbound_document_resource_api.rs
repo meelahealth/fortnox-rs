@@ -82,7 +82,7 @@ pub enum VoidDocumentError {
 }
 
 pub async fn get(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetParams,
 ) -> Result<crate::http::models::CustomOutboundDocument, Error<GetError>> {
     let local_var_configuration = configuration;
@@ -97,9 +97,11 @@ pub async fn get(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -123,7 +125,7 @@ pub async fn get(
 }
 
 pub async fn release(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: ReleaseParams,
 ) -> Result<(), Error<ReleaseError>> {
     let local_var_configuration = configuration;
@@ -138,9 +140,11 @@ pub async fn release(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -164,7 +168,7 @@ pub async fn release(
 
 /// <br>  If type is not known, it will be registered as belonging to the OUTBOUND category.<br>  If type is an existing custom document type of category INBOUND an error is thrown.<br>  If type is invalid an error is thrown.<br>
 pub async fn save(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: SaveParams,
 ) -> Result<crate::http::models::CustomOutboundDocument, Error<SaveError>> {
     let local_var_configuration = configuration;
@@ -180,9 +184,11 @@ pub async fn save(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&document);
 
@@ -207,7 +213,7 @@ pub async fn save(
 }
 
 pub async fn void_document(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: VoidDocumentParams,
 ) -> Result<(), Error<VoidDocumentError>> {
     let local_var_configuration = configuration;
@@ -227,9 +233,11 @@ pub async fn void_document(
         local_var_req_builder =
             local_var_req_builder.query(&[("force", &local_var_str.to_string())]);
     }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;

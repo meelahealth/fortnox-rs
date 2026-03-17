@@ -30,7 +30,7 @@ pub enum GetSieResourceError {
 
 /// Retrieves a SIE file as streamed content
 pub async fn get_sie_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetSieResourceParams,
 ) -> Result<(), Error<GetSieResourceError>> {
     let local_var_configuration = configuration;
@@ -53,9 +53,11 @@ pub async fn get_sie_resource(
         local_var_req_builder =
             local_var_req_builder.query(&[("financialYear", &local_var_str.to_string())]);
     }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;

@@ -2,7 +2,7 @@ use std::error;
 use std::fmt;
 use std::fmt::Display;
 
-use crate::TokenError;
+use crate::CheckTokenError;
 
 #[derive(Debug, Clone)]
 pub struct ResponseContent<T> {
@@ -25,7 +25,7 @@ pub enum Error<T> {
     SerdePath(serde_path_to_error::Error<serde_json::Error>),
     Io(std::io::Error),
     ResponseError(ResponseContent<T>),
-    Token(TokenError),
+    CheckToken(CheckTokenError),
 }
 
 impl<T> fmt::Display for Error<T> {
@@ -36,7 +36,7 @@ impl<T> fmt::Display for Error<T> {
             Error::SerdePath(e) => ("serde_path_to_error", e.to_string()),
             Error::Io(e) => ("IO", e.to_string()),
             Error::ResponseError(e) => ("response", e.to_string()),
-            Error::Token(e) => ("token", format!("{:?}", e)),
+            Error::CheckToken(e) => ("token", format!("{:?}", e)),
         };
         write!(f, "error in {}: {}", module, e)
     }
@@ -49,7 +49,7 @@ impl<T: fmt::Debug> error::Error for Error<T> {
             Error::Serde(e) => e,
             Error::SerdePath(e) => e,
             Error::Io(e) => e,
-            Error::Token(e) => e,
+            Error::CheckToken(e) => e,
             Error::ResponseError(_) => return None,
         })
     }
@@ -79,9 +79,9 @@ impl<T> From<std::io::Error> for Error<T> {
     }
 }
 
-impl<T> From<TokenError> for Error<T> {
-    fn from(value: TokenError) -> Self {
-        Error::Token(value)
+impl<T> From<CheckTokenError> for Error<T> {
+    fn from(value: CheckTokenError) -> Self {
+        Error::CheckToken(value)
     }
 }
 

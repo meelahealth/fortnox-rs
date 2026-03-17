@@ -78,7 +78,7 @@ pub enum UpdateCurrenciesResourceError {
 }
 
 pub async fn create_currencies_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: CreateCurrenciesResourceParams,
 ) -> Result<crate::http::models::CurrencyWrap, Error<CreateCurrenciesResourceError>> {
     let local_var_configuration = configuration;
@@ -92,9 +92,11 @@ pub async fn create_currencies_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&currency);
 
@@ -120,7 +122,7 @@ pub async fn create_currencies_resource(
 }
 
 pub async fn get_currencies_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetCurrenciesResourceParams,
 ) -> Result<crate::http::models::CurrencyWrap, Error<GetCurrenciesResourceError>> {
     let local_var_configuration = configuration;
@@ -138,9 +140,11 @@ pub async fn get_currencies_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -166,7 +170,7 @@ pub async fn get_currencies_resource(
 
 /// The currency register can return a list of records or a single record. By specifying a Code in the URL, a single record will be returned. Not specifying a Code will return a list of records.
 pub async fn list_currencies_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
 ) -> Result<crate::http::models::CurrencyList, Error<ListCurrenciesResourceError>> {
     let local_var_configuration = configuration;
 
@@ -178,9 +182,11 @@ pub async fn list_currencies_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -205,7 +211,7 @@ pub async fn list_currencies_resource(
 }
 
 pub async fn remove_currencies_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: RemoveCurrenciesResourceParams,
 ) -> Result<(), Error<RemoveCurrenciesResourceError>> {
     let local_var_configuration = configuration;
@@ -223,9 +229,11 @@ pub async fn remove_currencies_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::DELETE, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -249,7 +257,7 @@ pub async fn remove_currencies_resource(
 }
 
 pub async fn update_currencies_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: UpdateCurrenciesResourceParams,
 ) -> Result<crate::http::models::CurrencyWrap, Error<UpdateCurrenciesResourceError>> {
     let local_var_configuration = configuration;
@@ -268,9 +276,11 @@ pub async fn update_currencies_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&currency);
 

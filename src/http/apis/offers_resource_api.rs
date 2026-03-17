@@ -154,7 +154,7 @@ pub enum UpdateOffersResourceError {
 }
 
 pub async fn cancel_offers_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: CancelOffersResourceParams,
 ) -> Result<crate::http::models::OfferWrap, Error<CancelOffersResourceError>> {
     let local_var_configuration = configuration;
@@ -172,9 +172,11 @@ pub async fn cancel_offers_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -200,7 +202,7 @@ pub async fn cancel_offers_resource(
 
 /// An endpoint for creating an offer.   Should you have EasyVat enabled, it is mandatory to provide an account in the request should you use a custom VAT rate.   This endpoint can produce errors, some of which may only be relevant for EasyVat. Refer to the table below.  <table>  <caption>Errors that can be raised by this endpoint.</caption>    <tr>     <th>Error Code</th>     <th>HTTP Code</th>     <th>Description</th>     <th>Solution</th>    </tr>    <tr>     <td>2004167</td>     <td>400</td>     <td>An account must be provided when using a custom VAT rate and EasyVat has been enabled.</td>     <td>Supply each row which has a custom VAT rate with an account.</td>    </tr>  </table>
 pub async fn create_offers_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: CreateOffersResourceParams,
 ) -> Result<crate::http::models::OfferWrap, Error<CreateOffersResourceError>> {
     let local_var_configuration = configuration;
@@ -214,9 +216,11 @@ pub async fn create_offers_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&offer);
 
@@ -242,7 +246,7 @@ pub async fn create_offers_resource(
 }
 
 pub async fn createorder(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: CreateorderParams,
 ) -> Result<crate::http::models::OrderWrap, Error<CreateorderError>> {
     let local_var_configuration = configuration;
@@ -260,9 +264,11 @@ pub async fn createorder(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -288,7 +294,7 @@ pub async fn createorder(
 
 /// You can use the properties in the EmailInformation to customize the e-mail message on each offer.
 pub async fn email_offers_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: EmailOffersResourceParams,
 ) -> Result<crate::http::models::OfferWrap, Error<EmailOffersResourceError>> {
     let local_var_configuration = configuration;
@@ -306,9 +312,11 @@ pub async fn email_offers_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -334,7 +342,7 @@ pub async fn email_offers_resource(
 
 /// Use this endpoint to set offer as sent, without generating an offer.
 pub async fn externalprint(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: ExternalprintParams,
 ) -> Result<crate::http::models::OfferWrap, Error<ExternalprintError>> {
     let local_var_configuration = configuration;
@@ -352,9 +360,11 @@ pub async fn externalprint(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -379,7 +389,7 @@ pub async fn externalprint(
 }
 
 pub async fn get_offers_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetOffersResourceParams,
 ) -> Result<crate::http::models::OfferWrap, Error<GetOffersResourceError>> {
     let local_var_configuration = configuration;
@@ -397,9 +407,11 @@ pub async fn get_offers_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -424,7 +436,7 @@ pub async fn get_offers_resource(
 }
 
 pub async fn list_offers_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: ListOffersResourceParams,
 ) -> Result<crate::http::models::OfferListItemList, Error<ListOffersResourceError>> {
     let local_var_configuration = configuration;
@@ -442,9 +454,11 @@ pub async fn list_offers_resource(
         local_var_req_builder =
             local_var_req_builder.query(&[("filter", &local_var_str.to_string())]);
     }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -470,7 +484,7 @@ pub async fn list_offers_resource(
 
 /// The difference between this and the print-endpoint is that property Sent is not set to TRUE.
 pub async fn preview_offers_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: PreviewOffersResourceParams,
 ) -> Result<String, Error<PreviewOffersResourceError>> {
     let local_var_configuration = configuration;
@@ -488,9 +502,11 @@ pub async fn preview_offers_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -515,7 +531,7 @@ pub async fn preview_offers_resource(
 }
 
 pub async fn print_offers_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: PrintOffersResourceParams,
 ) -> Result<String, Error<PrintOffersResourceError>> {
     let local_var_configuration = configuration;
@@ -533,9 +549,11 @@ pub async fn print_offers_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -561,7 +579,7 @@ pub async fn print_offers_resource(
 
 /// Note that there are two approaches for updating the rows on an offer.   If RowId is not specified on any row, the rows will be mapped and updated in the order in which they are set in the array. All rows that should remain on the offer needs to be provided.   If RowId is specified on one or more rows the following goes: Corresponding row with that id will be updated. The rows without RowId will be interpreted as new rows. If a row should not be updated but remain on the offer then specify only RowId like { \"RowId\": 123 }, otherwise it will be removed. Note that new RowIds are generated for all rows every time an offer is updated.
 pub async fn update_offers_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: UpdateOffersResourceParams,
 ) -> Result<crate::http::models::OfferWrap, Error<UpdateOffersResourceError>> {
     let local_var_configuration = configuration;
@@ -580,9 +598,11 @@ pub async fn update_offers_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&offer);
 

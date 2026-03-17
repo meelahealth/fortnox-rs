@@ -86,7 +86,7 @@ pub enum UpdateArticlesResourceArticlesError {
 
 /// The created article will be returned if everything succeeded, if there was any problems an error will be returned.
 pub async fn create_articles_resource_articles(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: CreateArticlesResourceArticlesParams,
 ) -> Result<crate::http::models::ArticleWrap, Error<CreateArticlesResourceArticlesError>> {
     let local_var_configuration = configuration;
@@ -100,9 +100,11 @@ pub async fn create_articles_resource_articles(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&article);
 
@@ -129,7 +131,7 @@ pub async fn create_articles_resource_articles(
 
 /// Retrieves the details of an article. You need to supply the unique article number that was returned when the article was created or retrieved from the list of articles.
 pub async fn get_articles_resource_articles(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetArticlesResourceArticlesParams,
 ) -> Result<crate::http::models::ArticleWrap, Error<GetArticlesResourceArticlesError>> {
     let local_var_configuration = configuration;
@@ -147,9 +149,11 @@ pub async fn get_articles_resource_articles(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -175,7 +179,7 @@ pub async fn get_articles_resource_articles(
 
 /// Retrieves a list of articles. The articles are returned sorted by article number with the lowest number appearing first.
 pub async fn list_articles_resource_articles(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: ListArticlesResourceArticlesParams,
 ) -> Result<crate::http::models::ArticleListItemList, Error<ListArticlesResourceArticlesError>> {
     let local_var_configuration = configuration;
@@ -193,9 +197,11 @@ pub async fn list_articles_resource_articles(
         local_var_req_builder =
             local_var_req_builder.query(&[("filter", &local_var_str.to_string())]);
     }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -221,7 +227,7 @@ pub async fn list_articles_resource_articles(
 
 /// <p>Deletes the article permanently.</p>  <p>You need to supply the unique article number that was returned when the article was created or retrieved from the list of articles.</p>
 pub async fn remove_articles_resource_articles(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: RemoveArticlesResourceArticlesParams,
 ) -> Result<(), Error<RemoveArticlesResourceArticlesError>> {
     let local_var_configuration = configuration;
@@ -239,9 +245,11 @@ pub async fn remove_articles_resource_articles(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::DELETE, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -266,7 +274,7 @@ pub async fn remove_articles_resource_articles(
 
 /// Updates the specified article with the values provided in the properties. Any property not provided will be left unchanged.  You need to supply the unique article number that was returned when the article was created or retrieved from the list of articles.  Note that even though the article number is writeable you can not change the number of an existing article.
 pub async fn update_articles_resource_articles(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: UpdateArticlesResourceArticlesParams,
 ) -> Result<crate::http::models::ArticleWrap, Error<UpdateArticlesResourceArticlesError>> {
     let local_var_configuration = configuration;
@@ -285,9 +293,11 @@ pub async fn update_articles_resource_articles(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&article);
 

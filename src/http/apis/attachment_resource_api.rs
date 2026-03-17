@@ -104,7 +104,7 @@ pub enum ValidateIncludedOnSendError {
 }
 
 pub async fn attach(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: AttachParams,
 ) -> Result<Vec<crate::http::models::Attachment>, Error<AttachError>> {
     let local_var_configuration = configuration;
@@ -121,9 +121,11 @@ pub async fn attach(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&attachments);
 
@@ -148,7 +150,7 @@ pub async fn attach(
 }
 
 pub async fn detach(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: DetachParams,
 ) -> Result<(), Error<DetachError>> {
     let local_var_configuration = configuration;
@@ -166,9 +168,11 @@ pub async fn detach(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::DELETE, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -191,7 +195,7 @@ pub async fn detach(
 }
 
 pub async fn get_attachments(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetAttachmentsParams,
 ) -> Result<Vec<crate::http::models::Attachment>, Error<GetAttachmentsError>> {
     let local_var_configuration = configuration;
@@ -226,9 +230,11 @@ pub async fn get_attachments(
         )]),
     };
     local_var_req_builder = local_var_req_builder.query(&[("entitytype", &entitytype.to_string())]);
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -253,7 +259,7 @@ pub async fn get_attachments(
 }
 
 pub async fn get_number_of_attachments_for_entity(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetNumberOfAttachmentsForEntityParams,
 ) -> Result<
     Vec<crate::http::models::NumberOfAttachments>,
@@ -291,9 +297,11 @@ pub async fn get_number_of_attachments_for_entity(
         )]),
     };
     local_var_req_builder = local_var_req_builder.query(&[("entitytype", &entitytype.to_string())]);
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -318,7 +326,7 @@ pub async fn get_number_of_attachments_for_entity(
 }
 
 pub async fn update_attachment(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: UpdateAttachmentParams,
 ) -> Result<crate::http::models::Attachment, Error<UpdateAttachmentError>> {
     let local_var_configuration = configuration;
@@ -337,9 +345,11 @@ pub async fn update_attachment(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&attachment);
 
@@ -365,7 +375,7 @@ pub async fn update_attachment(
 }
 
 pub async fn validate_included_on_send(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: ValidateIncludedOnSendParams,
 ) -> Result<(), Error<ValidateIncludedOnSendError>> {
     let local_var_configuration = configuration;
@@ -382,9 +392,11 @@ pub async fn validate_included_on_send(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&attachments);
 

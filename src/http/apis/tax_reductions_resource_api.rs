@@ -86,7 +86,7 @@ pub enum UpdateTaxReductionsResourceError {
 
 /// Note that different types of tax reduction, i.e. ROT, RUT, or Green Technology, applications work differently.  When creating an application for Green Technology, the field <em>TaxReductionAmounts</em> becomes mandatory as  it is used to determine how much of the asked amount is intended for which type of work. Similarly, the <em>AskedAmount</em>  field of the <em>TaxReduction</em> becomes optional, as it will always be considered to be equal to the sum of the <em>TaxReductionAmounts</em>.   For the other types, ROT and RUT, this field is not required and should be omitted.   Unlike earlier iterations of this endpoint, specifying the type of reduction for the provided <em>TaxReduction</em> (e.g. ROT, RUT, or Green)  is not necessary as this value will always be equal to the type set on the provided document instead.   This endpoint can raise a variety of validation errors, some of which are only relevant for Green Technology applications.  Those errors will always return an HTTP Code of 400 and include, but are not limited to, those shown below:   <table>      <caption>Errors that can be raised by this endpoint.</caption>      <tr>          <th>Error Code</th>          <th>Types</th>          <th>Description</th>          <th>Solution</th>      </tr>      <tr>          <td>2000600</td>          <td>ROT, RUT, GREEN</td>          <td>The provided Social Security Number is already in use for this document.</td>          <td>Verify that the Social Security Number is different from any other applicants already added.</td>      </tr>      <tr>          <td>2004217, 2004218</td>          <td>ROT, RUT, GREEN</td>          <td>The total asked amount of the application is either in an invalid format or is negative.</td>          <td>Verify that the <em>AskedAmount</em>-field is a positive number (0 is valid for Green Technology) and that it is an integer.</td>      </tr>      <tr>          <td>2004209</td>          <td>GREEN</td>          <td>The <em>WorkType</em>-field contains a work type that is not valid for the given type of reduction.</td>          <td>Ensure that the <em>WorkType</em> contains a valid type of work for Green Technology.</td>      </tr>      <tr>          <td>2004263</td>          <td>GREEN</td>          <td>The <em>TaxReductionAmounts</em>-field is missing for a Green Technology application.</td>          <td>Ensure that the field is included, that it is an array, and that each contained object denotes a specific type's asked amount.</td>      </tr>      <tr>          <td>2004262</td>          <td>GREEN</td>          <td>There are more than one object denoting the asked amount for the same type in the <em>TaxReductionAmounts</em>-field.</td>          <td>Ensure that there is only one object denoting the asked amount per type contained in the array.</td>      </tr>  </table>
 pub async fn create_tax_reductions_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: CreateTaxReductionsResourceParams,
 ) -> Result<crate::http::models::TaxReductionWrap, Error<CreateTaxReductionsResourceError>> {
     let local_var_configuration = configuration;
@@ -100,9 +100,11 @@ pub async fn create_tax_reductions_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&tax_reduction);
 
@@ -128,7 +130,7 @@ pub async fn create_tax_reductions_resource(
 }
 
 pub async fn get_tax_reductions_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetTaxReductionsResourceParams,
 ) -> Result<crate::http::models::TaxReductionWrap, Error<GetTaxReductionsResourceError>> {
     let local_var_configuration = configuration;
@@ -146,9 +148,11 @@ pub async fn get_tax_reductions_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -173,7 +177,7 @@ pub async fn get_tax_reductions_resource(
 }
 
 pub async fn list_tax_reductions_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: ListTaxReductionsResourceParams,
 ) -> Result<crate::http::models::TaxReductionListItemList, Error<ListTaxReductionsResourceError>> {
     let local_var_configuration = configuration;
@@ -191,9 +195,11 @@ pub async fn list_tax_reductions_resource(
         local_var_req_builder =
             local_var_req_builder.query(&[("filter", &local_var_str.to_string())]);
     }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -218,7 +224,7 @@ pub async fn list_tax_reductions_resource(
 }
 
 pub async fn remove_tax_reductions_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: RemoveTaxReductionsResourceParams,
 ) -> Result<(), Error<RemoveTaxReductionsResourceError>> {
     let local_var_configuration = configuration;
@@ -236,9 +242,11 @@ pub async fn remove_tax_reductions_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::DELETE, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -262,7 +270,7 @@ pub async fn remove_tax_reductions_resource(
 }
 
 pub async fn update_tax_reductions_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: UpdateTaxReductionsResourceParams,
 ) -> Result<crate::http::models::TaxReductionWrap, Error<UpdateTaxReductionsResourceError>> {
     let local_var_configuration = configuration;
@@ -281,9 +289,11 @@ pub async fn update_tax_reductions_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&tax_reduction);
 

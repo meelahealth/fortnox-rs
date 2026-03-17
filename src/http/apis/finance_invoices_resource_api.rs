@@ -115,7 +115,7 @@ pub enum UnpauseError {
 
 /// <p>  When sending an invoice with Fortnox Finans you will get the invoice status returned if everything succeeded,  if there were any problems, an error will be returned.  <p>  Please note that it can take 1 min to several hours before you will get back status, OCR number and link to  PDF document, meanwhile the invoice will have status UNKNOWN or NOT_AUTHORIZED.  <p>  Fortnox Finans is currently only accepting invoices in SEK  <p>  <i>Parameters in the body:</i>  <ul>      <li><b>InvoiceNumber</b>: the invoice number for the invoice which should be sent with Fortnox Finans</li>      <li><b>SendMethod</b>: how to send the invoice; EMAIL, LETTER, EINVOICE or NONE</li>      <li><b>Service</b>: which service to use; LEDGERBASE or REMINDER</li>  </ul>  <p>
 pub async fn create_finance_invoices_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: CreateFinanceInvoicesResourceParams,
 ) -> Result<crate::http::models::InvoiceResponseWrap, Error<CreateFinanceInvoicesResourceError>> {
     let local_var_configuration = configuration;
@@ -129,9 +129,11 @@ pub async fn create_finance_invoices_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&payload);
 
@@ -158,7 +160,7 @@ pub async fn create_finance_invoices_resource(
 
 /// <p>  Retrieves the status and balance of an invoice sent to Fortnox Finans.  You need to supply the invoice number in Fortox to retrieve the invoice.  <p>  <b>Note that</b> invoices sent with the old &quot;Noxbox&quot; platform will not have the &quot;ServiceName&quot;  property in the response. This new property is added to the response if the invoice is  sent with the new finance service.  <p>  Response explanation for <b>Service</b> and <b>ServiceName</b>  <p>  <b>Service:</b>  <ul>      <li><b>LEDGERBASE</b>: if the invoice is sent by using the old &quot;Noxbox&quot; platform, or the new finance service with the subtypes &quot;Service Full&quot; or &quot;Service Light&quot;. These services are explained above in the &quot;Fortnox Finans services&quot; section</li>      <li><b>REMINDER</b>: If the invoice is sent by the new finance service, with the service Reminder Service</li>  </ul>  <p>  <b>ServiceName</b> (only provided for <u>new finance service</u> invoices):  <ul>      <li><b>SERVICE_FULL</b>: Ledgerbase service <u>with</u> automatic reminders is used</li>      <li><b>SERVICE_LIGHT</b>: Ledgerbase service <u>without</u> automatic reminders is used.</li>      <li><b>REMINDER_SERVICE</b>: Reminder service is used</li>  </ul>
 pub async fn get_finance_invoices_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetFinanceInvoicesResourceParams,
 ) -> Result<crate::http::models::InvoiceResponseWrap, Error<GetFinanceInvoicesResourceError>> {
     let local_var_configuration = configuration;
@@ -176,9 +178,11 @@ pub async fn get_finance_invoices_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -204,7 +208,7 @@ pub async fn get_finance_invoices_resource(
 
 /// <p>  Pauses an invoice for up to 60 days. Pause means that Fortnox Finans reminder process will stop for the invoice. All invoices which have the status OPEN can be paused.  <p>  <i>Parameters in the body:</i>  <ul>      <li><b>PausedUntilDate</b>: the invoice will be paused to and including this date.</li>  </ul>  <p>
 pub async fn pause(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: PauseParams,
 ) -> Result<crate::http::models::InvoiceResponseWrap, Error<PauseError>> {
     let local_var_configuration = configuration;
@@ -223,9 +227,11 @@ pub async fn pause(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&payload);
 
@@ -251,7 +257,7 @@ pub async fn pause(
 
 /// <p>  If a customer has paid some or all of the capital on an invoice directly to the client, this can be reported  for bookkeeping purposes and reported to Fortnox Finans to actually deduct the paid amount from the invoice.  <p>  <b>Note:</b> this action is <b>not</b> available for invoices sent by the old Noxbox platform  <p>  <i>Parameters in the body:</i>  <ul>      <li><b>ClientTakesFees</b>: a boolean indicating if the client should take the customer fees or not.</li>      <li><b>BookkeepPaymentInFortnox</b>: a boolean indicating if the payment should be bookkept in Fortnox or not. Usually the payment should be bookkept.</li>      <li><b>ReportToFinance</b>: a boolean indicating if the payment should be reported to Fortnox Finans or not. Usually the payment should be reported.</li>      <li><b>PaymentAmount</b>: a decimal field with the amount to report.</li>      <li><b>PaymentMethodCode</b>: a string with the method code (e.g. BG, PG or other). Could be omitted if BookkeepPaymentInFortnox is false.</li>      <li><b>PaymentMethodAccount</b>: an integer with the account number to bookkeep the payment on (e.g. 1920 or other). Could be omitted if BookkeepPaymentInFortnox is false.</li>  </ul>  <p>
 pub async fn report_payment(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: ReportPaymentParams,
 ) -> Result<crate::http::models::InvoiceResponseWrap, Error<ReportPaymentError>> {
     let local_var_configuration = configuration;
@@ -270,9 +276,11 @@ pub async fn report_payment(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&payload);
 
@@ -299,7 +307,7 @@ pub async fn report_payment(
 
 /// <p>  Removes the invoice from Fortnox Finans process. The invoice can still be handled manually, but no further automatic process will be applied  <p>
 pub async fn stop(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: StopParams,
 ) -> Result<crate::http::models::InvoiceResponseWrap, Error<StopError>> {
     let local_var_configuration = configuration;
@@ -317,9 +325,11 @@ pub async fn stop(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -344,7 +354,7 @@ pub async fn stop(
 
 /// <p>  If fees have been added to an invoice, e.g. reminder fees, the client can choose to pay those fees instead of letting the customer pay.  <p>  <b>Note:</b> this action is <b>not</b> available for invoices sent by the old Noxbox platform
 pub async fn take_fees(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: TakeFeesParams,
 ) -> Result<crate::http::models::InvoiceResponseWrap, Error<TakeFeesError>> {
     let local_var_configuration = configuration;
@@ -362,9 +372,11 @@ pub async fn take_fees(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -389,7 +401,7 @@ pub async fn take_fees(
 
 /// <p>  Unpauses a paused invoice. If the invoice is manually paused, then this action will remove the pause status immediately. Invoices which are paused by the system cannot be unpaused.  <p>  <b>Note:</b> this action is <b>not</b> available for invoices sent by the old Noxbox platform
 pub async fn unpause(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: UnpauseParams,
 ) -> Result<crate::http::models::InvoiceResponseWrap, Error<UnpauseError>> {
     let local_var_configuration = configuration;
@@ -407,9 +419,11 @@ pub async fn unpause(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;

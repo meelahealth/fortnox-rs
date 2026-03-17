@@ -63,7 +63,7 @@ pub enum UpdateModesOfPaymentsResourceError {
 }
 
 pub async fn create_modes_of_payments_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: CreateModesOfPaymentsResourceParams,
 ) -> Result<crate::http::models::ModeOfPaymentWrap, Error<CreateModesOfPaymentsResourceError>> {
     let local_var_configuration = configuration;
@@ -77,9 +77,11 @@ pub async fn create_modes_of_payments_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&mode_of_payment);
 
@@ -105,7 +107,7 @@ pub async fn create_modes_of_payments_resource(
 }
 
 pub async fn get_modes_of_payments_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetModesOfPaymentsResourceParams,
 ) -> Result<crate::http::models::ModeOfPaymentWrap, Error<GetModesOfPaymentsResourceError>> {
     let local_var_configuration = configuration;
@@ -123,9 +125,11 @@ pub async fn get_modes_of_payments_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -151,7 +155,7 @@ pub async fn get_modes_of_payments_resource(
 
 /// The modes of payments register can return a list of records or a single record. By specifying a Code in the URL, a single record will be returned. Not specifying a Code will return a list of records.
 pub async fn list_modes_of_payments_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
 ) -> Result<crate::http::models::ModeOfPaymentList, Error<ListModesOfPaymentsResourceError>> {
     let local_var_configuration = configuration;
 
@@ -163,9 +167,11 @@ pub async fn list_modes_of_payments_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -190,7 +196,7 @@ pub async fn list_modes_of_payments_resource(
 }
 
 pub async fn update_modes_of_payments_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: UpdateModesOfPaymentsResourceParams,
 ) -> Result<crate::http::models::ModeOfPaymentWrap, Error<UpdateModesOfPaymentsResourceError>> {
     let local_var_configuration = configuration;
@@ -209,9 +215,11 @@ pub async fn update_modes_of_payments_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&unit);
 

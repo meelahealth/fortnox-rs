@@ -48,7 +48,7 @@ pub enum GetAllAssetFileConnectionResourceError {
 }
 
 pub async fn create_asset_file_connection_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: CreateAssetFileConnectionResourceParams,
 ) -> Result<crate::http::models::AssetFileConnection, Error<CreateAssetFileConnectionResourceError>>
 {
@@ -66,9 +66,11 @@ pub async fn create_asset_file_connection_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&asset_file_connection);
 
@@ -94,7 +96,7 @@ pub async fn create_asset_file_connection_resource(
 }
 
 pub async fn delete_asset_file_connection_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: DeleteAssetFileConnectionResourceParams,
 ) -> Result<(), Error<DeleteAssetFileConnectionResourceError>> {
     let local_var_configuration = configuration;
@@ -112,9 +114,11 @@ pub async fn delete_asset_file_connection_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::DELETE, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -139,7 +143,7 @@ pub async fn delete_asset_file_connection_resource(
 
 /// The asset register can return a list of assets or a single asset. By specifying a FileId in the URL, a single asset will be returned. Not specifying a FileId will return a list of records.
 pub async fn get_all_asset_file_connection_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
 ) -> Result<
     crate::http::models::AssetFileConnectionResponse,
     Error<GetAllAssetFileConnectionResourceError>,
@@ -157,9 +161,11 @@ pub async fn get_all_asset_file_connection_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;

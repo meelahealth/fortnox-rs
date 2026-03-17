@@ -94,7 +94,7 @@ pub enum UpdateInvoicePaymentsResourceError {
 }
 
 pub async fn bookkeep(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: BookkeepParams,
 ) -> Result<crate::http::models::BookedInvoicePaymentWrap, Error<BookkeepError>> {
     let local_var_configuration = configuration;
@@ -113,9 +113,11 @@ pub async fn bookkeep(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&invoice_payment);
 
@@ -140,7 +142,7 @@ pub async fn bookkeep(
 }
 
 pub async fn create_invoice_payments_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: CreateInvoicePaymentsResourceParams,
 ) -> Result<crate::http::models::InvoicePaymentWrap, Error<CreateInvoicePaymentsResourceError>> {
     let local_var_configuration = configuration;
@@ -154,9 +156,11 @@ pub async fn create_invoice_payments_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     tracing::trace!("Request: {:?}", invoice_payment);
     local_var_req_builder = local_var_req_builder.json(&invoice_payment);
@@ -183,7 +187,7 @@ pub async fn create_invoice_payments_resource(
 }
 
 pub async fn get_invoice_payments_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetInvoicePaymentsResourceParams,
 ) -> Result<crate::http::models::InvoicePaymentWrap, Error<GetInvoicePaymentsResourceError>> {
     let local_var_configuration = configuration;
@@ -201,9 +205,11 @@ pub async fn get_invoice_payments_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -228,7 +234,7 @@ pub async fn get_invoice_payments_resource(
 }
 
 pub async fn list_invoice_payments_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
 ) -> Result<crate::http::models::InvoicePaymentListItemList, Error<ListInvoicePaymentsResourceError>>
 {
     let local_var_configuration = configuration;
@@ -241,9 +247,11 @@ pub async fn list_invoice_payments_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -268,7 +276,7 @@ pub async fn list_invoice_payments_resource(
 }
 
 pub async fn remove_invoice_payments_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: RemoveInvoicePaymentsResourceParams,
 ) -> Result<(), Error<RemoveInvoicePaymentsResourceError>> {
     let local_var_configuration = configuration;
@@ -286,9 +294,11 @@ pub async fn remove_invoice_payments_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::DELETE, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -312,7 +322,7 @@ pub async fn remove_invoice_payments_resource(
 }
 
 pub async fn update_invoice_payments_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: UpdateInvoicePaymentsResourceParams,
 ) -> Result<crate::http::models::InvoicePaymentWrap, Error<UpdateInvoicePaymentsResourceError>> {
     let local_var_configuration = configuration;
@@ -331,9 +341,11 @@ pub async fn update_invoice_payments_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&invoice_payment);
 

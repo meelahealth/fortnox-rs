@@ -82,7 +82,7 @@ pub enum VoidDocumentCustomInboundDocumentResourceError {
 }
 
 pub async fn get_custom_inbound_document_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetCustomInboundDocumentResourceParams,
 ) -> Result<crate::http::models::CustomInboundDocument, Error<GetCustomInboundDocumentResourceError>>
 {
@@ -98,9 +98,11 @@ pub async fn get_custom_inbound_document_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -126,7 +128,7 @@ pub async fn get_custom_inbound_document_resource(
 
 /// The document will be locked and bookkept.  The inbound deliveries will affect available stock.
 pub async fn release_custom_inbound_document_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: ReleaseCustomInboundDocumentResourceParams,
 ) -> Result<(), Error<ReleaseCustomInboundDocumentResourceError>> {
     let local_var_configuration = configuration;
@@ -141,9 +143,11 @@ pub async fn release_custom_inbound_document_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -167,7 +171,7 @@ pub async fn release_custom_inbound_document_resource(
 }
 
 pub async fn save_custom_inbound_document_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: SaveCustomInboundDocumentResourceParams,
 ) -> Result<crate::http::models::CustomInboundDocument, Error<SaveCustomInboundDocumentResourceError>>
 {
@@ -184,9 +188,11 @@ pub async fn save_custom_inbound_document_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&document);
 
@@ -213,7 +219,7 @@ pub async fn save_custom_inbound_document_resource(
 
 /// Voiding a document will undo the possible stock changes that the document had made,  note that the document and the transactions created are not deleted. Some limitations apply, see below.
 pub async fn void_document_custom_inbound_document_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: VoidDocumentCustomInboundDocumentResourceParams,
 ) -> Result<(), Error<VoidDocumentCustomInboundDocumentResourceError>> {
     let local_var_configuration = configuration;
@@ -233,9 +239,11 @@ pub async fn void_document_custom_inbound_document_resource(
         local_var_req_builder =
             local_var_req_builder.query(&[("force", &local_var_str.to_string())]);
     }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;

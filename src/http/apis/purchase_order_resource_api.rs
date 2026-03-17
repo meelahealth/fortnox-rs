@@ -248,7 +248,7 @@ pub enum VoidDocumentPurchaseOrderResourceError {
 }
 
 pub async fn batch_update_response_state(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: BatchUpdateResponseStateParams,
 ) -> Result<Vec<crate::http::models::PurchaseOrder>, Error<BatchUpdateResponseStateError>> {
     let local_var_configuration = configuration;
@@ -284,9 +284,11 @@ pub async fn batch_update_response_state(
             )]),
         };
     }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&response_state_change);
 
@@ -312,7 +314,7 @@ pub async fn batch_update_response_state(
 }
 
 pub async fn create_purchase_order_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: CreatePurchaseOrderResourceParams,
 ) -> Result<crate::http::models::PurchaseOrder, Error<CreatePurchaseOrderResourceError>> {
     let local_var_configuration = configuration;
@@ -329,9 +331,11 @@ pub async fn create_purchase_order_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&purchase_order);
 
@@ -358,7 +362,7 @@ pub async fn create_purchase_order_resource(
 
 /// <p>      List purchase orders matching the given parameters.  </p>  <p>      Sortable fields:      <code>id</code>,      <code>supplier_number</code>,      <code>order_date</code>,      <code>internal_reference</code>,      <code>response_state</code>,      <code>delivery_date</code>  </p>
 pub async fn get_all_purchase_order_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetAllPurchaseOrderResourceParams,
 ) -> Result<Vec<crate::http::models::PurchaseOrder>, Error<GetAllPurchaseOrderResourceError>> {
     let local_var_configuration = configuration;
@@ -408,9 +412,11 @@ pub async fn get_all_purchase_order_resource(
         local_var_req_builder =
             local_var_req_builder.query(&[("note", &local_var_str.to_string())]);
     }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -436,7 +442,7 @@ pub async fn get_all_purchase_order_resource(
 
 /// Get notes for a purchase order.
 pub async fn get_attached_notes(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetAttachedNotesParams,
 ) -> Result<Vec<crate::http::models::PurchaseOrderRowNote>, Error<GetAttachedNotesError>> {
     let local_var_configuration = configuration;
@@ -454,9 +460,11 @@ pub async fn get_attached_notes(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -481,7 +489,7 @@ pub async fn get_attached_notes(
 }
 
 pub async fn get_csv_report(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetCsvReportParams,
 ) -> Result<String, Error<GetCsvReportError>> {
     let local_var_configuration = configuration;
@@ -536,9 +544,11 @@ pub async fn get_csv_report(
         local_var_req_builder =
             local_var_req_builder.query(&[("showPurchaseTypeColumn", &local_var_str.to_string())]);
     }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -564,7 +574,7 @@ pub async fn get_csv_report(
 
 /// Get a list of <code>DocumentReference</code> of linked/connected purchase orders to incoming goods and/or invoice document.
 pub async fn get_matched_documents(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetMatchedDocumentsParams,
 ) -> Result<Vec<crate::http::models::DocumentReference>, Error<GetMatchedDocumentsError>> {
     let local_var_configuration = configuration;
@@ -582,9 +592,11 @@ pub async fn get_matched_documents(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -609,7 +621,7 @@ pub async fn get_matched_documents(
 }
 
 pub async fn get_purchase_order_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetPurchaseOrderResourceParams,
 ) -> Result<crate::http::models::PurchaseOrder, Error<GetPurchaseOrderResourceError>> {
     let local_var_configuration = configuration;
@@ -632,9 +644,11 @@ pub async fn get_purchase_order_resource(
         local_var_req_builder =
             local_var_req_builder.query(&[("ignoreIncomingGoodsId", &local_var_str.to_string())]);
     }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -660,7 +674,7 @@ pub async fn get_purchase_order_resource(
 
 /// Sends the purchase order with the specified <code>id</code> to the recipient and sets the purchase order state to SENT
 pub async fn send_purchase_order(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: SendPurchaseOrderParams,
 ) -> Result<(), Error<SendPurchaseOrderError>> {
     let local_var_configuration = configuration;
@@ -679,9 +693,11 @@ pub async fn send_purchase_order(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&settings);
 
@@ -706,7 +722,7 @@ pub async fn send_purchase_order(
 }
 
 pub async fn send_purchase_orders(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: SendPurchaseOrdersParams,
 ) -> Result<(), Error<SendPurchaseOrdersError>> {
     let local_var_configuration = configuration;
@@ -723,9 +739,11 @@ pub async fn send_purchase_orders(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&purchase_order_ids);
 
@@ -751,7 +769,7 @@ pub async fn send_purchase_orders(
 
 /// The dropship order will be treated as fully received.  Any remaining quantity will be ignored.
 pub async fn set_dropship_manually_completed(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: SetDropshipManuallyCompletedParams,
 ) -> Result<crate::http::models::ReleaseParentOrder, Error<SetDropshipManuallyCompletedError>> {
     let local_var_configuration = configuration;
@@ -769,9 +787,11 @@ pub async fn set_dropship_manually_completed(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -797,7 +817,7 @@ pub async fn set_dropship_manually_completed(
 
 /// The purchase order will be treated as fully received.  Any remaining quantity will be ignored.
 pub async fn set_manually_completed(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: SetManuallyCompletedParams,
 ) -> Result<(), Error<SetManuallyCompletedError>> {
     let local_var_configuration = configuration;
@@ -815,9 +835,11 @@ pub async fn set_manually_completed(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -841,7 +863,7 @@ pub async fn set_manually_completed(
 }
 
 pub async fn update_purchase_order_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: UpdatePurchaseOrderResourceParams,
 ) -> Result<crate::http::models::PurchaseOrder, Error<UpdatePurchaseOrderResourceError>> {
     let local_var_configuration = configuration;
@@ -860,9 +882,11 @@ pub async fn update_purchase_order_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&purchase_order);
 
@@ -888,7 +912,7 @@ pub async fn update_purchase_order_resource(
 }
 
 pub async fn update_response_state(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: UpdateResponseStateParams,
 ) -> Result<crate::http::models::PurchaseOrder, Error<UpdateResponseStateError>> {
     let local_var_configuration = configuration;
@@ -907,9 +931,11 @@ pub async fn update_response_state(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&response_state_change);
 
@@ -935,7 +961,7 @@ pub async fn update_response_state(
 }
 
 pub async fn void_document_purchase_order_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: VoidDocumentPurchaseOrderResourceParams,
 ) -> Result<(), Error<VoidDocumentPurchaseOrderResourceError>> {
     let local_var_configuration = configuration;
@@ -953,9 +979,11 @@ pub async fn void_document_purchase_order_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;

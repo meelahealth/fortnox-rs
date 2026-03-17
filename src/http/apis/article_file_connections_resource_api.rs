@@ -62,7 +62,7 @@ pub enum RemoveArticleFileConnectionsResourceError {
 }
 
 pub async fn create_article_file_connections_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: CreateArticleFileConnectionsResourceParams,
 ) -> Result<
     crate::http::models::ArticleFileConnectionWrap,
@@ -82,9 +82,11 @@ pub async fn create_article_file_connections_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&article_file_connection);
 
@@ -110,7 +112,7 @@ pub async fn create_article_file_connections_resource(
 }
 
 pub async fn get_article_file_connections_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetArticleFileConnectionsResourceParams,
 ) -> Result<
     crate::http::models::ArticleFileConnectionWrap,
@@ -131,9 +133,11 @@ pub async fn get_article_file_connections_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -159,7 +163,7 @@ pub async fn get_article_file_connections_resource(
 
 /// The article file connections register can return a list of records or a single record. By specifying a FileId in the URL, a single record will be returned. Not specifying a FileId will return a list of records.
 pub async fn list_article_file_connections_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
 ) -> Result<
     crate::http::models::ArticleFileConnectionListItemWrap,
     Error<ListArticleFileConnectionsResourceError>,
@@ -177,9 +181,11 @@ pub async fn list_article_file_connections_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -204,7 +210,7 @@ pub async fn list_article_file_connections_resource(
 }
 
 pub async fn remove_article_file_connections_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: RemoveArticleFileConnectionsResourceParams,
 ) -> Result<(), Error<RemoveArticleFileConnectionsResourceError>> {
     let local_var_configuration = configuration;
@@ -222,9 +228,11 @@ pub async fn remove_article_file_connections_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::DELETE, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;

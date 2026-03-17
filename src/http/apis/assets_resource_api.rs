@@ -173,7 +173,7 @@ pub enum WriteUpError {
 
 /// The updated asset will be returned if everything succeeded, if there was any problems an error will be returned.
 pub async fn change_manual_ob_value(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: ChangeManualObValueParams,
 ) -> Result<crate::http::models::AssetSingle, Error<ChangeManualObValueError>> {
     let local_var_configuration = configuration;
@@ -192,9 +192,11 @@ pub async fn change_manual_ob_value(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&asset);
 
@@ -221,7 +223,7 @@ pub async fn change_manual_ob_value(
 
 /// The created asset will be returned if everything succeeded, if there was any problems an error will be returned.
 pub async fn create_assets_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: CreateAssetsResourceParams,
 ) -> Result<crate::http::models::AssetSingle, Error<CreateAssetsResourceError>> {
     let local_var_configuration = configuration;
@@ -235,9 +237,11 @@ pub async fn create_assets_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&asset);
 
@@ -264,7 +268,7 @@ pub async fn create_assets_resource(
 
 /// By specifying a {GivenNumber} in the URL a single &quot;Not active&quot; asset or asset with a type &quot;Not depreciable&quot; can be deleted. By specifying a {GivenNumber} in the URL a single &quot;Active&quot; or &quot;Fully depreciated&quot; assets can be voided and in this case in request body voiddate should be provided, otherwise it will use todays date.
 pub async fn delete_assets_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: DeleteAssetsResourceParams,
 ) -> Result<(), Error<DeleteAssetsResourceError>> {
     let local_var_configuration = configuration;
@@ -283,9 +287,11 @@ pub async fn delete_assets_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::DELETE, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&request);
 
@@ -311,7 +317,7 @@ pub async fn delete_assets_resource(
 
 /// The created vouchers list will be returned if everything succeeded, if there was any problems an error will be returned.
 pub async fn depreciate(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: DepreciateParams,
 ) -> Result<crate::http::models::DepreciationResponseWrap, Error<DepreciateError>> {
     let local_var_configuration = configuration;
@@ -325,9 +331,11 @@ pub async fn depreciate(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&body);
 
@@ -353,7 +361,7 @@ pub async fn depreciate(
 }
 
 pub async fn get_assets_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetAssetsResourceParams,
 ) -> Result<crate::http::models::AssetSingle, Error<GetAssetsResourceError>> {
     let local_var_configuration = configuration;
@@ -371,9 +379,11 @@ pub async fn get_assets_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -399,7 +409,7 @@ pub async fn get_assets_resource(
 
 /// Retrieves a list of assets to depreciate.
 pub async fn get_deprecation_list(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetDeprecationListParams,
 ) -> Result<crate::http::models::ListAssetWrap, Error<GetDeprecationListError>> {
     let local_var_configuration = configuration;
@@ -417,9 +427,11 @@ pub async fn get_deprecation_list(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -444,7 +456,7 @@ pub async fn get_deprecation_list(
 }
 
 pub async fn list_assets_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
 ) -> Result<crate::http::models::ListAssetWrap, Error<ListAssetsResourceError>> {
     let local_var_configuration = configuration;
 
@@ -456,9 +468,11 @@ pub async fn list_assets_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -484,7 +498,7 @@ pub async fn list_assets_resource(
 
 /// The updated asset will be returned if everything succeeded, if there was any problems an error will be returned.
 pub async fn scrap(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: ScrapParams,
 ) -> Result<crate::http::models::AssetSingle, Error<ScrapError>> {
     let local_var_configuration = configuration;
@@ -503,9 +517,11 @@ pub async fn scrap(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&asset);
 
@@ -531,7 +547,7 @@ pub async fn scrap(
 
 /// Partial sell or full sell of an asset.
 pub async fn sell(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: SellParams,
 ) -> Result<crate::http::models::AssetSingle, Error<SellError>> {
     let local_var_configuration = configuration;
@@ -550,9 +566,11 @@ pub async fn sell(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&asset);
 
@@ -578,7 +596,7 @@ pub async fn sell(
 
 /// The updated asset will be returned if everything succeeded, if there was any problems an error will be returned.
 pub async fn write_down(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: WriteDownParams,
 ) -> Result<crate::http::models::AssetSingle, Error<WriteDownError>> {
     let local_var_configuration = configuration;
@@ -597,9 +615,11 @@ pub async fn write_down(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&asset);
 
@@ -626,7 +646,7 @@ pub async fn write_down(
 
 /// The updated asset will be returned if everything succeeded, if there was any problems an error will be returned.
 pub async fn write_up(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: WriteUpParams,
 ) -> Result<crate::http::models::AssetSingle, Error<WriteUpError>> {
     let local_var_configuration = configuration;
@@ -645,9 +665,11 @@ pub async fn write_up(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&asset);
 

@@ -66,7 +66,7 @@ pub enum UploadError {
 }
 
 pub async fn get_file_by_id_inbox_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetFileByIdInboxResourceParams,
 ) -> Result<String, Error<GetFileByIdInboxResourceError>> {
     let local_var_configuration = configuration;
@@ -84,9 +84,11 @@ pub async fn get_file_by_id_inbox_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -111,7 +113,7 @@ pub async fn get_file_by_id_inbox_resource(
 }
 
 pub async fn get_inbox_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
 ) -> Result<crate::http::models::FolderWrap, Error<GetInboxResourceError>> {
     let local_var_configuration = configuration;
 
@@ -123,9 +125,11 @@ pub async fn get_inbox_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -150,7 +154,7 @@ pub async fn get_inbox_resource(
 }
 
 pub async fn remove_inbox_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: RemoveInboxResourceParams,
 ) -> Result<(), Error<RemoveInboxResourceError>> {
     let local_var_configuration = configuration;
@@ -168,9 +172,11 @@ pub async fn remove_inbox_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::DELETE, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -195,7 +201,7 @@ pub async fn remove_inbox_resource(
 
 /// Upload a file to a specific subdirectory.
 pub async fn upload(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: UploadParams,
 ) -> Result<crate::http::models::FolderFileRowWrap, Error<UploadError>> {
     let local_var_configuration = configuration;
@@ -219,9 +225,11 @@ pub async fn upload(
         local_var_req_builder =
             local_var_req_builder.query(&[("path", &local_var_str.to_string())]);
     }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     let mut local_var_form = reqwest::multipart::Form::new();
     if let Some(local_var_param_value) = file {

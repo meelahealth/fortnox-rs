@@ -252,7 +252,7 @@ pub enum WarehouseReadyError {
 }
 
 pub async fn bookkeep_invoices_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: BookkeepInvoicesResourceParams,
 ) -> Result<crate::http::models::InvoiceWrap, Error<BookkeepInvoicesResourceError>> {
     let local_var_configuration = configuration;
@@ -270,9 +270,11 @@ pub async fn bookkeep_invoices_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -297,7 +299,7 @@ pub async fn bookkeep_invoices_resource(
 }
 
 pub async fn cancel(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: CancelParams,
 ) -> Result<crate::http::models::InvoiceWrap, Error<CancelError>> {
     let local_var_configuration = configuration;
@@ -315,9 +317,11 @@ pub async fn cancel(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -342,7 +346,7 @@ pub async fn cancel(
 
 /// An endpoint for creating an invoice. While it is possible to create an invoice without rows, we encourage you to add them if you can.  Omitted values in the payload will be supplied by Predefined values which can be edited in the Fortnox account settings.  Note that Predefined values will always be overwritten by values provided through the API.   Should you have EasyVat enabled, it is mandatory to provide an account in the request should you use a custom VAT rate.   This endpoint can produce errors, some of which may only be relevant for EasyVat. Refer to the table below.  <table>  <caption>Errors that can be raised by this endpoint.</caption>    <tr>     <th>Error Code</th>     <th>HTTP Code</th>     <th>Description</th>     <th>Solution</th>    </tr>    <tr>     <td>2004167</td>     <td>400</td>     <td>An account must be provided when using a custom VAT rate and EasyVat has been enabled.</td>     <td>Supply each row which has a custom VAT rate with an account.</td>    </tr>  </table>   Note: The <b>EuQuarterlyReport</b> property will become obsolete at 2021-12-01.  This property is currently used by the <b>Quarterly</b> report as one of the conditions that determine if an invoice  should be included in the report or not.  A new version of the <b>Quarterly</b> report is released at 2021-12-01. In the new report, this property will not be  used when determining if an invoice should be included in the report or not, with one exception: if the invoice  is created before 2021-12-01, and this property is false, the invoice will be excluded from the report.  For invoices created 2021-12-01 and later, this property will have no effect.
 pub async fn create_invoices_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: CreateInvoicesResourceParams,
 ) -> Result<crate::http::models::InvoiceWrap, Error<CreateInvoicesResourceError>> {
     let local_var_configuration = configuration;
@@ -356,9 +360,11 @@ pub async fn create_invoices_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&invoice_payload);
 
@@ -384,7 +390,7 @@ pub async fn create_invoices_resource(
 
 /// The created credit invoice will be referenced in the property CreditInvoiceReference.
 pub async fn credit(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: CreditParams,
 ) -> Result<crate::http::models::InvoiceWrap, Error<CreditError>> {
     let local_var_configuration = configuration;
@@ -402,9 +408,11 @@ pub async fn credit(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -428,7 +436,7 @@ pub async fn credit(
 }
 
 pub async fn e_invoice(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: EInvoiceParams,
 ) -> Result<crate::http::models::InvoiceWrap, Error<EInvoiceError>> {
     let local_var_configuration = configuration;
@@ -446,9 +454,11 @@ pub async fn e_invoice(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -472,7 +482,7 @@ pub async fn e_invoice(
 }
 
 pub async fn e_print(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: EPrintParams,
 ) -> Result<crate::http::models::InvoiceWrap, Error<EPrintError>> {
     let local_var_configuration = configuration;
@@ -490,9 +500,11 @@ pub async fn e_print(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -517,7 +529,7 @@ pub async fn e_print(
 
 /// You can use the properties in the EmailInformation to customize the e-mail message on each invoice.
 pub async fn email(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: EmailParams,
 ) -> Result<crate::http::models::InvoiceWrap, Error<EmailError>> {
     let local_var_configuration = configuration;
@@ -535,9 +547,11 @@ pub async fn email(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -562,7 +576,7 @@ pub async fn email(
 
 /// Use this endpoint to set invoice as sent, without generating an invoice.
 pub async fn external_print(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: ExternalPrintParams,
 ) -> Result<crate::http::models::InvoiceWrap, Error<ExternalPrintError>> {
     let local_var_configuration = configuration;
@@ -580,9 +594,11 @@ pub async fn external_print(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -607,7 +623,7 @@ pub async fn external_print(
 }
 
 pub async fn get_invoices_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetInvoicesResourceParams,
 ) -> Result<crate::http::models::InvoiceWrap, Error<GetInvoicesResourceError>> {
     let local_var_configuration = configuration;
@@ -625,9 +641,11 @@ pub async fn get_invoices_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -652,7 +670,7 @@ pub async fn get_invoices_resource(
 }
 
 pub async fn list_invoices_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: ListInvoicesResourceParams,
 ) -> Result<crate::http::models::InvoiceListItemWrap, Error<ListInvoicesResourceError>> {
     let local_var_configuration = configuration;
@@ -804,9 +822,11 @@ pub async fn list_invoices_resource(
         local_var_req_builder =
             local_var_req_builder.query(&[("sortby", &local_var_str.to_string())]);
     }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -832,7 +852,7 @@ pub async fn list_invoices_resource(
 
 /// The difference between this and the print-endpoint is that property Sent is not set to TRUE.
 pub async fn preview(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: PreviewParams,
 ) -> Result<String, Error<PreviewError>> {
     let local_var_configuration = configuration;
@@ -850,9 +870,11 @@ pub async fn preview(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -876,7 +898,7 @@ pub async fn preview(
 }
 
 pub async fn print(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: PrintParams,
 ) -> Result<Vec<u8>, Error<PrintError>> {
     let local_var_configuration = configuration;
@@ -894,9 +916,11 @@ pub async fn print(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -918,7 +942,7 @@ pub async fn print(
 }
 
 pub async fn print_reminder(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: PrintReminderParams,
 ) -> Result<String, Error<PrintReminderError>> {
     let local_var_configuration = configuration;
@@ -936,9 +960,11 @@ pub async fn print_reminder(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -964,7 +990,7 @@ pub async fn print_reminder(
 
 /// Note that there are two approaches for updating the rows on an invoice.   If RowId is not specified on any row, the rows will be mapped and updated in the order in which they are set in the array. All rows that should remain on the invoice needs to be provided.   If RowId is specified on one or more rows the following goes: Corresponding row with that id will be updated. The rows without RowId will be interpreted as new rows. If a row should not be updated but remain on the invoice then specify only RowId like { \"RowId\": 123 }, otherwise it will be removed. Note that new RowIds are generated for all rows every time an invoice is updated.   Note: The <b>EuQuarterlyReport</b> property will become obsolete at 2021-12-01.  This property is currently used by the <b>Quarterly</b> report as one of the conditions that determine if an invoice  should be included in the report or not.  A new version of the <b>Quarterly</b> report is released at 2021-12-01. In the new report, this property will not be  used when determining if an invoice should be included in the report or not, with one exception: if the invoice  is created before 2021-12-01, and this property is false, the invoice will be excluded from the report.  For invoices created 2021-12-01 and later, this property will have no effect.
 pub async fn update_invoices_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: UpdateInvoicesResourceParams,
 ) -> Result<crate::http::models::InvoiceWrap, Error<UpdateInvoicesResourceError>> {
     let local_var_configuration = configuration;
@@ -983,9 +1009,11 @@ pub async fn update_invoices_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&invoice_payload);
 
@@ -1012,7 +1040,7 @@ pub async fn update_invoices_resource(
 
 /// Used for marking a document as ready in the warehouse module. DeliveryState needs to be set to &quot;delivery&quot;.
 pub async fn warehouse_ready(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: WarehouseReadyParams,
 ) -> Result<crate::http::models::InvoiceWrap, Error<WarehouseReadyError>> {
     let local_var_configuration = configuration;
@@ -1030,9 +1058,11 @@ pub async fn warehouse_ready(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;

@@ -72,7 +72,7 @@ pub enum UpdateAttendanceTransactionsResourceError {
 }
 
 pub async fn create_attendance_transactions_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: CreateAttendanceTransactionsResourceParams,
 ) -> Result<
     crate::http::models::AttendanceTransactionWrap,
@@ -92,9 +92,11 @@ pub async fn create_attendance_transactions_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&attendance_transaction);
 
@@ -121,7 +123,7 @@ pub async fn create_attendance_transactions_resource(
 
 /// Retrieves a specific transaction
 pub async fn get_attendance_transactions_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetAttendanceTransactionsResourceParams,
 ) -> Result<
     crate::http::models::AttendanceTransactionWrap,
@@ -142,9 +144,11 @@ pub async fn get_attendance_transactions_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -170,7 +174,7 @@ pub async fn get_attendance_transactions_resource(
 
 /// Supports query-string parameters <strong>employeeid</strong> and <strong>date</strong> for filtering the result.
 pub async fn list_attendance_transactions_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: ListAttendanceTransactionsResourceParams,
 ) -> Result<
     crate::http::models::AttendanceTransactionListItemList,
@@ -199,9 +203,11 @@ pub async fn list_attendance_transactions_resource(
         local_var_req_builder =
             local_var_req_builder.query(&[("date", &local_var_str.to_string())]);
     }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -226,7 +232,7 @@ pub async fn list_attendance_transactions_resource(
 }
 
 pub async fn update_attendance_transactions_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: UpdateAttendanceTransactionsResourceParams,
 ) -> Result<
     crate::http::models::AttendanceTransactionWrap,
@@ -248,9 +254,11 @@ pub async fn update_attendance_transactions_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&attendance_transaction);
 

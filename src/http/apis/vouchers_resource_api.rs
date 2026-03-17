@@ -77,7 +77,7 @@ pub enum ListVouchersResourceError {
 
 /// The created voucher will be returned if everything succeeded, if there was any problems an error will be returned.  If no query param is used the voucher will be created in the preselected financial year. Go to the financialyears endpoint to read on how to retreive the Financial year id.
 pub async fn create_vouchers_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: CreateVouchersResourceParams,
 ) -> Result<crate::http::models::VoucherWrap, Error<CreateVouchersResourceError>> {
     let local_var_configuration = configuration;
@@ -96,9 +96,11 @@ pub async fn create_vouchers_resource(
         local_var_req_builder =
             local_var_req_builder.query(&[("financialyear", &local_var_str.to_string())]);
     }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&voucher);
 
@@ -124,7 +126,7 @@ pub async fn create_vouchers_resource(
 }
 
 pub async fn get_vouchers_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetVouchersResourceParams,
 ) -> Result<crate::http::models::VoucherWrap, Error<GetVouchersResourceError>> {
     let local_var_configuration = configuration;
@@ -149,9 +151,11 @@ pub async fn get_vouchers_resource(
         local_var_req_builder =
             local_var_req_builder.query(&[("financialyear", &local_var_str.to_string())]);
     }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -176,7 +180,7 @@ pub async fn get_vouchers_resource(
 }
 
 pub async fn list_series(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: ListSeriesParams,
 ) -> Result<crate::http::models::VoucherListItemList, Error<ListSeriesError>> {
     let local_var_configuration = configuration;
@@ -199,9 +203,11 @@ pub async fn list_series(
         local_var_req_builder =
             local_var_req_builder.query(&[("financialyear", &local_var_str.to_string())]);
     }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -227,7 +233,7 @@ pub async fn list_series(
 
 /// Note that vouchers have two keys, one for voucher series and one for voucher number. The financial year is also specified for each voucher, this is due to the same voucher series and number is used each year.  To get a unique voucher you need the voucher series, the voucher number and the financial year. These properties will always be returned where ever vouchers is used.
 pub async fn list_vouchers_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: ListVouchersResourceParams,
 ) -> Result<crate::http::models::VoucherListItemList, Error<ListVouchersResourceError>> {
     let local_var_configuration = configuration;
@@ -245,9 +251,11 @@ pub async fn list_vouchers_resource(
         local_var_req_builder =
             local_var_req_builder.query(&[("financialyear", &local_var_str.to_string())]);
     }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;

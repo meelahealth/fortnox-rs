@@ -133,7 +133,7 @@ pub enum UpdatePricesResource1Error {
 }
 
 pub async fn create_prices_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: CreatePricesResourceParams,
 ) -> Result<crate::http::models::PriceWrap, Error<CreatePricesResourceError>> {
     let local_var_configuration = configuration;
@@ -147,9 +147,11 @@ pub async fn create_prices_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&price);
 
@@ -175,7 +177,7 @@ pub async fn create_prices_resource(
 }
 
 pub async fn get_first_price(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetFirstPriceParams,
 ) -> Result<crate::http::models::PriceWrap, Error<GetFirstPriceError>> {
     let local_var_configuration = configuration;
@@ -195,9 +197,11 @@ pub async fn get_first_price(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -222,7 +226,7 @@ pub async fn get_first_price(
 }
 
 pub async fn get_prices_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetPricesResourceParams,
 ) -> Result<crate::http::models::PriceWrap, Error<GetPricesResourceError>> {
     let local_var_configuration = configuration;
@@ -244,9 +248,11 @@ pub async fn get_prices_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -272,7 +278,7 @@ pub async fn get_prices_resource(
 
 /// The list contains a slimmer version of the prices. To get a full entity, use the GET with a price list, article number and from quantity.
 pub async fn list_prices_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: ListPricesResourceParams,
 ) -> Result<crate::http::models::PriceListItemList, Error<ListPricesResourceError>> {
     let local_var_configuration = configuration;
@@ -292,9 +298,11 @@ pub async fn list_prices_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -319,7 +327,7 @@ pub async fn list_prices_resource(
 }
 
 pub async fn remove_prices_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: RemovePricesResourceParams,
 ) -> Result<(), Error<RemovePricesResourceError>> {
     let local_var_configuration = configuration;
@@ -341,9 +349,11 @@ pub async fn remove_prices_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::DELETE, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -367,7 +377,7 @@ pub async fn remove_prices_resource(
 }
 
 pub async fn update_prices_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: UpdatePricesResourceParams,
 ) -> Result<crate::http::models::PriceWrap, Error<UpdatePricesResourceError>> {
     let local_var_configuration = configuration;
@@ -390,9 +400,11 @@ pub async fn update_prices_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&price);
 
@@ -418,7 +430,7 @@ pub async fn update_prices_resource(
 }
 
 pub async fn update_prices_resource1(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: UpdatePricesResource1Params,
 ) -> Result<crate::http::models::PriceWrap, Error<UpdatePricesResource1Error>> {
     let local_var_configuration = configuration;
@@ -439,9 +451,11 @@ pub async fn update_prices_resource1(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&price);
 

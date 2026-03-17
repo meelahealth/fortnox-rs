@@ -112,7 +112,7 @@ pub enum UpdateContractsResourceError {
 }
 
 pub async fn create_contracts_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: CreateContractsResourceParams,
 ) -> Result<crate::http::models::ContractWrap, Error<CreateContractsResourceError>> {
     let local_var_configuration = configuration;
@@ -126,9 +126,11 @@ pub async fn create_contracts_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&contract);
 
@@ -154,7 +156,7 @@ pub async fn create_contracts_resource(
 }
 
 pub async fn createinvoice(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: CreateinvoiceParams,
 ) -> Result<crate::http::models::InvoiceWrap, Error<CreateinvoiceError>> {
     let local_var_configuration = configuration;
@@ -172,9 +174,11 @@ pub async fn createinvoice(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -199,7 +203,7 @@ pub async fn createinvoice(
 }
 
 pub async fn finish(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: FinishParams,
 ) -> Result<crate::http::models::ContractWrap, Error<FinishError>> {
     let local_var_configuration = configuration;
@@ -217,9 +221,11 @@ pub async fn finish(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -243,7 +249,7 @@ pub async fn finish(
 }
 
 pub async fn get_contracts_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetContractsResourceParams,
 ) -> Result<crate::http::models::ContractWrap, Error<GetContractsResourceError>> {
     let local_var_configuration = configuration;
@@ -261,9 +267,11 @@ pub async fn get_contracts_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -288,7 +296,7 @@ pub async fn get_contracts_resource(
 }
 
 pub async fn increaseinvoicecount(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: IncreaseinvoicecountParams,
 ) -> Result<crate::http::models::ContractWrap, Error<IncreaseinvoicecountError>> {
     let local_var_configuration = configuration;
@@ -306,9 +314,11 @@ pub async fn increaseinvoicecount(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -333,7 +343,7 @@ pub async fn increaseinvoicecount(
 }
 
 pub async fn list_contracts_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: ListContractsResourceParams,
 ) -> Result<crate::http::models::ContractListItemList, Error<ListContractsResourceError>> {
     let local_var_configuration = configuration;
@@ -351,9 +361,11 @@ pub async fn list_contracts_resource(
         local_var_req_builder =
             local_var_req_builder.query(&[("filter", &local_var_str.to_string())]);
     }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -379,7 +391,7 @@ pub async fn list_contracts_resource(
 
 /// Note that there are two approaches for updating the rows on a contract.   If RowId is not specified on any row, the rows will be mapped and updated in the order in which they are set in the array. All rows that should remain on the contract needs to be provided.   If RowId is specified on one or more rows the following goes: Corresponding row with that id will be updated. The rows without RowId will be interpreted as new rows. If a row should not be updated but remain on the contract then specify only RowId like { \"RowId\": 123 }, otherwise it will be removed. Note that new RowIds are generated for all rows every time a contract is updated.
 pub async fn update_contracts_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: UpdateContractsResourceParams,
 ) -> Result<crate::http::models::ContractWrap, Error<UpdateContractsResourceError>> {
     let local_var_configuration = configuration;
@@ -398,9 +410,11 @@ pub async fn update_contracts_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&contract);
 

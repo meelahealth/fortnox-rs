@@ -86,7 +86,7 @@ pub enum UpdateCustomersResourceError {
 
 /// The created customer will be returned if everything succeeded, if there was any problems an error will be returned.
 pub async fn create_customers_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: CreateCustomersResourceParams,
 ) -> Result<crate::http::models::CustomerWrap, Error<CreateCustomersResourceError>> {
     let local_var_configuration = configuration;
@@ -100,9 +100,11 @@ pub async fn create_customers_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&customer);
 
@@ -129,7 +131,7 @@ pub async fn create_customers_resource(
 
 /// You need to supply the unique customer number that was returned when the customer was created or retrieved from the list of customers.
 pub async fn get_customers_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetCustomersResourceParams,
 ) -> Result<crate::http::models::CustomerWrap, Error<GetCustomersResourceError>> {
     let local_var_configuration = configuration;
@@ -147,9 +149,11 @@ pub async fn get_customers_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -175,7 +179,7 @@ pub async fn get_customers_resource(
 
 /// The customers are returned sorted by customer number with the lowest number appearing first.
 pub async fn list_customers_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: ListCustomersResourceParams,
 ) -> Result<crate::http::models::CustomerListItemList, Error<ListCustomersResourceError>> {
     let local_var_configuration = configuration;
@@ -193,9 +197,11 @@ pub async fn list_customers_resource(
         local_var_req_builder =
             local_var_req_builder.query(&[("filter", &local_var_str.to_string())]);
     }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -221,7 +227,7 @@ pub async fn list_customers_resource(
 
 /// Deletes the customer permanently. If everything succeeded the response will be of the type 204 \\u2013 No content and the response body will be empty. If there was any problems an error will be returned.  You need to supply the unique customer number of the customer that you want to delete.
 pub async fn remove_customers_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: RemoveCustomersResourceParams,
 ) -> Result<(), Error<RemoveCustomersResourceError>> {
     let local_var_configuration = configuration;
@@ -239,9 +245,11 @@ pub async fn remove_customers_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::DELETE, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -266,7 +274,7 @@ pub async fn remove_customers_resource(
 
 /// <p>The updated customer will be returned if everything succeeded, if there was any problems an error will be returned.</p>  <p>You need to supply the unique customer number of the customer that you want to update.</p>  <p>Only the properties provided in the request body will be updated, properties not provided will left unchanged.</p>
 pub async fn update_customers_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: UpdateCustomersResourceParams,
 ) -> Result<crate::http::models::CustomerWrap, Error<UpdateCustomersResourceError>> {
     let local_var_configuration = configuration;
@@ -285,9 +293,11 @@ pub async fn update_customers_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&customer);
 

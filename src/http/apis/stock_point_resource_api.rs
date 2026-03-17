@@ -135,7 +135,7 @@ pub enum UpdateError {
 
 /// Add new stock locations to specific <code>StockPoint</code>.   If you include an already existing stock location code, it will be ignored.
 pub async fn append_stock_locations(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: AppendStockLocationsParams,
 ) -> Result<Vec<crate::http::models::StockLocation>, Error<AppendStockLocationsError>> {
     let local_var_configuration = configuration;
@@ -154,9 +154,11 @@ pub async fn append_stock_locations(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&stock_locations);
 
@@ -183,7 +185,7 @@ pub async fn append_stock_locations(
 
 /// Both <code>code</code> and <code>name</code> are mandatory.   If you want to set a custom delivery address for this stock point,  you must remember to set <code>usingCompanyAddress</code> to <code>false</code>.   Returns 400 <code>alreadyexists</code> if a stock point with same code already exists.   Returns 400 <code>duplicatestocklocations</code> if two or more stock locations have the same code.
 pub async fn create(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: CreateParams,
 ) -> Result<crate::http::models::StockPoint, Error<CreateError>> {
     let local_var_configuration = configuration;
@@ -200,9 +202,11 @@ pub async fn create(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&stock_point);
 
@@ -228,7 +232,7 @@ pub async fn create(
 
 /// Note that it is not allowed to delete a stock point that is in use.
 pub async fn delete(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: DeleteParams,
 ) -> Result<crate::http::models::StockPoint, Error<DeleteError>> {
     let local_var_configuration = configuration;
@@ -246,9 +250,11 @@ pub async fn delete(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::DELETE, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -273,7 +279,7 @@ pub async fn delete(
 
 /// List stock points, optionally include a query parameter `q` to filter on stock point code or name.   Use query param `state` to filter on ACTIVE, INACTIVE or ALL (default is to include only ACTIVE stock points).   Stock locations are NOT included in the response.
 pub async fn get_all(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetAllParams,
 ) -> Result<Vec<crate::http::models::StockPoint>, Error<GetAllError>> {
     let local_var_configuration = configuration;
@@ -298,9 +304,11 @@ pub async fn get_all(
         local_var_req_builder =
             local_var_req_builder.query(&[("state", &local_var_str.to_string())]);
     }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -325,7 +333,7 @@ pub async fn get_all(
 
 /// Get stock point by id or code.
 pub async fn get_by_ambiguous_id(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetByAmbiguousIdParams,
 ) -> Result<crate::http::models::StockPoint, Error<GetByAmbiguousIdError>> {
     let local_var_configuration = configuration;
@@ -343,9 +351,11 @@ pub async fn get_by_ambiguous_id(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -371,7 +381,7 @@ pub async fn get_by_ambiguous_id(
 
 /// Get stock points by IDs.   Use query param `state` to filter on ACTIVE, INACTIVE or ALL (default is to include ALL stock points).   Stock locations are NOT included in the response.
 pub async fn get_many(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetManyParams,
 ) -> Result<Vec<crate::http::models::StockPoint>, Error<GetManyError>> {
     let local_var_configuration = configuration;
@@ -411,9 +421,11 @@ pub async fn get_many(
         local_var_req_builder =
             local_var_req_builder.query(&[("state", &local_var_str.to_string())]);
     }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -438,7 +450,7 @@ pub async fn get_many(
 
 /// List stock locations for a specific stock point.   Optionally include a query parameter `q` to filter on stock location code or name.
 pub async fn get_stock_locations_by_ambiguous_id(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetStockLocationsByAmbiguousIdParams,
 ) -> Result<Vec<crate::http::models::StockLocation>, Error<GetStockLocationsByAmbiguousIdError>> {
     let local_var_configuration = configuration;
@@ -460,9 +472,11 @@ pub async fn get_stock_locations_by_ambiguous_id(
     if let Some(ref local_var_str) = q {
         local_var_req_builder = local_var_req_builder.query(&[("q", &local_var_str.to_string())]);
     }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -488,7 +502,7 @@ pub async fn get_stock_locations_by_ambiguous_id(
 
 /// Remember to supply the complete representation of stock point including stock locations.
 pub async fn update(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: UpdateParams,
 ) -> Result<crate::http::models::StockPoint, Error<UpdateError>> {
     let local_var_configuration = configuration;
@@ -507,9 +521,11 @@ pub async fn update(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&stock_point);
 

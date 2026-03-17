@@ -5,9 +5,13 @@ pub mod http;
 pub mod id;
 
 pub use oauth2;
+use tokio::fs;
+use tokio::io::{AsyncReadExt, AsyncWriteExt};
 
+use std::collections::BTreeMap;
+use std::io;
 use std::path::{Path, PathBuf};
-use std::sync::LazyLock;
+use std::sync::{Arc, LazyLock};
 use std::time::Duration;
 
 use chrono::{DateTime, NaiveDate, Utc};
@@ -41,9 +45,8 @@ use oauth2::{
     EmptyExtraTokenFields, RedirectUrl, RefreshToken, RequestTokenError, Scope as OAuth2Scope,
     StandardErrorResponse, StandardTokenResponse, TokenResponse as _, TokenUrl,
 };
-use reqwest::header;
 use rust_decimal::Decimal;
-use tokio::sync::RwLock;
+use tokio::sync::{Mutex, MutexGuard};
 use url::Url;
 
 use crate::http::apis::customers_resource_api::ListCustomersResourceParams;
@@ -152,71 +155,39 @@ impl OAuthClient {
 
 pub struct Client {
     oauth_client: OAuthClient,
-    config: RwLock<Configuration>,
-    creds: RwLock<OAuthCredentials>,
+    creds: OAuthCredentials,
+    base_path: String,
+    client: reqwest::Client,
 }
 
-fn make_http_client(access_token: Option<&AccessToken>) -> reqwest::Client {
-    let mut headers = header::HeaderMap::new();
-
-    if let Some(access_token) = access_token.as_ref() {
-        headers.insert(
-            "Authorization",
-            header::HeaderValue::from_str(&format!("Bearer {}", access_token.secret())).unwrap(),
-        );
-    }
-
-    reqwest::Client::builder()
-        .default_headers(headers)
-        .build()
-        .unwrap()
+#[derive(Debug, thiserror::Error)]
+pub enum CheckTokenError {
+    #[error(transparent)]
+    Token(#[from] TokenError),
+    #[error(transparent)]
+    Io(#[from] io::Error),
 }
 
 impl Client {
-    async fn check_bearer_token(&self) -> Result<(), TokenError> {
-        // If the configuration is locked, it means the tokens are being refreshed right now.
-        let current_refresh_token = {
-            let creds = self.creds.read().await;
-            let Some(creds) = creds.data.as_ref() else {
-                return Ok(());
-            };
-
-            let Some(expires_at) = creds.expires_at.as_ref() else {
-                return Ok(());
-            };
-
-            if &Utc::now() < expires_at {
-                return Ok(());
-            }
-
-            if let Some(refresh_token) = creds.refresh_token.clone() {
-                refresh_token
-            } else {
-                return Ok(());
-            }
-        };
-
-        let mut creds_parent = self.creds.write().await;
-        let Some(creds) = creds_parent.data.as_mut() else {
-            return Ok(());
-        };
-
-        // It was updated by another task.
-        let Some(refresh_token) = creds.refresh_token.take() else {
-            return Ok(());
-        };
-
-        if current_refresh_token.secret() != refresh_token.secret() {
+    async fn check_bearer_token(&self) -> Result<(), CheckTokenError> {
+        if !self.creds.expired().await {
             return Ok(());
         }
 
-        // We're the responsible task. Time to refresh.
+        let mut creds = self.creds.lock().await;
+        if !creds.expired() {
+            // Updated elsewhere
+            return Ok(());
+        }
+        let Some(refresh_token) = creds.refresh_token else {
+            // No refresh token, let request fail
+            return Ok(());
+        };
+
         let res = self
             .oauth_client
             .exchange_refresh_token(&refresh_token)
             .await?;
-
-        self.config.write().await.client = make_http_client(Some(res.access_token()));
 
         creds.access_token = Some(res.access_token().clone());
         creds.refresh_token = res.refresh_token().cloned();
@@ -225,30 +196,32 @@ impl Client {
             .map(|x| chrono::Duration::seconds(x.as_secs() as i64 - 90))
             .map(|x| Utc::now() + x);
 
-        creds_parent.save().unwrap();
+        creds.save().await?;
 
         Ok(())
     }
 
     pub fn new(oauth_client: OAuthClient, creds: OAuthCredentials) -> Self {
-        let config = Configuration {
-            base_path: "https://api.fortnox.se".to_string(),
-            user_agent: Some(format!("fortnox-rs/{}", env!("CARGO_PKG_VERSION"))),
-            client: make_http_client(creds.data.as_ref().and_then(|x| x.access_token.as_ref())),
-        };
+        let client = reqwest::ClientBuilder::new()
+            .user_agent(format!("fortnox-rs/{}", env!("CARGO_PKG_VERSION")))
+            .build()
+            .unwrap();
 
         Self {
             oauth_client,
-            config: RwLock::from(config),
-            creds: RwLock::from(creds),
+            creds,
+            base_path: "https://api.fortnox.se".to_string(),
+            client,
         }
     }
 
-    pub async fn set_credentials(&self, creds: OAuthCredentialsData) -> Result<(), std::io::Error> {
-        let mut guard = self.creds.write().await;
-        guard.data = Some(creds);
-        guard.save()?;
-        Ok(())
+    async fn config<'a>(&'a self) -> Configuration<'a> {
+        let access_token = self.creds.access_token().await;
+        Configuration {
+            base_path: &self.base_path,
+            access_token,
+            client: self.client.clone(),
+        }
     }
 
     pub async fn list_customers(
@@ -258,7 +231,7 @@ impl Client {
 
         fortnox_ratelimit_wait().await;
         let result = http::apis::customers_resource_api::list_customers_resource(
-            &*self.config.read().await,
+            &self.config().await,
             ListCustomersResourceParams { filter: None },
         )
         .await?;
@@ -278,7 +251,7 @@ impl Client {
 
         fortnox_ratelimit_wait().await;
         let result = http::apis::customers_resource_api::get_customers_resource(
-            &*self.config.read().await,
+            &self.config().await,
             GetCustomersResourceParams {
                 customer_number: id.as_ref().to_string(),
             },
@@ -315,7 +288,7 @@ impl Client {
 
         fortnox_ratelimit_wait().await;
         let result = http::apis::customers_resource_api::create_customers_resource(
-            &*self.config.read().await,
+            &self.config().await,
             CreateCustomersResourceParams {
                 customer: Some(CustomerWrap {
                     customer: Box::new(Customer {
@@ -356,7 +329,7 @@ impl Client {
 
         fortnox_ratelimit_wait().await;
         let result = http::apis::suppliers_resource_api::get_suppliers_resource(
-            &*self.config.read().await,
+            &self.config().await,
             GetSuppliersResourceParams {
                 supplier_number: supplier_id.to_string(),
             },
@@ -374,7 +347,7 @@ impl Client {
 
         fortnox_ratelimit_wait().await;
         let result = http::apis::supplier_invoices_resource_api::get_supplier_invoices_resource(
-            &*self.config.read().await,
+            &self.config().await,
             GetSupplierInvoicesResourceParams { given_number },
         )
         .await?;
@@ -397,7 +370,7 @@ impl Client {
 
         fortnox_ratelimit_wait().await;
         let result = http::apis::customers_resource_api::create_customers_resource(
-            &*self.config.read().await,
+            &self.config().await,
             CreateCustomersResourceParams {
                 customer: Some(CustomerWrap {
                     customer: Box::new(Customer {
@@ -441,7 +414,7 @@ impl Client {
 
         fortnox_ratelimit_wait().await;
         let result = http::apis::suppliers_resource_api::create_suppliers_resource(
-            &*self.config.read().await,
+            &self.config().await,
             CreateSuppliersResourceParams {
                 supplier: Some(SupplierWrap {
                     supplier: Box::new(Supplier {
@@ -482,7 +455,7 @@ impl Client {
 
         fortnox_ratelimit_wait().await;
         let result = http::apis::supplier_invoices_resource_api::create_supplier_invoices_resource(
-            &*self.config.read().await,
+            &self.config().await,
             CreateSupplierInvoicesResourceParams {
                 supplier_invoice: Some(SupplierInvoiceWrap {
                     supplier_invoice: Box::new(SupplierInvoice {
@@ -542,7 +515,7 @@ impl Client {
 
         fortnox_ratelimit_wait().await;
         let result = http::apis::customers_resource_api::update_customers_resource(
-            &*self.config.read().await,
+            &self.config().await,
             UpdateCustomersResourceParams {
                 customer_number: id.as_ref().to_string(),
                 customer: CustomerWrap {
@@ -582,7 +555,7 @@ impl Client {
 
         fortnox_ratelimit_wait().await;
         let result = http::apis::invoices_resource_api::bookkeep_invoices_resource(
-            &*self.config.read().await,
+            &self.config().await,
             BookkeepInvoicesResourceParams {
                 document_number: invoice_id.to_string(),
             },
@@ -600,7 +573,7 @@ impl Client {
 
         fortnox_ratelimit_wait().await;
         let result = http::apis::invoices_resource_api::get_invoices_resource(
-            &*self.config.read().await,
+            &self.config().await,
             GetInvoicesResourceParams {
                 document_number: invoice_id.to_string(),
             },
@@ -615,7 +588,7 @@ impl Client {
 
         fortnox_ratelimit_wait().await;
         let result = http::apis::invoices_resource_api::credit(
-            &*self.config.read().await,
+            &self.config().await,
             CreditParams {
                 document_number: invoice_id.to_string(),
             },
@@ -633,7 +606,7 @@ impl Client {
 
         fortnox_ratelimit_wait().await;
         let result = http::apis::invoices_resource_api::external_print(
-            &*self.config.read().await,
+            &self.config().await,
             ExternalPrintParams {
                 document_number: invoice_id.to_string(),
             },
@@ -651,7 +624,7 @@ impl Client {
 
         fortnox_ratelimit_wait().await;
         let result = http::apis::invoices_resource_api::print(
-            &*self.config.read().await,
+            &self.config().await,
             PrintParams {
                 document_number: invoice_id.to_string(),
             },
@@ -670,7 +643,7 @@ impl Client {
 
         fortnox_ratelimit_wait().await;
         let result = http::apis::invoices_resource_api::list_invoices_resource(
-            &*self.config.read().await,
+            &self.config().await,
             ListInvoicesResourceParams {
                 customernumber: Some(customer_id.to_string()),
                 externalinvoicereference1: external_invoice_reference1.map(str::to_string),
@@ -699,7 +672,7 @@ impl Client {
 
         fortnox_ratelimit_wait().await;
         let result = http::apis::invoices_resource_api::email(
-            &*self.config.read().await,
+            &self.config().await,
             EmailParams {
                 document_number: invoice_id.to_string(),
             },
@@ -717,7 +690,7 @@ impl Client {
 
         fortnox_ratelimit_wait().await;
         let result = http::apis::invoice_payments_resource_api::bookkeep(
-            &*self.config.read().await,
+            &self.config().await,
             BookkeepParams {
                 number: invoice_payment.number.unwrap().to_string(),
                 invoice_payment: Some(InvoicePaymentWrap {
@@ -738,7 +711,7 @@ impl Client {
 
         fortnox_ratelimit_wait().await;
         let result = http::apis::invoice_payments_resource_api::create_invoice_payments_resource(
-            &*self.config.read().await,
+            &self.config().await,
             CreateInvoicePaymentsResourceParams {
                 invoice_payment: Some(InvoicePaymentWrap {
                     invoice_payment: Some(Box::new(payload.clone())),
@@ -758,7 +731,7 @@ impl Client {
 
         fortnox_ratelimit_wait().await;
         let result = http::apis::invoices_resource_api::create_invoices_resource(
-            &*self.config.read().await,
+            &self.config().await,
             CreateInvoicesResourceParams {
                 invoice_payload: Some(InvoicePayloadWrap {
                     invoice: Some(Box::new(payload.clone())),
@@ -778,7 +751,7 @@ impl Client {
 
         fortnox_ratelimit_wait().await;
         let result = http::apis::invoices_resource_api::create_invoices_resource(
-            &*self.config.read().await,
+            &self.config().await,
             CreateInvoicesResourceParams {
                 invoice_payload: Some(InvoicePayloadWrap {
                     invoice: Some(Box::new(InvoicePayload {
@@ -808,7 +781,7 @@ impl Client {
                         terms_of_payment: details.payment_terms.clone(),
                         remarks: details.comment.clone(),
                         your_reference: details.your_reference.clone(),
-                        language: details.language.clone(),
+                        language: details.language,
                         currency: details.currency.clone(),
                         external_invoice_reference1: details.external_invoice_reference1.clone(),
                         ..Default::default()
@@ -830,7 +803,7 @@ impl Client {
 
         fortnox_ratelimit_wait().await;
         let result = http::apis::invoices_resource_api::update_invoices_resource(
-            &*self.config.read().await,
+            &self.config().await,
             UpdateInvoicesResourceParams {
                 document_number: invoice_id.to_string(),
                 invoice_payload: Some(InvoicePayloadWrap {
@@ -845,7 +818,7 @@ impl Client {
                         terms_of_payment: details.payment_terms.clone(),
                         remarks: details.comment.clone(),
                         your_reference: details.your_reference.clone(),
-                        language: details.language.clone(),
+                        language: details.language,
                         currency: details.currency.clone(),
                         ..Default::default()
                     })),
@@ -1053,44 +1026,105 @@ impl From<VatSE> for i32 {
 #[derive(Debug, Clone)]
 pub struct OAuthCredentials {
     pub persistence_path: PathBuf,
-    pub data: Option<OAuthCredentialsData>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct OAuthCredentialsData {
-    pub access_token: Option<AccessToken>,
-    pub refresh_token: Option<RefreshToken>,
+    pub access_token: Option<Arc<AccessToken>>,
     pub expires_at: Option<DateTime<Utc>>,
+    pub refresh_token: Option<RefreshToken>,
 }
 
-impl OAuthCredentials {
-    pub fn save(&self) -> Result<(), std::io::Error> {
-        if let Some(data) = self.data.as_ref() {
-            let file = std::fs::File::create(&self.persistence_path)?;
-            serde_json::to_writer_pretty(file, data)?;
-        }
-        Ok(())
+pub struct OAuthCredentialsGuard<'a> {
+    guard: MutexGuard<'a, CredentialStore>,
+    path: &'a Path,
+    pub access_token: Option<AccessToken>,
+    pub expires_at: Option<DateTime<Utc>>,
+    pub refresh_token: Option<RefreshToken>,
+}
+
+impl OAuthCredentialsGuard<'_> {
+    pub fn expired(&self) -> bool {
+        self.expires_at
+            .is_none_or(|expires_at| expires_at <= Utc::now())
     }
 
-    pub fn load<P: AsRef<Path>>(path: P) -> Result<Self, std::io::Error> {
-        let file = match std::fs::File::open(path.as_ref()) {
-            Ok(v) => v,
-            Err(e) => match e.kind() {
-                std::io::ErrorKind::NotFound => {
-                    return Ok(OAuthCredentials {
-                        persistence_path: path.as_ref().to_path_buf(),
-                        data: None,
-                    })
-                }
-                _ => return Err(e),
-            },
+    pub async fn save(self) -> Result<(), std::io::Error> {
+        let Self {
+            mut guard,
+            path,
+            access_token,
+            expires_at,
+            refresh_token,
+        } = self;
+
+        let data = OAuthCredentialsData {
+            access_token: access_token.map(Arc::new),
+            expires_at,
+            refresh_token,
         };
 
-        let data: OAuthCredentialsData = serde_json::from_reader(file)?;
+        let buf = serde_json::to_vec_pretty(&data)?;
+        fs::File::create(path).await?.write_all(&buf).await?;
+
+        guard.insert(path.to_path_buf(), data);
+
+        Ok(())
+    }
+}
+
+type CredentialStore = BTreeMap<PathBuf, OAuthCredentialsData>;
+
+static CREDENTIALS_STORE: LazyLock<Mutex<CredentialStore>> =
+    LazyLock::new(|| Mutex::new(BTreeMap::new()));
+
+impl OAuthCredentials {
+    pub async fn load<P: AsRef<Path>>(path: P) -> Result<Self, std::io::Error> {
+        let mut store = CREDENTIALS_STORE.lock().await;
+
+        let path = path.as_ref();
+        if !store.contains_key(path) && path.try_exists()? {
+            let mut buf = Vec::new();
+            fs::File::open(path).await?.read_to_end(&mut buf).await?;
+            let data: OAuthCredentialsData = serde_json::from_slice(&buf)?;
+
+            store.insert(path.to_path_buf(), data);
+        }
+
         Ok(OAuthCredentials {
-            persistence_path: path.as_ref().to_path_buf(),
-            data: Some(data),
+            persistence_path: path.to_path_buf(),
         })
+    }
+
+    pub async fn expired(&self) -> bool {
+        let store = CREDENTIALS_STORE.lock().await;
+        store
+            .get(&self.persistence_path)
+            .and_then(|c| c.expires_at)
+            .is_none_or(|expires_at| expires_at <= Utc::now())
+    }
+
+    pub async fn access_token(&self) -> Option<Arc<AccessToken>> {
+        let store = CREDENTIALS_STORE.lock().await;
+        store
+            .get(&self.persistence_path)
+            .and_then(|c| c.access_token.clone())
+    }
+
+    pub async fn lock<'a>(&'a self) -> OAuthCredentialsGuard<'a> {
+        let store = CREDENTIALS_STORE.lock().await;
+        let data = store.get(&self.persistence_path);
+        let access_token = data.and_then(|c| c.access_token.as_deref()).cloned();
+        let expires_at = data.and_then(|c| c.expires_at);
+        let refresh_token = data.and_then(|c| c.refresh_token.clone());
+
+        OAuthCredentialsGuard {
+            guard: store,
+            path: &self.persistence_path,
+            access_token,
+            expires_at,
+            refresh_token,
+        }
     }
 }
 

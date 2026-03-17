@@ -54,7 +54,7 @@ pub enum GetByIdError {
 }
 
 pub async fn create_financial_years_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: CreateFinancialYearsResourceParams,
 ) -> Result<crate::http::models::FinancialYearWrap, Error<CreateFinancialYearsResourceError>> {
     let local_var_configuration = configuration;
@@ -68,9 +68,11 @@ pub async fn create_financial_years_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&financial_year);
 
@@ -97,7 +99,7 @@ pub async fn create_financial_years_resource(
 
 /// Add the query param to filter on specific date.
 pub async fn get_by_date(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetByDateParams,
 ) -> Result<crate::http::models::FinancialYearWrapList, Error<GetByDateError>> {
     let local_var_configuration = configuration;
@@ -115,9 +117,11 @@ pub async fn get_by_date(
         local_var_req_builder =
             local_var_req_builder.query(&[("Date", &local_var_str.to_string())]);
     }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -142,7 +146,7 @@ pub async fn get_by_date(
 }
 
 pub async fn get_by_id(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetByIdParams,
 ) -> Result<crate::http::models::FinancialYearWrap, Error<GetByIdError>> {
     let local_var_configuration = configuration;
@@ -160,9 +164,11 @@ pub async fn get_by_id(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;

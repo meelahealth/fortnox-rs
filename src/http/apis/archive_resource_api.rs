@@ -93,7 +93,7 @@ pub enum UploadFileError {
 
 /// Providing fileId will return given file from fileattachments.
 pub async fn get_file_by_id(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetFileByIdParams,
 ) -> Result<String, Error<GetFileByIdError>> {
     let local_var_configuration = configuration;
@@ -116,9 +116,11 @@ pub async fn get_file_by_id(
         local_var_req_builder =
             local_var_req_builder.query(&[("fileid", &local_var_str.to_string())]);
     }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -144,7 +146,7 @@ pub async fn get_file_by_id(
 
 /// If no path is provided the root will be returned.  Providing fileId will return given file from fileattachments.
 pub async fn get_folder(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetFolderParams,
 ) -> Result<crate::http::models::FolderWrap, Error<GetFolderError>> {
     let local_var_configuration = configuration;
@@ -167,9 +169,11 @@ pub async fn get_folder(
         local_var_req_builder =
             local_var_req_builder.query(&[("fileid", &local_var_str.to_string())]);
     }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -194,7 +198,7 @@ pub async fn get_folder(
 }
 
 pub async fn remove_by_id(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: RemoveByIdParams,
 ) -> Result<(), Error<RemoveByIdError>> {
     let local_var_configuration = configuration;
@@ -212,9 +216,11 @@ pub async fn remove_by_id(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::DELETE, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -239,7 +245,7 @@ pub async fn remove_by_id(
 
 /// Please note that removing a folder will also resulting in removal of all the contents within!
 pub async fn remove_by_path(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: RemoveByPathParams,
 ) -> Result<(), Error<RemoveByPathError>> {
     let local_var_configuration = configuration;
@@ -257,9 +263,11 @@ pub async fn remove_by_path(
         local_var_req_builder =
             local_var_req_builder.query(&[("path", &local_var_str.to_string())]);
     }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -284,7 +292,7 @@ pub async fn remove_by_path(
 
 /// If not path or folderId is provided, the file will be uploaded to the root directory.
 pub async fn upload_file(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: UploadFileParams,
 ) -> Result<crate::http::models::FolderFileRowWrap, Error<UploadFileError>> {
     let local_var_configuration = configuration;
@@ -308,9 +316,11 @@ pub async fn upload_file(
         local_var_req_builder =
             local_var_req_builder.query(&[("folderid", &local_var_str.to_string())]);
     }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     let mut local_var_form = reqwest::multipart::Form::new();
     if let Some(local_var_param_value) = file {

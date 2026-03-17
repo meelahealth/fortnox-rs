@@ -49,7 +49,7 @@ pub enum UpdatePredefinedAccountsResourceError {
 }
 
 pub async fn get_predefined_accounts_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetPredefinedAccountsResourceParams,
 ) -> Result<crate::http::models::PredefinedAccountWrap, Error<GetPredefinedAccountsResourceError>> {
     let local_var_configuration = configuration;
@@ -67,9 +67,11 @@ pub async fn get_predefined_accounts_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -94,7 +96,7 @@ pub async fn get_predefined_accounts_resource(
 }
 
 pub async fn list_predefined_accounts_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
 ) -> Result<crate::http::models::PredefinedAccountList, Error<ListPredefinedAccountsResourceError>>
 {
     let local_var_configuration = configuration;
@@ -110,9 +112,11 @@ pub async fn list_predefined_accounts_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -138,7 +142,7 @@ pub async fn list_predefined_accounts_resource(
 
 /// An endpoint for updating a Predefined Account. Predefined Accounts are identified by their <em>name</em>-field, and as such must be unique.  Some Predefined Accounts distinguish between Goods and Services.  In this case, the former retains the original name whereas the latter ends with a 2. Such as <em>SALES</em> and <em>SALES2</em>.  Accounts are chosen from the Account Registry, and if you have EasyVat enabled then the new EasyVat Predefined Accounts (<em>SALES_25_SE</em>, etc.) have certain restrictions on the accounts that can be selected.  Refer to the table below.   <table>      <caption>Account restrictions when EasyVat has been enabled.</caption>      <tr>          <th>Name</th>          <th>VAT Code</th>          <th>Restrictions</th>      </tr>      <tr>          <td>SALES_25_SE</td>          <td>MP1</td>          <td>Must have a compatible VAT Code.</td>      </tr>      <tr>          <td>SALES_12_SE</td>          <td>MP2</td>          <td>Must have a compatible VAT Code.</td>      </tr>      <tr>          <td>SALES_6_SE</td>          <td>MP3</td>          <td>Must have a compatible VAT Code.</td>      </tr>      <tr>          <td>SALES_0_SE</td>          <td>MF</td>          <td>Must have a compatible VAT Code.</td>      </tr>  </table>   This endpoint can produce errors, some of which may only be relevant for EasyVat. Refer to the table below.  <table>      <caption>Errors that can be raised by this endpoint.</caption>      <tr>          <th>Error Code</th>          <th>HTTP Code</th>          <th>Description</th>          <th>Solution</th>      </tr>      <tr>          <td>2001265</td>          <td>400</td>          <td>The provided account is invalid. It either has not been provided, does not exist, or is inactive.</td>          <td>Verify that an account has been provided and that it exists and is active.</td>      </tr>      <tr>          <td>2002462</td>          <td>400</td>          <td>The account is not in a valid format.</td>          <td>Verify that the format of the account is correct. It has to consist of 4 digits.</td>      </tr>      <tr>          <td>2000729</td>          <td>400</td>          <td>A Predefined Account has not been provided.</td>          <td>Verify that a valid Predefined Account has been provided as a PATH-parameter.</td>      </tr>      <tr>          <td>2004052</td>          <td>400</td>          <td>The provided account has an incompatible VAT Code. Only applies if EasyVat has been enabled.</td>          <td>Verify that the provided account has a VAT Code that is compatible with the selected Predefined Account. Refer to the table above for more information about compatibility.</td>      </tr>  </table>   If you have activated EasyVat, you can read more about how to use the new Predefined Accounts with your documents in their respective api documentation.
 pub async fn update_predefined_accounts_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: UpdatePredefinedAccountsResourceParams,
 ) -> Result<crate::http::models::PredefinedAccountWrap, Error<UpdatePredefinedAccountsResourceError>>
 {
@@ -158,9 +162,11 @@ pub async fn update_predefined_accounts_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&predefined_account);
 

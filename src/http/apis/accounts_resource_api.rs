@@ -77,7 +77,7 @@ pub enum UpdateAccountsResourceError {
 
 /// The created account will be returned if everything succeeded, if there was any problems an error will be returned.
 pub async fn create_accounts_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: CreateAccountsResourceParams,
 ) -> Result<crate::http::models::AccountSingleItemWrap, Error<CreateAccountsResourceError>> {
     let local_var_configuration = configuration;
@@ -96,9 +96,11 @@ pub async fn create_accounts_resource(
         local_var_req_builder =
             local_var_req_builder.query(&[("financialyear", &local_var_str.to_string())]);
     }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&account_payload);
 
@@ -125,7 +127,7 @@ pub async fn create_accounts_resource(
 
 /// Retrieves the details of an account. You need to supply the unique account number that was returned when the account was created or retrieved from the list of accounts.
 pub async fn get_accounts_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetAccountsResourceParams,
 ) -> Result<crate::http::models::AccountSingleItemWrap, Error<GetAccountsResourceError>> {
     let local_var_configuration = configuration;
@@ -143,9 +145,11 @@ pub async fn get_accounts_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -171,7 +175,7 @@ pub async fn get_accounts_resource(
 
 /// The accounts are returned sorted by account number with the lowest number appearing first.
 pub async fn list_accounts_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: ListAccountsResourceParams,
 ) -> Result<crate::http::models::AccountListItemWrap, Error<ListAccountsResourceError>> {
     let local_var_configuration = configuration;
@@ -198,9 +202,11 @@ pub async fn list_accounts_resource(
         local_var_req_builder =
             local_var_req_builder.query(&[("sortby", &local_var_str.to_string())]);
     }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -226,7 +232,7 @@ pub async fn list_accounts_resource(
 
 /// Updates the specified account with the values provided in the properties. Any property not provided will be left unchanged.  Note that even though the account number is writeable you can&acute;t change the number of an existing account.
 pub async fn update_accounts_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: UpdateAccountsResourceParams,
 ) -> Result<crate::http::models::AccountSingleItemWrap, Error<UpdateAccountsResourceError>> {
     let local_var_configuration = configuration;
@@ -250,9 +256,11 @@ pub async fn update_accounts_resource(
         local_var_req_builder =
             local_var_req_builder.query(&[("financialyear", &local_var_str.to_string())]);
     }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&account_payload);
 

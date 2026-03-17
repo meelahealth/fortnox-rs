@@ -140,7 +140,7 @@ pub enum UpdateSupplierInvoicesResourceError {
 }
 
 pub async fn approvalbookkeep(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: ApprovalbookkeepParams,
 ) -> Result<crate::http::models::SupplierInvoiceWrap, Error<ApprovalbookkeepError>> {
     let local_var_configuration = configuration;
@@ -158,9 +158,11 @@ pub async fn approvalbookkeep(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -185,7 +187,7 @@ pub async fn approvalbookkeep(
 }
 
 pub async fn approvalpayment(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: ApprovalpaymentParams,
 ) -> Result<crate::http::models::SupplierInvoiceWrap, Error<ApprovalpaymentError>> {
     let local_var_configuration = configuration;
@@ -203,9 +205,11 @@ pub async fn approvalpayment(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -230,7 +234,7 @@ pub async fn approvalpayment(
 }
 
 pub async fn bookkeep_supplier_invoices_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: BookkeepSupplierInvoicesResourceParams,
 ) -> Result<crate::http::models::SupplierInvoiceWrap, Error<BookkeepSupplierInvoicesResourceError>>
 {
@@ -249,9 +253,11 @@ pub async fn bookkeep_supplier_invoices_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -276,7 +282,7 @@ pub async fn bookkeep_supplier_invoices_resource(
 }
 
 pub async fn cancel_supplier_invoices_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: CancelSupplierInvoicesResourceParams,
 ) -> Result<crate::http::models::SupplierInvoiceWrap, Error<CancelSupplierInvoicesResourceError>> {
     let local_var_configuration = configuration;
@@ -294,9 +300,11 @@ pub async fn cancel_supplier_invoices_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -321,7 +329,7 @@ pub async fn cancel_supplier_invoices_resource(
 }
 
 pub async fn create_supplier_invoices_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: CreateSupplierInvoicesResourceParams,
 ) -> Result<crate::http::models::SupplierInvoiceWrap, Error<CreateSupplierInvoicesResourceError>> {
     let local_var_configuration = configuration;
@@ -335,9 +343,11 @@ pub async fn create_supplier_invoices_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&supplier_invoice);
 
@@ -364,7 +374,7 @@ pub async fn create_supplier_invoices_resource(
 
 /// The created credit invoice will be referenced in the property CreditReference.
 pub async fn credit_supplier_invoices_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: CreditSupplierInvoicesResourceParams,
 ) -> Result<crate::http::models::SupplierInvoiceWrap, Error<CreditSupplierInvoicesResourceError>> {
     let local_var_configuration = configuration;
@@ -382,9 +392,11 @@ pub async fn credit_supplier_invoices_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -409,7 +421,7 @@ pub async fn credit_supplier_invoices_resource(
 }
 
 pub async fn get_supplier_invoices_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetSupplierInvoicesResourceParams,
 ) -> Result<crate::http::models::SupplierInvoiceWrap, Error<GetSupplierInvoicesResourceError>> {
     let local_var_configuration = configuration;
@@ -427,9 +439,11 @@ pub async fn get_supplier_invoices_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -454,7 +468,7 @@ pub async fn get_supplier_invoices_resource(
 }
 
 pub async fn list_supplier_invoices_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: ListSupplierInvoicesResourceParams,
 ) -> Result<
     crate::http::models::SupplierInvoiceListItemWrap,
@@ -475,9 +489,11 @@ pub async fn list_supplier_invoices_resource(
         local_var_req_builder =
             local_var_req_builder.query(&[("filter", &local_var_str.to_string())]);
     }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -502,7 +518,7 @@ pub async fn list_supplier_invoices_resource(
 }
 
 pub async fn update_supplier_invoices_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: UpdateSupplierInvoicesResourceParams,
 ) -> Result<crate::http::models::SupplierInvoiceWrap, Error<UpdateSupplierInvoicesResourceError>> {
     let local_var_configuration = configuration;
@@ -521,9 +537,11 @@ pub async fn update_supplier_invoices_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&supplier_invoice);
 

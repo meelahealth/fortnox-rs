@@ -48,7 +48,7 @@ pub enum GetCustomDocumentTypeResourceError {
 
 /// Create type, if it doesn't already exists. Note that new custom document types are  created automatically when you create custom documents, so normally  you do not need to call this method.   Throws HTTP 400 <code>referenceTypeNotAllowed</code> if the name of the type is not allowed.
 pub async fn create_custom_document_type_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: CreateCustomDocumentTypeResourceParams,
 ) -> Result<i32, Error<CreateCustomDocumentTypeResourceError>> {
     let local_var_configuration = configuration;
@@ -65,9 +65,11 @@ pub async fn create_custom_document_type_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&custom_document_type);
 
@@ -93,7 +95,7 @@ pub async fn create_custom_document_type_resource(
 }
 
 pub async fn get_all_custom_document_type_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
 ) -> Result<
     Vec<crate::http::models::CustomDocumentType>,
     Error<GetAllCustomDocumentTypeResourceError>,
@@ -111,9 +113,11 @@ pub async fn get_all_custom_document_type_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -138,7 +142,7 @@ pub async fn get_all_custom_document_type_resource(
 }
 
 pub async fn get_custom_document_type_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetCustomDocumentTypeResourceParams,
 ) -> Result<crate::http::models::CustomDocumentType, Error<GetCustomDocumentTypeResourceError>> {
     let local_var_configuration = configuration;
@@ -152,9 +156,11 @@ pub async fn get_custom_document_type_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;

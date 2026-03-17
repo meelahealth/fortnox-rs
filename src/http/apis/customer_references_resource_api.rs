@@ -88,7 +88,7 @@ pub enum UpdateCustomerReferencesResourceError {
 
 /// </p>  <p>The created customer reference row will be returned if everything succeeded, if there was any problems an error will be returned.</p>
 pub async fn create_customer_references_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: CreateCustomerReferencesResourceParams,
 ) -> Result<crate::http::models::CustomerReferenceWrap, Error<CreateCustomerReferencesResourceError>>
 {
@@ -106,9 +106,11 @@ pub async fn create_customer_references_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&customer_reference_row);
 
@@ -135,7 +137,7 @@ pub async fn create_customer_references_resource(
 
 /// </p>  <p>You need to supply the unique customer reference row id that was returned when the customer reference row was created or retrieved from the list of customer reference rows.</p>
 pub async fn get_customer_references_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetCustomerReferencesResourceParams,
 ) -> Result<crate::http::models::CustomerReferenceWrap, Error<GetCustomerReferencesResourceError>> {
     let local_var_configuration = configuration;
@@ -153,9 +155,11 @@ pub async fn get_customer_references_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -181,7 +185,7 @@ pub async fn get_customer_references_resource(
 
 /// </p>
 pub async fn list_customer_references_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: ListCustomerReferencesResourceParams,
 ) -> Result<crate::http::models::CustomerReferenceWrap, Error<ListCustomerReferencesResourceError>>
 {
@@ -203,9 +207,11 @@ pub async fn list_customer_references_resource(
         local_var_req_builder =
             local_var_req_builder.query(&[("customer", &local_var_str.to_string())]);
     }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -231,7 +237,7 @@ pub async fn list_customer_references_resource(
 
 /// </p>  <p>Deletes the customer reference row permanently. If everything succeeded the response will be of the type 204, No content and the response body will be empty.</p>  <p>If there was any problems an error will be returned.</p>  <p>You need to supply the unique customer reference row id of the customer reference row that you want to delete.</p>
 pub async fn remove_customer_references_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: RemoveCustomerReferencesResourceParams,
 ) -> Result<(), Error<RemoveCustomerReferencesResourceError>> {
     let local_var_configuration = configuration;
@@ -249,9 +255,11 @@ pub async fn remove_customer_references_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::DELETE, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -276,7 +284,7 @@ pub async fn remove_customer_references_resource(
 
 /// </p>  <p>The updated customer reference row will be returned if everything succeeded, if there was any problems an error will be returned.</p>  <p>You need to supply the unique customer reference row id of the customer reference row that you want to update.</p>  <p>Only the properties provided in the request body will be updated, properties not provided will be left unchanged.</p>  <p>CustomerNumber cannot be changed by this request.</p>
 pub async fn update_customer_references_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: UpdateCustomerReferencesResourceParams,
 ) -> Result<crate::http::models::CustomerWrap, Error<UpdateCustomerReferencesResourceError>> {
     let local_var_configuration = configuration;
@@ -295,9 +303,11 @@ pub async fn update_customer_references_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&customer_reference_row);
 

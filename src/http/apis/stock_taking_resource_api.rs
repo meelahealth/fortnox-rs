@@ -251,7 +251,7 @@ pub enum VoidStockTakingError {
 
 /// Add rows to a stock taking.  If you add an already existing row noting happens.
 pub async fn add_stock_taking_rows(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: AddStockTakingRowsParams,
 ) -> Result<(), Error<AddStockTakingRowsError>> {
     let local_var_configuration = configuration;
@@ -270,9 +270,11 @@ pub async fn add_stock_taking_rows(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&rows);
 
@@ -298,7 +300,7 @@ pub async fn add_stock_taking_rows(
 
 /// Add all matching candidate rows to a stock taking, as specified by filters.
 pub async fn add_stock_taking_rows_by_filter(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: AddStockTakingRowsByFilterParams,
 ) -> Result<i32, Error<AddStockTakingRowsByFilterError>> {
     let local_var_configuration = configuration;
@@ -417,9 +419,11 @@ pub async fn add_stock_taking_rows_by_filter(
         local_var_req_builder =
             local_var_req_builder.query(&[("excludeNonInboundItems", &local_var_str.to_string())]);
     }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -445,7 +449,7 @@ pub async fn add_stock_taking_rows_by_filter(
 
 /// Create a new Stock Taking document.  The only mandatory fields are <code>name</code> and <code>responsible</code>.  <code>state</code> will be set to <code>planning</code> for a newly created document.   The <code>date</code>-field is not mandatory for documents in state <code>planning</code>.  However, when you update the state to <code>started</code> you have to provide a date.   <code>name</code> is a descriptive name of the stock taking.   <code>responsible</code> is the name of the responsible for the stock taking.   <code>rows</code> are added after creation by using the addRows-method.   <code>projectId</code> and <code>costCenterCode</code> are used for book-keeping, when the  Stock Taking document is released.   The field <code>usingStockPoints</code> is set from Warehouse system settings upon creation.  If multiple stockpoints is used, then the rows will be per item-stockPoint-stockLocation.  If multiple stockpoints is NOT used, then the rows will be per item-stockLocation.
 pub async fn create_stock_taking_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: CreateStockTakingResourceParams,
 ) -> Result<crate::http::models::StockTaking, Error<CreateStockTakingResourceError>> {
     let local_var_configuration = configuration;
@@ -462,9 +466,11 @@ pub async fn create_stock_taking_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&stock_taking);
 
@@ -491,7 +497,7 @@ pub async fn create_stock_taking_resource(
 
 /// Permanently deletes a Stock Taking document and its rows.   Only for documents in state <code>planning</code> and <code>started</code>.
 pub async fn delete_stock_taking(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: DeleteStockTakingParams,
 ) -> Result<(), Error<DeleteStockTakingError>> {
     let local_var_configuration = configuration;
@@ -509,9 +515,11 @@ pub async fn delete_stock_taking(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::DELETE, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -536,7 +544,7 @@ pub async fn delete_stock_taking(
 
 /// Remove single row by id from the Stock Taking document.
 pub async fn delete_stock_taking_row(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: DeleteStockTakingRowParams,
 ) -> Result<i32, Error<DeleteStockTakingRowError>> {
     let local_var_configuration = configuration;
@@ -555,9 +563,11 @@ pub async fn delete_stock_taking_row(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::DELETE, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -583,7 +593,7 @@ pub async fn delete_stock_taking_row(
 
 /// Remove all rows matching the filter parameters from the Stock Taking document.
 pub async fn delete_stock_taking_row_by_filter(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: DeleteStockTakingRowByFilterParams,
 ) -> Result<i32, Error<DeleteStockTakingRowByFilterError>> {
     let local_var_configuration = configuration;
@@ -697,9 +707,11 @@ pub async fn delete_stock_taking_row_by_filter(
         local_var_req_builder =
             local_var_req_builder.query(&[("excludeZeroBalanceItems", &local_var_str.to_string())]);
     }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -725,7 +737,7 @@ pub async fn delete_stock_taking_row_by_filter(
 
 /// <p>      Sortable fields:      <code>id</code>,      <code>name</code>,      <code>date</code>,      <code>responsible</code>,      <code>state</code>  </p>
 pub async fn get_all_stock_taking_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetAllStockTakingResourceParams,
 ) -> Result<Vec<crate::http::models::StockTaking>, Error<GetAllStockTakingResourceError>> {
     let local_var_configuration = configuration;
@@ -751,9 +763,11 @@ pub async fn get_all_stock_taking_resource(
         local_var_req_builder =
             local_var_req_builder.query(&[("itemId", &local_var_str.to_string())]);
     }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -779,7 +793,7 @@ pub async fn get_all_stock_taking_resource(
 
 /// A candidate row is a combination of itemId, stockPointId and stockLocationId  that can be added to the Stock Taking document.   Rows already added to the Stock Taking are excluded from this list.
 pub async fn get_candidate_rows(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetCandidateRowsParams,
 ) -> Result<Vec<crate::http::models::StockTakingRow>, Error<GetCandidateRowsError>> {
     let local_var_configuration = configuration;
@@ -898,9 +912,11 @@ pub async fn get_candidate_rows(
         local_var_req_builder =
             local_var_req_builder.query(&[("includeNonInboundItems", &local_var_str.to_string())]);
     }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -925,7 +941,7 @@ pub async fn get_candidate_rows(
 }
 
 pub async fn get_rows(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetRowsParams,
 ) -> Result<Vec<crate::http::models::StockTakingRow>, Error<GetRowsError>> {
     let local_var_configuration = configuration;
@@ -1064,9 +1080,11 @@ pub async fn get_rows(
         local_var_req_builder =
             local_var_req_builder.query(&[("startingItemId", &local_var_str.to_string())]);
     }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -1090,7 +1108,7 @@ pub async fn get_rows(
 }
 
 pub async fn get_stock_taking_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetStockTakingResourceParams,
 ) -> Result<crate::http::models::StockTaking, Error<GetStockTakingResourceError>> {
     let local_var_configuration = configuration;
@@ -1108,9 +1126,11 @@ pub async fn get_stock_taking_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -1136,7 +1156,7 @@ pub async fn get_stock_taking_resource(
 
 /// The document will be locked and bookkept.  The Stock Taking document state will be set to <code>completed</code>.  The stock amount will be adjusted according to the stock taken quantity.
 pub async fn release_stock_taking_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: ReleaseStockTakingResourceParams,
 ) -> Result<(), Error<ReleaseStockTakingResourceError>> {
     let local_var_configuration = configuration;
@@ -1154,9 +1174,11 @@ pub async fn release_stock_taking_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -1181,7 +1203,7 @@ pub async fn release_stock_taking_resource(
 
 /// Updates can only be done when state is <code>planning</code> or <code>started</code>.   All updatable fields (<code>date</code>, <code>name</code>, <code>responsible</code>,  <code>state</code>, <code>sortingId</code>, <code>costCenterCode</code>, <code>projectId</code>)  in the document head are set to supplied values.   You cannot set <code>state</code> to <code>completed</code> or <code>voided</code>. Use endpoints  release or void for this.   The <code>date</code>-field is mandatory for documents in state <code>started</code>.   When state is <code>started</code> you use this endpoint for setting the stock taken quantity.  Only existing rows can be updated - no new rows will be created (use the addRows endpoint for this).  Only the supplied rows will be updated. I.e. you don't have to send in <strong>all</strong>  document rows - just supply the rows you want to set stockTakenQuantity for. Just make sure  to always include all the fields from the document head as mentioned above.   The mandatory fields on the (optionally supplied) rows are: <code>itemId</code>,  <code>stockPointId</code>, <code>stockLocationId</code>.  Fields <code>countedBy</code> and <code>stockTakenQuantity</code> are technically  not mandatory, but will be set to null if you don't supply them.
 pub async fn update_stock_taking_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: UpdateStockTakingResourceParams,
 ) -> Result<crate::http::models::StockTaking, Error<UpdateStockTakingResourceError>> {
     let local_var_configuration = configuration;
@@ -1200,9 +1222,11 @@ pub async fn update_stock_taking_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&stock_taking);
 
@@ -1229,7 +1253,7 @@ pub async fn update_stock_taking_resource(
 
 /// Sets the Stock Taking document state to <code>voided</code>.   Only documents in state <code>planning</code> and <code>started</code>  can be voided. A <code>completed</code> document may not be voided.
 pub async fn void_stock_taking(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: VoidStockTakingParams,
 ) -> Result<(), Error<VoidStockTakingError>> {
     let local_var_configuration = configuration;
@@ -1247,9 +1271,11 @@ pub async fn void_stock_taking(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;

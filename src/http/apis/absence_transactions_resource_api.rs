@@ -104,7 +104,7 @@ pub enum UpdateAbsenceTransactionsResourceError {
 }
 
 pub async fn create_absence_transactions_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: CreateAbsenceTransactionsResourceParams,
 ) -> Result<
     crate::http::models::AbsenceTransactionSingleItemWrap,
@@ -124,9 +124,11 @@ pub async fn create_absence_transactions_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&absence_transactions_payload);
 
@@ -153,7 +155,7 @@ pub async fn create_absence_transactions_resource(
 
 /// Retrieves a specific transaction
 pub async fn get_absence_transactions_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetAbsenceTransactionsResourceParams,
 ) -> Result<
     crate::http::models::AbsenceTransactionSingleItemWrap,
@@ -174,9 +176,11 @@ pub async fn get_absence_transactions_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -202,7 +206,7 @@ pub async fn get_absence_transactions_resource(
 
 /// Retrieves a list of absence transactions for an employee on a specific date and cause code.
 pub async fn get_absence_transactions_resource1(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetAbsenceTransactionsResource1Params,
 ) -> Result<
     crate::http::models::AbsenceTransactionListItemWrap,
@@ -227,9 +231,11 @@ pub async fn get_absence_transactions_resource1(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -255,7 +261,7 @@ pub async fn get_absence_transactions_resource1(
 
 /// Supports query-string parameters <strong>employeeid</strong> and <strong>date</strong> for filtering the result.
 pub async fn list_absence_transactions_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: ListAbsenceTransactionsResourceParams,
 ) -> Result<
     crate::http::models::AbsenceTransactionListItemWrap,
@@ -284,9 +290,11 @@ pub async fn list_absence_transactions_resource(
         local_var_req_builder =
             local_var_req_builder.query(&[("date", &local_var_str.to_string())]);
     }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -311,7 +319,7 @@ pub async fn list_absence_transactions_resource(
 }
 
 pub async fn remove(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: RemoveParams,
 ) -> Result<crate::http::models::AbsenceTransactionSingleItemWrap, Error<RemoveError>> {
     let local_var_configuration = configuration;
@@ -329,9 +337,11 @@ pub async fn remove(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::DELETE, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -355,7 +365,7 @@ pub async fn remove(
 }
 
 pub async fn update_absence_transactions_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: UpdateAbsenceTransactionsResourceParams,
 ) -> Result<
     crate::http::models::AbsenceTransactionSingleItemWrap,
@@ -377,9 +387,11 @@ pub async fn update_absence_transactions_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&absence_transactions_payload);
 

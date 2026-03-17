@@ -64,7 +64,7 @@ pub enum UpdateEmployeesResourceError {
 
 /// EmployeeId is optional. If not supplied the program will generate a unique id.   Only one of DatedSchedules and ScheduleId may be supplied. If DatedSchedules are supplied  it must have one and only one record where FirstDay = '1970-01-01'.  All FirstDay values must greater or equal to '1970-01-01' and unique.   If DatedWages is supplied neither MonthlySalary nor HourlyPay may be supplied. If  MonthlySalary or HourlyPay are supplied, DatedWages may not be supplied.  If DatedWages are supplied it must have one and only one record where FirstDay = '1970-01-01'.  All FirstDay values must greater or equal to '1970-01-01' and unique.
 pub async fn create_employees_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: CreateEmployeesResourceParams,
 ) -> Result<crate::http::models::EmployeeWrap, Error<CreateEmployeesResourceError>> {
     let local_var_configuration = configuration;
@@ -78,9 +78,11 @@ pub async fn create_employees_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&employee);
 
@@ -107,7 +109,7 @@ pub async fn create_employees_resource(
 
 /// ScheduleId, MonthlySalary and HourlyPay reflect current values, all  ScheduleIds are returned in DatedSchedules and all MonthlySalary and  HourlyPay pairs are returned in DatedWages.
 pub async fn get_employees_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetEmployeesResourceParams,
 ) -> Result<crate::http::models::EmployeeWrap, Error<GetEmployeesResourceError>> {
     let local_var_configuration = configuration;
@@ -125,9 +127,11 @@ pub async fn get_employees_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -153,7 +157,7 @@ pub async fn get_employees_resource(
 
 /// ScheduleId, MonthlySalary and HourlyPay reflect current values, all  ScheduleIds are returned in DatedSchedules and all MonthlySalary and  HourlyPay pairs are returned in DatedWages.
 pub async fn list_employees_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
 ) -> Result<crate::http::models::EmployeeListItemWrap, Error<ListEmployeesResourceError>> {
     let local_var_configuration = configuration;
 
@@ -165,9 +169,11 @@ pub async fn list_employees_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -193,7 +199,7 @@ pub async fn list_employees_resource(
 
 /// Only one of DatedSchedules and ScheduleId may be supplied. If DatedSchedules are supplied  it must have one and only one record where FirstDay = '1970-01-01'.  All FirstDay values must greater or equal to '1970-01-01' and unique.   If DatedWages is supplied neither MonthlySalary nor HourlyPay may be supplied. If  MonthlySalary or HourlyPay are supplied, DatedWages may not be supplied.  If DatedWages are supplied it must have one and only one record where FirstDay = '1970-01-01'.  All FirstDay values must greater or equal to '1970-01-01' and unique.
 pub async fn update_employees_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: UpdateEmployeesResourceParams,
 ) -> Result<crate::http::models::EmployeeWrap, Error<UpdateEmployeesResourceError>> {
     let local_var_configuration = configuration;
@@ -212,9 +218,11 @@ pub async fn update_employees_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&employee);
 

@@ -92,7 +92,7 @@ pub enum UpdateSupplierInvoicePaymentsResourceError {
 }
 
 pub async fn bookkeep_supplier_invoice_payments_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: BookkeepSupplierInvoicePaymentsResourceParams,
 ) -> Result<
     crate::http::models::SupplierInvoicePaymentWrap,
@@ -113,9 +113,11 @@ pub async fn bookkeep_supplier_invoice_payments_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -140,7 +142,7 @@ pub async fn bookkeep_supplier_invoice_payments_resource(
 }
 
 pub async fn create_supplier_invoice_payments_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: CreateSupplierInvoicePaymentsResourceParams,
 ) -> Result<
     crate::http::models::SupplierInvoicePaymentWrap,
@@ -160,9 +162,11 @@ pub async fn create_supplier_invoice_payments_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&supplier_invoice_payment);
 
@@ -188,7 +192,7 @@ pub async fn create_supplier_invoice_payments_resource(
 }
 
 pub async fn get_supplier_invoice_payments_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetSupplierInvoicePaymentsResourceParams,
 ) -> Result<
     crate::http::models::SupplierInvoicePaymentWrap,
@@ -209,9 +213,11 @@ pub async fn get_supplier_invoice_payments_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -236,7 +242,7 @@ pub async fn get_supplier_invoice_payments_resource(
 }
 
 pub async fn list_supplier_invoice_payments_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
 ) -> Result<
     crate::http::models::SupplierInvoicePaymentListItemList,
     Error<ListSupplierInvoicePaymentsResourceError>,
@@ -254,9 +260,11 @@ pub async fn list_supplier_invoice_payments_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -281,7 +289,7 @@ pub async fn list_supplier_invoice_payments_resource(
 }
 
 pub async fn remove_supplier_invoice_payments_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: RemoveSupplierInvoicePaymentsResourceParams,
 ) -> Result<(), Error<RemoveSupplierInvoicePaymentsResourceError>> {
     let local_var_configuration = configuration;
@@ -299,9 +307,11 @@ pub async fn remove_supplier_invoice_payments_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::DELETE, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -325,7 +335,7 @@ pub async fn remove_supplier_invoice_payments_resource(
 }
 
 pub async fn update_supplier_invoice_payments_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: UpdateSupplierInvoicePaymentsResourceParams,
 ) -> Result<
     crate::http::models::SupplierInvoicePaymentWrap,
@@ -347,9 +357,11 @@ pub async fn update_supplier_invoice_payments_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&supplier_invoice_payment);
 

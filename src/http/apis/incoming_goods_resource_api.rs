@@ -134,7 +134,7 @@ pub enum VoidDocumentIncomingGoodsResourceError {
 
 /// Mark a released Incoming Goods document as Completed.  Bookkeeping will be finalized.  A Completed Incoming Goods document cannot be matched against  any more Supplier Invoices.
 pub async fn completed(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: CompletedParams,
 ) -> Result<(), Error<CompletedError>> {
     let local_var_configuration = configuration;
@@ -153,9 +153,11 @@ pub async fn completed(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&booking_date);
 
@@ -180,7 +182,7 @@ pub async fn completed(
 }
 
 pub async fn create_incoming_goods_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: CreateIncomingGoodsResourceParams,
 ) -> Result<crate::http::models::IncomingGoods, Error<CreateIncomingGoodsResourceError>> {
     let local_var_configuration = configuration;
@@ -197,9 +199,11 @@ pub async fn create_incoming_goods_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&incoming_goods);
 
@@ -226,7 +230,7 @@ pub async fn create_incoming_goods_resource(
 
 /// <p>      List incoming goods documents matching the given parameters.  </p>  <p>      Sortable fields:      <code>id</code>,      <code>has_delivery_note</code>,      <code>delivery_note_id</code>,      <code>supplier_number</code>,      <code>date</code>  </p>
 pub async fn get_all_incoming_goods_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetAllIncomingGoodsResourceParams,
 ) -> Result<Vec<crate::http::models::IncomingGoodsListRow>, Error<GetAllIncomingGoodsResourceError>>
 {
@@ -282,9 +286,11 @@ pub async fn get_all_incoming_goods_resource(
     if let Some(ref local_var_str) = q {
         local_var_req_builder = local_var_req_builder.query(&[("q", &local_var_str.to_string())]);
     }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -309,7 +315,7 @@ pub async fn get_all_incoming_goods_resource(
 }
 
 pub async fn get_incoming_goods_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetIncomingGoodsResourceParams,
 ) -> Result<crate::http::models::IncomingGoods, Error<GetIncomingGoodsResourceError>> {
     let local_var_configuration = configuration;
@@ -332,9 +338,11 @@ pub async fn get_incoming_goods_resource(
         local_var_req_builder =
             local_var_req_builder.query(&[("ignoreSupplierInvoiceId", &local_var_str.to_string())]);
     }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -360,7 +368,7 @@ pub async fn get_incoming_goods_resource(
 
 /// The document will be locked and bookkept.  The inbound deliveries will affect available stock.
 pub async fn release_incoming_goods_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: ReleaseIncomingGoodsResourceParams,
 ) -> Result<(), Error<ReleaseIncomingGoodsResourceError>> {
     let local_var_configuration = configuration;
@@ -378,9 +386,11 @@ pub async fn release_incoming_goods_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -404,7 +414,7 @@ pub async fn release_incoming_goods_resource(
 }
 
 pub async fn save_incoming_goods_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: SaveIncomingGoodsResourceParams,
 ) -> Result<crate::http::models::IncomingGoods, Error<SaveIncomingGoodsResourceError>> {
     let local_var_configuration = configuration;
@@ -423,9 +433,11 @@ pub async fn save_incoming_goods_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&incoming_goods);
 
@@ -452,7 +464,7 @@ pub async fn save_incoming_goods_resource(
 
 /// Void a document.  If an Incoming Goods document has been Completed, or matched against  Supplier Invoice, it cannot be voided.
 pub async fn void_document_incoming_goods_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: VoidDocumentIncomingGoodsResourceParams,
 ) -> Result<(), Error<VoidDocumentIncomingGoodsResourceError>> {
     let local_var_configuration = configuration;
@@ -470,9 +482,11 @@ pub async fn void_document_incoming_goods_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;

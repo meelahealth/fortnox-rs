@@ -86,7 +86,7 @@ pub enum UpdateSalaryTransactionsResourceError {
 }
 
 pub async fn create_salary_transactions_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: CreateSalaryTransactionsResourceParams,
 ) -> Result<crate::http::models::SalaryTransactionWrap, Error<CreateSalaryTransactionsResourceError>>
 {
@@ -101,9 +101,9 @@ pub async fn create_salary_transactions_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder
+            .header(reqwest::header::AUTHORIZATION, format!("Bearer {}", local_var_access_token.secret()));
     }
     local_var_req_builder = local_var_req_builder.json(&salary_transaction);
 
@@ -129,7 +129,7 @@ pub async fn create_salary_transactions_resource(
 }
 
 pub async fn delete_salary_transactions_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: DeleteSalaryTransactionsResourceParams,
 ) -> Result<crate::http::models::SalaryTransactionWrap, Error<DeleteSalaryTransactionsResourceError>>
 {
@@ -148,9 +148,9 @@ pub async fn delete_salary_transactions_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::DELETE, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder
+            .header(reqwest::header::AUTHORIZATION, format!("Bearer {}", local_var_access_token.secret()));
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -175,7 +175,7 @@ pub async fn delete_salary_transactions_resource(
 }
 
 pub async fn get_salary_transactions_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: GetSalaryTransactionsResourceParams,
 ) -> Result<crate::http::models::SalaryTransactionWrap, Error<GetSalaryTransactionsResourceError>> {
     let local_var_configuration = configuration;
@@ -193,9 +193,9 @@ pub async fn get_salary_transactions_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder
+            .header(reqwest::header::AUTHORIZATION, format!("Bearer {}", local_var_access_token.secret()));
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -221,7 +221,7 @@ pub async fn get_salary_transactions_resource(
 
 /// Supports query-string parameters <b>employeeid</b> and <b>date</b> for filtering the result.
 pub async fn list_salary_transactions_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: ListSalaryTransactionsResourceParams,
 ) -> Result<
     crate::http::models::SalaryTransactionListItemList,
@@ -247,9 +247,9 @@ pub async fn list_salary_transactions_resource(
         local_var_req_builder =
             local_var_req_builder.query(&[("date", &local_var_str.to_string())]);
     }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder
+            .header(reqwest::header::AUTHORIZATION, format!("Bearer {}", local_var_access_token.secret()));
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -274,7 +274,7 @@ pub async fn list_salary_transactions_resource(
 }
 
 pub async fn update_salary_transactions_resource(
-    configuration: &configuration::Configuration,
+    configuration: &configuration::Configuration<'_>,
     params: UpdateSalaryTransactionsResourceParams,
 ) -> Result<crate::http::models::SalaryTransactionWrap, Error<UpdateSalaryTransactionsResourceError>>
 {
@@ -294,9 +294,9 @@ pub async fn update_salary_transactions_resource(
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    if let Some(ref local_var_access_token) = local_var_configuration.access_token {
+        local_var_req_builder = local_var_req_builder
+            .header(reqwest::header::AUTHORIZATION, format!("Bearer {}", local_var_access_token.secret()));
     }
     local_var_req_builder = local_var_req_builder.json(&salary_transaction);
 
