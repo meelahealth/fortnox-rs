@@ -8,14 +8,6 @@
 
 #[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize)]
 pub struct SupplierInvoiceWrap {
-    #[serde(rename = "SupplierInvoice", skip_serializing_if = "Option::is_none")]
-    pub supplier_invoice: Option<Box<crate::http::models::SupplierInvoice>>,
-}
-
-impl SupplierInvoiceWrap {
-    pub fn new() -> SupplierInvoiceWrap {
-        SupplierInvoiceWrap {
-            supplier_invoice: None,
-        }
-    }
+    #[serde(rename = "SupplierInvoice")]
+    pub supplier_invoice: Box<crate::http::models::SupplierInvoice>,
 }

@@ -50,6 +50,17 @@ use crate::http::apis::customers_resource_api::ListCustomersResourceParams;
 use crate::http::apis::invoices_resource_api::{
     UpdateInvoicesResourceError, UpdateInvoicesResourceParams,
 };
+use crate::http::apis::supplier_invoices_resource_api::{
+    CreateSupplierInvoicesResourceError, CreateSupplierInvoicesResourceParams,
+    GetSupplierInvoicesResourceError, GetSupplierInvoicesResourceParams,
+};
+use crate::http::apis::suppliers_resource_api::{
+    CreateSuppliersResourceError, CreateSuppliersResourceParams, GetSuppliersResourceError,
+    GetSuppliersResourceParams,
+};
+use crate::http::models::{
+    Supplier, SupplierInvoice, SupplierInvoiceSupplierInvoiceRow, SupplierInvoiceWrap, SupplierWrap,
+};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Scope {
@@ -290,14 +301,6 @@ impl Client {
             Err(_e) => {}
         }
 
-        self.create_customer(customer_id, details).await
-    }
-
-    pub async fn create_customer(
-        &self,
-        customer_id: impl AsRef<str>,
-        details: UpdateCustomer,
-    ) -> Result<Customer, Error<CreateCustomersResourceError>> {
         self.check_bearer_token().await?;
 
         let vat_type = match details.vat_type {
@@ -343,6 +346,181 @@ impl Client {
         .await?;
 
         Ok(*result.customer)
+    }
+
+    pub async fn supplier(
+        &self,
+        supplier_id: impl ToString,
+    ) -> Result<Supplier, Error<GetSuppliersResourceError>> {
+        self.check_bearer_token().await?;
+
+        fortnox_ratelimit_wait().await;
+        let result = http::apis::suppliers_resource_api::get_suppliers_resource(
+            &*self.config.read().await,
+            GetSuppliersResourceParams {
+                supplier_number: supplier_id.to_string(),
+            },
+        )
+        .await?;
+
+        Ok(*result.supplier)
+    }
+
+    pub async fn supplier_invoice(
+        &self,
+        given_number: i32,
+    ) -> Result<SupplierInvoice, Error<GetSupplierInvoicesResourceError>> {
+        self.check_bearer_token().await?;
+
+        fortnox_ratelimit_wait().await;
+        let result = http::apis::supplier_invoices_resource_api::get_supplier_invoices_resource(
+            &*self.config.read().await,
+            GetSupplierInvoicesResourceParams { given_number },
+        )
+        .await?;
+
+        Ok(*result.supplier_invoice)
+    }
+
+    pub async fn create_customer(
+        &self,
+        customer_id: impl ToString,
+        customer: CreateCustomer,
+    ) -> Result<Customer, Error<CreateCustomersResourceError>> {
+        self.check_bearer_token().await?;
+
+        let vat_type = match customer.vat_type {
+            VatType::Sweden => http::models::customer::VatType::Sevat,
+            VatType::ReverseEu => http::models::customer::VatType::Eureversedvat,
+            VatType::Export => http::models::customer::VatType::Export,
+        };
+
+        fortnox_ratelimit_wait().await;
+        let result = http::apis::customers_resource_api::create_customers_resource(
+            &*self.config.read().await,
+            CreateCustomersResourceParams {
+                customer: Some(CustomerWrap {
+                    customer: Box::new(Customer {
+                        customer_number: Some(customer_id.to_string()),
+
+                        organisation_number: Some(customer.org_nr),
+                        vat_type: Some(vat_type),
+                        currency: Some(customer.currency),
+                        country_code: Some(customer.country_code),
+                        external_reference: Some(customer.external_reference),
+                        active: Some(customer.active),
+                        email: Some(customer.email),
+                        email_invoice: Some(customer.email_invoice),
+                        name: Some(customer.name),
+                        address1: customer.address1,
+                        address2: customer.address2,
+                        city: customer.city,
+                        zip_code: customer.post_code,
+                        ..Default::default()
+                    }),
+                }),
+            },
+        )
+        .await?;
+
+        Ok(*result.customer)
+    }
+
+    pub async fn create_supplier(
+        &self,
+        supplier_id: impl ToString,
+        supplier: CreateSupplier,
+    ) -> Result<Supplier, Error<CreateSuppliersResourceError>> {
+        self.check_bearer_token().await?;
+
+        let vat_type = match supplier.vat_type {
+            VatType::Sweden => http::models::supplier::VatType::Sevat,
+            VatType::ReverseEu => http::models::supplier::VatType::Eureversedvat,
+            VatType::Export => http::models::supplier::VatType::Export,
+        };
+
+        fortnox_ratelimit_wait().await;
+        let result = http::apis::suppliers_resource_api::create_suppliers_resource(
+            &*self.config.read().await,
+            CreateSuppliersResourceParams {
+                supplier: Some(SupplierWrap {
+                    supplier: Box::new(Supplier {
+                        supplier_number: Some(supplier_id.to_string()),
+                        organisation_number: Some(supplier.org_nr),
+                        vat_type: Some(vat_type),
+                        currency: Some(supplier.currency),
+                        country_code: Some(supplier.country_code),
+                        active: Some(supplier.active),
+                        email: Some(supplier.email),
+                        name: supplier.name,
+                        address1: supplier.address1,
+                        address2: supplier.address2,
+                        city: supplier.city,
+                        zip_code: supplier.post_code,
+                        clearing_number: supplier.clearing_number,
+                        bank_account_number: supplier.bank_account_number,
+                        bg: supplier.bank_giro,
+                        pg: supplier.post_giro,
+                        bic: supplier.bic,
+                        iban: supplier.iban,
+                        ..Default::default()
+                    }),
+                }),
+            },
+        )
+        .await?;
+
+        Ok(*result.supplier)
+    }
+
+    pub async fn create_supplier_invoice(
+        &self,
+        supplier_id: impl ToString,
+        invoice: CreateSupplierInvoice,
+    ) -> Result<SupplierInvoice, Error<CreateSupplierInvoicesResourceError>> {
+        self.check_bearer_token().await?;
+
+        fortnox_ratelimit_wait().await;
+        let result = http::apis::supplier_invoices_resource_api::create_supplier_invoices_resource(
+            &*self.config.read().await,
+            CreateSupplierInvoicesResourceParams {
+                supplier_invoice: Some(SupplierInvoiceWrap {
+                    supplier_invoice: Box::new(SupplierInvoice {
+                        supplier_number: supplier_id.to_string(),
+                        given_number: Some(invoice.given_number.to_string()),
+                        due_date: invoice.due_date.map(|d| d.format("%Y-%m-%d").to_string()),
+                        invoice_date: invoice
+                            .invoice_date
+                            .map(|d| d.format("%Y-%m-%d").to_string()),
+                        our_reference: invoice.our_reference.clone(),
+                        vat: invoice.vat,
+                        total: invoice.total,
+                        currency: invoice.currency,
+                        supplier_invoice_rows: Some(
+                            invoice
+                                .items
+                                .into_iter()
+                                .map(|row| SupplierInvoiceSupplierInvoiceRow {
+                                    article_number: row.article_number,
+                                    account: Some(row.account_number as i32),
+                                    quantity: Some(row.count as i32),
+                                    item_description: Some(row.description),
+                                    price: Some(row.price),
+                                    total: Some(row.total),
+                                    cost_center: row.cost_center,
+                                    ..Default::default()
+                                })
+                                .collect(),
+                        ),
+                        disable_payment_file: Some(invoice.disable_payment_file),
+                        ..Default::default()
+                    }),
+                }),
+            },
+        )
+        .await?;
+
+        Ok(*result.supplier_invoice)
     }
 
     pub async fn update_customer(
@@ -740,6 +918,71 @@ pub struct UpdateCustomer {
     pub currency: Update<String>,
 }
 
+#[derive(Debug, Default)]
+pub struct CreateCustomer {
+    pub org_nr: String,
+    pub vat_type: VatType,
+    pub currency: String,
+    pub country_code: String,
+    pub external_reference: String,
+    pub active: bool,
+    pub name: String,
+    pub email: String,
+    pub email_invoice: String,
+    pub address1: Option<String>,
+    pub address2: Option<String>,
+    pub city: Option<String>,
+    pub post_code: Option<String>,
+}
+
+#[derive(Debug, Default)]
+pub struct CreateSupplier {
+    pub name: String,
+    pub org_nr: String,
+    pub vat_type: VatType,
+    pub currency: String,
+    pub country_code: String,
+    pub active: bool,
+
+    pub email: String,
+    pub address1: Option<String>,
+    pub address2: Option<String>,
+    pub city: Option<String>,
+    pub post_code: Option<String>,
+
+    pub clearing_number: Option<String>,
+    pub bank_account_number: Option<String>,
+    pub bank_giro: Option<String>,
+    pub post_giro: Option<String>,
+    pub bic: Option<String>,
+    pub iban: Option<String>,
+}
+
+#[derive(Debug, Clone)]
+pub struct CreateSupplierInvoice {
+    pub given_number: i32,
+    pub due_date: Option<NaiveDate>,
+    pub invoice_date: Option<NaiveDate>,
+    pub our_reference: Option<String>,
+    pub language: Option<Language>,
+    pub currency: Option<String>,
+    pub vat: Option<String>,
+    pub total: Option<String>,
+    pub items: Vec<SupplierInvoiceItem>,
+    pub disable_payment_file: bool,
+}
+
+#[derive(Debug, Clone)]
+pub struct SupplierInvoiceItem {
+    pub article_number: Option<String>,
+    pub account_number: u16,
+    pub count: u32,
+    pub description: String,
+    pub price: f64,
+    pub total: f64,
+    pub cost_center: Option<String>,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct CreateInvoice {
     pub customer_id: String,
@@ -771,7 +1014,6 @@ pub struct UpdateInvoice {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct InvoiceItem {
     pub article_number: Option<String>,
-    // TODO: how are we able to deal with the fact that our own is u16 but theirs is i32? Worrying...
     pub account_number: u16,
     pub count: u32,
     pub description: String,

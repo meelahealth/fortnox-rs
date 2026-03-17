@@ -73,7 +73,7 @@ pub struct Supplier {
     #[serde(rename = "VATNumber", skip_serializing_if = "Option::is_none")]
     pub vat_number: Option<String>,
     #[serde(rename = "VATType", skip_serializing_if = "Option::is_none")]
-    pub vat_type: Option<String>,
+    pub vat_type: Option<VatType>,
     #[serde(rename = "VisitingAddress", skip_serializing_if = "Option::is_none")]
     pub visiting_address: Option<String>,
     #[serde(rename = "VisitingCity", skip_serializing_if = "Option::is_none")]
@@ -144,4 +144,21 @@ impl Supplier {
             zip_code: None,
         }
     }
+}
+
+#[derive(
+    Clone, Copy, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize,
+)]
+pub enum VatType {
+    #[serde(rename = "SEVAT")]
+    #[default]
+    Sevat,
+    #[serde(rename = "SEREVERSEDVAT")]
+    Sereversedvat,
+    #[serde(rename = "EUREVERSEDVAT")]
+    Eureversedvat,
+    #[serde(rename = "EUVAT")]
+    Euvat,
+    #[serde(rename = "EXPORT")]
+    Export,
 }
