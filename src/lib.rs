@@ -407,9 +407,9 @@ impl Client {
         self.check_bearer_token().await?;
 
         let vat_type = match supplier.vat_type {
-            VatType::Sweden => http::models::supplier::VatType::Sevat,
-            VatType::ReverseEu => http::models::supplier::VatType::Eureversedvat,
-            VatType::Export => http::models::supplier::VatType::Export,
+            VatType::Sweden => "0".to_string(),
+            VatType::ReverseEu => "0".to_string(),
+            VatType::Export => "0".to_string(),
         };
 
         fortnox_ratelimit_wait().await;
@@ -453,6 +453,11 @@ impl Client {
     ) -> Result<SupplierInvoice, Error<CreateSupplierInvoicesResourceError>> {
         self.check_bearer_token().await?;
 
+        let sales_type = match invoice.sales_type {
+            SalesType::Stock => http::models::supplier_invoice::SalesType::Stock,
+            SalesType::Service => http::models::supplier_invoice::SalesType::Service,
+        };
+
         fortnox_ratelimit_wait().await;
         let result = http::apis::supplier_invoices_resource_api::create_supplier_invoices_resource(
             &self.config().await,
@@ -461,6 +466,8 @@ impl Client {
                     supplier_invoice: Box::new(SupplierInvoice {
                         supplier_number: supplier_id.to_string(),
                         given_number: Some(invoice.given_number.to_string()),
+                        invoice_number: Some(invoice.invoice_number),
+                        ocr: invoice.ocr,
                         due_date: invoice.due_date.map(|d| d.format("%Y-%m-%d").to_string()),
                         invoice_date: invoice
                             .invoice_date
@@ -469,6 +476,7 @@ impl Client {
                         vat: invoice.vat,
                         total: invoice.total,
                         currency: invoice.currency,
+                        sales_type: Some(sales_type),
                         supplier_invoice_rows: Some(
                             invoice
                                 .items
@@ -477,10 +485,11 @@ impl Client {
                                     article_number: row.article_number,
                                     account: Some(row.account_number as i32),
                                     quantity: Some(row.count as i32),
-                                    item_description: Some(row.description),
+                                    item_description: Some(row.description.clone()),
                                     price: Some(row.price),
                                     total: Some(row.total),
                                     cost_center: row.cost_center,
+                                    transaction_information: Some(row.description),
                                     ..Default::default()
                                 })
                                 .collect(),
@@ -931,9 +940,17 @@ pub struct CreateSupplier {
     pub iban: Option<String>,
 }
 
+#[derive(Clone, Copy, Debug)]
+pub enum SalesType {
+    Stock,
+    Service,
+}
+
 #[derive(Debug, Clone)]
 pub struct CreateSupplierInvoice {
     pub given_number: i32,
+    pub invoice_number: String,
+    pub ocr: Option<String>,
     pub due_date: Option<NaiveDate>,
     pub invoice_date: Option<NaiveDate>,
     pub our_reference: Option<String>,
@@ -943,6 +960,7 @@ pub struct CreateSupplierInvoice {
     pub total: Option<String>,
     pub items: Vec<SupplierInvoiceItem>,
     pub disable_payment_file: bool,
+    pub sales_type: SalesType,
 }
 
 #[derive(Debug, Clone)]

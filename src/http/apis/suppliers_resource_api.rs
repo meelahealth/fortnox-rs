@@ -9,7 +9,7 @@
 use reqwest;
 
 use super::{configuration, Error};
-use crate::http::apis::ResponseContent;
+use crate::http::{apis::ResponseContent, parse_json};
 
 /// struct for passing parameters to the method [`create_suppliers_resource`]
 #[derive(Clone, Debug, Default)]
@@ -93,7 +93,7 @@ pub async fn create_suppliers_resource(
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
         tracing::trace!("Response: {}", local_var_content);
-        serde_json::from_str(&local_var_content).map_err(Error::from)
+        parse_json(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<CreateSuppliersResourceError> =
             serde_json::from_str(&local_var_content).ok();

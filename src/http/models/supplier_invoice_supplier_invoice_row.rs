@@ -13,7 +13,7 @@ pub struct SupplierInvoiceSupplierInvoiceRow {
     #[serde(rename = "ArticleNumber", skip_serializing_if = "Option::is_none")]
     pub article_number: Option<String>,
     #[serde(rename = "Code", skip_serializing_if = "Option::is_none")]
-    pub code: Option<Code>,
+    pub code: Option<String>,
     #[serde(rename = "CostCenter", skip_serializing_if = "Option::is_none")]
     pub cost_center: Option<String>,
     #[serde(rename = "AccountDescription", skip_serializing_if = "Option::is_none")]
@@ -71,42 +71,5 @@ impl SupplierInvoiceSupplierInvoiceRow {
             stock_point_code: None,
             stock_location_code: None,
         }
-    }
-}
-
-///
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
-pub enum Code {
-    #[serde(rename = "TOT")]
-    Tot,
-    #[serde(rename = "VAT")]
-    Vat,
-    #[serde(rename = "FRT")]
-    Frt,
-    #[serde(rename = "AFE")]
-    Afe,
-    #[serde(rename = "ROV")]
-    Rov,
-    #[serde(rename = "CND")]
-    Cnd,
-    #[serde(rename = "CNC")]
-    Cnc,
-    #[serde(rename = "PRD")]
-    Prd,
-    #[serde(rename = "PRC")]
-    Prc,
-    #[serde(rename = "SRD")]
-    Srd,
-    #[serde(rename = "SRC")]
-    Src,
-    #[serde(rename = "PRE")]
-    Pre,
-    #[serde(rename = "GWB")]
-    Gwb,
-}
-
-impl Default for Code {
-    fn default() -> Code {
-        Self::Tot
     }
 }

@@ -9,7 +9,7 @@
 use reqwest;
 
 use super::{configuration, Error};
-use crate::http::apis::ResponseContent;
+use crate::http::{apis::ResponseContent, parse_json};
 
 /// struct for passing parameters to the method [`approvalbookkeep`]
 #[derive(Clone, Debug, Default)]
@@ -359,7 +359,7 @@ pub async fn create_supplier_invoices_resource(
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
         tracing::trace!("Response: {}", local_var_content);
-        serde_json::from_str(&local_var_content).map_err(Error::from)
+        parse_json(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<CreateSupplierInvoicesResourceError> =
             serde_json::from_str(&local_var_content).ok();
@@ -454,7 +454,7 @@ pub async fn get_supplier_invoices_resource(
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
         tracing::trace!("Response: {}", local_var_content);
-        serde_json::from_str(&local_var_content).map_err(Error::from)
+        parse_json(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<GetSupplierInvoicesResourceError> =
             serde_json::from_str(&local_var_content).ok();
