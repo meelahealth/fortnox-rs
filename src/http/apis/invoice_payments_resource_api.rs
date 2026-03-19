@@ -17,14 +17,14 @@ pub struct BookkeepParams {
     /// identifies the invoice payment
     pub number: String,
     /// invoice payment to update
-    pub invoice_payment: Option<crate::http::models::InvoicePaymentWrap>,
+    pub invoice_payment: crate::http::models::InvoicePaymentWrap,
 }
 
 /// struct for passing parameters to the method [`create_invoice_payments_resource`]
 #[derive(Clone, Debug, Default)]
 pub struct CreateInvoicePaymentsResourceParams {
     /// invoice payment to create
-    pub invoice_payment: Option<crate::http::models::InvoicePaymentWrap>,
+    pub invoice_payment: crate::http::models::InvoicePaymentWrap,
 }
 
 /// struct for passing parameters to the method [`get_invoice_payments_resource`]

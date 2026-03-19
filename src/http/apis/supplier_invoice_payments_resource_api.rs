@@ -22,7 +22,7 @@ pub struct BookkeepSupplierInvoicePaymentsResourceParams {
 #[derive(Clone, Debug, Default)]
 pub struct CreateSupplierInvoicePaymentsResourceParams {
     /// to create
-    pub supplier_invoice_payment: Option<crate::http::models::SupplierInvoicePaymentWrap>,
+    pub supplier_invoice_payment: crate::http::models::SupplierInvoicePaymentWrap,
 }
 
 /// struct for passing parameters to the method [`get_supplier_invoice_payments_resource`]

@@ -8,17 +8,6 @@
 
 #[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize)]
 pub struct SupplierInvoicePaymentListItemList {
-    #[serde(
-        rename = "SupplierInvoicePayments",
-        skip_serializing_if = "Option::is_none"
-    )]
-    pub supplier_invoice_payments: Option<Vec<crate::http::models::SupplierInvoicePaymentListItem>>,
-}
-
-impl SupplierInvoicePaymentListItemList {
-    pub fn new() -> SupplierInvoicePaymentListItemList {
-        SupplierInvoicePaymentListItemList {
-            supplier_invoice_payments: None,
-        }
-    }
+    #[serde(rename = "SupplierInvoicePayments")]
+    pub supplier_invoice_payments: Vec<crate::http::models::SupplierInvoicePaymentListItem>,
 }

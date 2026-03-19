@@ -50,10 +50,20 @@ use tokio::sync::{Mutex, MutexGuard};
 use url::Url;
 
 use crate::http::apis::customers_resource_api::ListCustomersResourceParams;
+use crate::http::apis::invoice_payments_resource_api::{
+    GetInvoicePaymentsResourceError, GetInvoicePaymentsResourceParams,
+    ListInvoicePaymentsResourceError,
+};
 use crate::http::apis::invoices_resource_api::{
     UpdateInvoicesResourceError, UpdateInvoicesResourceParams,
 };
+use crate::http::apis::supplier_invoice_payments_resource_api::{
+    CreateSupplierInvoicePaymentsResourceError, CreateSupplierInvoicePaymentsResourceParams,
+    GetSupplierInvoicePaymentsResourceError, GetSupplierInvoicePaymentsResourceParams,
+    ListSupplierInvoicePaymentsResourceError,
+};
 use crate::http::apis::supplier_invoices_resource_api::{
+    BookkeepSupplierInvoicesResourceError, BookkeepSupplierInvoicesResourceParams,
     CreateSupplierInvoicesResourceError, CreateSupplierInvoicesResourceParams,
     GetSupplierInvoicesResourceError, GetSupplierInvoicesResourceParams,
 };
@@ -62,7 +72,9 @@ use crate::http::apis::suppliers_resource_api::{
     GetSuppliersResourceParams,
 };
 use crate::http::models::{
-    Supplier, SupplierInvoice, SupplierInvoiceSupplierInvoiceRow, SupplierInvoiceWrap, SupplierWrap,
+    InvoicePaymentListItem, Supplier, SupplierInvoice, SupplierInvoicePayment,
+    SupplierInvoicePaymentListItem, SupplierInvoicePaymentWrap, SupplierInvoiceSupplierInvoiceRow,
+    SupplierInvoiceWrap, SupplierWrap,
 };
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -353,6 +365,136 @@ impl Client {
         .await?;
 
         Ok(*result.supplier_invoice)
+    }
+
+    pub async fn book_supplier_invoice(
+        &self,
+        given_number: i32,
+    ) -> Result<SupplierInvoice, Error<BookkeepSupplierInvoicesResourceError>> {
+        self.check_bearer_token().await?;
+
+        fortnox_ratelimit_wait().await;
+        let result =
+            http::apis::supplier_invoices_resource_api::bookkeep_supplier_invoices_resource(
+                &self.config().await,
+                BookkeepSupplierInvoicesResourceParams { given_number },
+            )
+            .await?;
+
+        Ok(*result.supplier_invoice)
+    }
+
+    pub async fn invoice_payment(
+        &self,
+        number: String,
+    ) -> Result<InvoicePayment, Error<GetInvoicePaymentsResourceError>> {
+        self.check_bearer_token().await?;
+
+        fortnox_ratelimit_wait().await;
+        let result = http::apis::invoice_payments_resource_api::get_invoice_payments_resource(
+            &self.config().await,
+            GetInvoicePaymentsResourceParams { number },
+        )
+        .await?;
+
+        Ok(result.invoice_payment)
+    }
+
+    pub async fn supplier_invoice_payment(
+        &self,
+        number: i32,
+    ) -> Result<SupplierInvoicePayment, Error<GetSupplierInvoicePaymentsResourceError>> {
+        self.check_bearer_token().await?;
+
+        fortnox_ratelimit_wait().await;
+        let result = http::apis::supplier_invoice_payments_resource_api::get_supplier_invoice_payments_resource(
+            &self.config().await,
+            GetSupplierInvoicePaymentsResourceParams {
+                number,
+            },
+        )
+        .await?;
+
+        Ok(result.supplier_invoice_payment)
+    }
+
+    pub async fn list_invoice_payment(
+        &self,
+    ) -> Result<Vec<InvoicePaymentListItem>, Error<ListInvoicePaymentsResourceError>> {
+        self.check_bearer_token().await?;
+
+        fortnox_ratelimit_wait().await;
+        let result = http::apis::invoice_payments_resource_api::list_invoice_payments_resource(
+            &self.config().await,
+        )
+        .await?;
+
+        Ok(result.invoice_payments)
+    }
+
+    pub async fn list_supplier_invoice_payment(
+        &self,
+    ) -> Result<Vec<SupplierInvoicePaymentListItem>, Error<ListSupplierInvoicePaymentsResourceError>>
+    {
+        self.check_bearer_token().await?;
+
+        fortnox_ratelimit_wait().await;
+        let result = http::apis::supplier_invoice_payments_resource_api::list_supplier_invoice_payments_resource(
+            &self.config().await,
+        )
+        .await?;
+
+        Ok(result.supplier_invoice_payments)
+    }
+
+    pub async fn create_invoice_payment(
+        &self,
+        invoice_payment: CreateInvoicePayment,
+    ) -> Result<InvoicePayment, Error<CreateInvoicePaymentsResourceError>> {
+        self.check_bearer_token().await?;
+
+        fortnox_ratelimit_wait().await;
+        let result = http::apis::invoice_payments_resource_api::create_invoice_payments_resource(
+            &self.config().await,
+            CreateInvoicePaymentsResourceParams {
+                invoice_payment: InvoicePaymentWrap {
+                    invoice_payment: InvoicePayment {
+                        invoice_number: invoice_payment.invoice_number,
+                        amount: Some(invoice_payment.amount),
+                        mode_of_payment: Some(invoice_payment.mode_of_payment),
+                        ..Default::default()
+                    },
+                },
+            },
+        )
+        .await?;
+
+        Ok(result.invoice_payment)
+    }
+
+    pub async fn create_supplier_invoice_payment(
+        &self,
+        invoice_payment: CreateInvoicePayment,
+    ) -> Result<SupplierInvoicePayment, Error<CreateSupplierInvoicePaymentsResourceError>> {
+        self.check_bearer_token().await?;
+
+        fortnox_ratelimit_wait().await;
+        let result = http::apis::supplier_invoice_payments_resource_api::create_supplier_invoice_payments_resource(
+            &self.config().await,
+            CreateSupplierInvoicePaymentsResourceParams {
+                supplier_invoice_payment: SupplierInvoicePaymentWrap {
+                    supplier_invoice_payment: SupplierInvoicePayment {
+                        invoice_number: invoice_payment.invoice_number,
+                        amount: Some(invoice_payment.amount),
+                        mode_of_payment: Some(invoice_payment.mode_of_payment),
+                        ..Default::default()
+                    }
+                }
+            },
+        )
+        .await?;
+
+        Ok(result.supplier_invoice_payment)
     }
 
     pub async fn create_customer(
@@ -702,9 +844,7 @@ impl Client {
             &self.config().await,
             BookkeepParams {
                 number: invoice_payment.number.unwrap().to_string(),
-                invoice_payment: Some(InvoicePaymentWrap {
-                    invoice_payment: Some(Box::new(invoice_payment.clone())),
-                }),
+                invoice_payment: InvoicePaymentWrap { invoice_payment },
             },
         )
         .await?;
@@ -722,14 +862,14 @@ impl Client {
         let result = http::apis::invoice_payments_resource_api::create_invoice_payments_resource(
             &self.config().await,
             CreateInvoicePaymentsResourceParams {
-                invoice_payment: Some(InvoicePaymentWrap {
-                    invoice_payment: Some(Box::new(payload.clone())),
-                }),
+                invoice_payment: InvoicePaymentWrap {
+                    invoice_payment: payload,
+                },
             },
         )
         .await?;
 
-        Ok(*result.invoice_payment.unwrap())
+        Ok(result.invoice_payment)
     }
 
     pub async fn create_invoice_raw(
@@ -961,6 +1101,13 @@ pub struct CreateSupplierInvoice {
     pub items: Vec<SupplierInvoiceItem>,
     pub disable_payment_file: bool,
     pub sales_type: SalesType,
+}
+
+#[derive(Debug, Clone)]
+pub struct CreateInvoicePayment {
+    pub invoice_number: String,
+    pub amount: f64,
+    pub mode_of_payment: String,
 }
 
 #[derive(Debug, Clone)]
