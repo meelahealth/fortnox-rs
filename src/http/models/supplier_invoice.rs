@@ -7,6 +7,7 @@
  */
 
 use crate::http::deserialize_bool_from_string;
+use crate::http::deserialize_number_from_string;
 use crate::http::deserialize_string_from_number;
 
 #[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize)]
@@ -19,7 +20,11 @@ pub struct SupplierInvoice {
         deserialize_with = "deserialize_string_from_number"
     )]
     pub administration_fee: Option<String>,
-    #[serde(rename = "Balance", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "Balance",
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "deserialize_number_from_string"
+    )]
     pub balance: Option<f64>,
     #[serde(rename = "Booked", skip_serializing_if = "Option::is_none")]
     pub booked: Option<bool>,

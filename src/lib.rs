@@ -58,6 +58,7 @@ use crate::http::apis::invoices_resource_api::{
     UpdateInvoicesResourceError, UpdateInvoicesResourceParams,
 };
 use crate::http::apis::supplier_invoice_payments_resource_api::{
+    BookkeepSupplierInvoicePaymentsResourceError, BookkeepSupplierInvoicePaymentsResourceParams,
     CreateSupplierInvoicePaymentsResourceError, CreateSupplierInvoicePaymentsResourceParams,
     GetSupplierInvoicePaymentsResourceError, GetSupplierInvoicePaymentsResourceParams,
     ListSupplierInvoicePaymentsResourceError,
@@ -386,14 +387,16 @@ impl Client {
 
     pub async fn invoice_payment(
         &self,
-        number: String,
+        number: &str,
     ) -> Result<InvoicePayment, Error<GetInvoicePaymentsResourceError>> {
         self.check_bearer_token().await?;
 
         fortnox_ratelimit_wait().await;
         let result = http::apis::invoice_payments_resource_api::get_invoice_payments_resource(
             &self.config().await,
-            GetInvoicePaymentsResourceParams { number },
+            GetInvoicePaymentsResourceParams {
+                number: number.to_string(),
+            },
         )
         .await?;
 
@@ -490,6 +493,24 @@ impl Client {
                         ..Default::default()
                     }
                 }
+            },
+        )
+        .await?;
+
+        Ok(result.supplier_invoice_payment)
+    }
+
+    pub async fn book_supplier_invoice_payment(
+        &self,
+        invoice_payment_number: i32,
+    ) -> Result<SupplierInvoicePayment, Error<BookkeepSupplierInvoicePaymentsResourceError>> {
+        self.check_bearer_token().await?;
+
+        fortnox_ratelimit_wait().await;
+        let result = http::apis::supplier_invoice_payments_resource_api::bookkeep_supplier_invoice_payments_resource(
+            &self.config().await,
+            BookkeepSupplierInvoicePaymentsResourceParams {
+                number: invoice_payment_number,
             },
         )
         .await?;
@@ -844,7 +865,7 @@ impl Client {
             &self.config().await,
             BookkeepParams {
                 number: invoice_payment.number.unwrap().to_string(),
-                invoice_payment: InvoicePaymentWrap { invoice_payment },
+                invoice_payment: Some(InvoicePaymentWrap { invoice_payment }),
             },
         )
         .await?;

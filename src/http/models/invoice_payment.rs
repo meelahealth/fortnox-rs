@@ -10,6 +10,12 @@
 // "ExternalInvoiceReference1":null,"ExternalInvoiceReference2":null,
 //"InvoiceCustomerName":"Real Comapny AB","InvoiceCustomerNumber":"T-7VVS009VVVVVVVVVVVVVVVVVVV",
 //"InvoiceNumber":"11","InvoiceDueDate":"2024-11-18","InvoiceOCR":"1149","InvoiceTotal":1563,"ModeOfPayment":"","ModeOfPaymentAccount":2420,"Number":9,"PaymentDate":"2024-10-20","VoucherNumber":null,"VoucherSeries":null,"VoucherYear":null,"Source":"manual","WriteOffs":[]}}
+
+use crate::http::deserialize_integer_from_string;
+use crate::http::deserialize_number_from_string;
+use crate::http::deserialize_string_from_number;
+use crate::http::deserialize_string_from_number_required;
+
 #[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize)]
 pub struct InvoicePayment {
     #[serde(rename = "@url", skip_serializing_if = "Option::is_none")]
@@ -46,13 +52,20 @@ pub struct InvoicePayment {
         skip_serializing_if = "Option::is_none"
     )]
     pub invoice_customer_number: Option<String>,
-    #[serde(rename = "InvoiceNumber")]
+    #[serde(
+        rename = "InvoiceNumber",
+        deserialize_with = "deserialize_string_from_number_required"
+    )]
     pub invoice_number: String,
     #[serde(rename = "InvoiceDueDate", skip_serializing_if = "Option::is_none")]
     pub invoice_due_date: Option<String>,
     #[serde(rename = "InvoiceOCR", skip_serializing_if = "Option::is_none")]
     pub invoice_ocr: Option<String>,
-    #[serde(rename = "InvoiceTotal", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "InvoiceTotal",
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "deserialize_number_from_string"
+    )]
     pub invoice_total: Option<f64>,
     #[serde(rename = "ModeOfPayment", skip_serializing_if = "Option::is_none")]
     pub mode_of_payment: Option<String>,
@@ -61,15 +74,27 @@ pub struct InvoicePayment {
         skip_serializing_if = "Option::is_none"
     )]
     pub mode_of_payment_account: Option<i32>,
-    #[serde(rename = "Number", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "Number",
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "deserialize_integer_from_string"
+    )]
     pub number: Option<i32>,
     #[serde(rename = "PaymentDate", skip_serializing_if = "Option::is_none")]
     pub payment_date: Option<String>,
-    #[serde(rename = "VoucherNumber", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "VoucherNumber",
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "deserialize_string_from_number"
+    )]
     pub voucher_number: Option<String>,
     #[serde(rename = "VoucherSeries", skip_serializing_if = "Option::is_none")]
     pub voucher_series: Option<String>,
-    #[serde(rename = "VoucherYear", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "VoucherYear",
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "deserialize_string_from_number"
+    )]
     pub voucher_year: Option<String>,
     #[serde(rename = "Source", skip_serializing_if = "Option::is_none")]
     pub source: Option<String>,

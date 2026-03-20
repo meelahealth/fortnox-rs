@@ -9,7 +9,7 @@
 use reqwest;
 
 use super::{configuration, Error};
-use crate::http::apis::ResponseContent;
+use crate::http::{apis::ResponseContent, parse_json};
 
 /// struct for passing parameters to the method [`bookkeep`]
 #[derive(Clone, Debug, Default)]
@@ -17,7 +17,7 @@ pub struct BookkeepParams {
     /// identifies the invoice payment
     pub number: String,
     /// invoice payment to update
-    pub invoice_payment: crate::http::models::InvoicePaymentWrap,
+    pub invoice_payment: Option<crate::http::models::InvoicePaymentWrap>,
 }
 
 /// struct for passing parameters to the method [`create_invoice_payments_resource`]
@@ -220,7 +220,7 @@ pub async fn get_invoice_payments_resource(
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
         tracing::trace!("Response: {}", local_var_content);
-        serde_json::from_str(&local_var_content).map_err(Error::from)
+        parse_json(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<GetInvoicePaymentsResourceError> =
             serde_json::from_str(&local_var_content).ok();
