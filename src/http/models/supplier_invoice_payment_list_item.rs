@@ -27,7 +27,7 @@ pub struct SupplierInvoicePaymentListItem {
     #[serde(rename = "PaymentDate", skip_serializing_if = "Option::is_none")]
     pub payment_date: Option<String>,
     #[serde(rename = "Source", skip_serializing_if = "Option::is_none")]
-    pub source: Option<Source>,
+    pub source: Option<String>,
     #[serde(rename = "WriteOffExist", skip_serializing_if = "Option::is_none")]
     pub write_off_exist: Option<bool>,
 }
@@ -48,17 +48,4 @@ impl SupplierInvoicePaymentListItem {
             write_off_exist: None,
         }
     }
-}
-
-#[derive(
-    Default, Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize,
-)]
-pub enum Source {
-    #[serde(rename = "manual")]
-    #[default]
-    Manual,
-    #[serde(rename = "direct")]
-    Direct,
-    #[serde(rename = "file")]
-    File,
 }
