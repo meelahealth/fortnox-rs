@@ -50,17 +50,15 @@ impl SupplierInvoicePaymentListItem {
     }
 }
 
-///
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
+#[derive(
+    Default, Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize,
+)]
 pub enum Source {
     #[serde(rename = "manual")]
+    #[default]
     Manual,
     #[serde(rename = "direct")]
     Direct,
-}
-
-impl Default for Source {
-    fn default() -> Source {
-        Self::Manual
-    }
+    #[serde(rename = "file")]
+    File,
 }
