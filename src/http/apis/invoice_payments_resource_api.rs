@@ -235,6 +235,7 @@ pub async fn get_invoice_payments_resource(
 
 pub async fn list_invoice_payments_resource(
     configuration: &configuration::Configuration<'_>,
+    invoice_number: &str,
 ) -> Result<crate::http::models::InvoicePaymentListItemList, Error<ListInvoicePaymentsResourceError>>
 {
     let local_var_configuration = configuration;
@@ -243,7 +244,10 @@ pub async fn list_invoice_payments_resource(
 
     let local_var_client = &local_var_configuration.client;
 
-    let local_var_uri_str = format!("{}/3/invoicepayments/", local_var_configuration.base_path);
+    let local_var_uri_str = format!(
+        "{}/3/invoicepayments/?invoicenumber={}",
+        local_var_configuration.base_path, invoice_number
+    );
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 

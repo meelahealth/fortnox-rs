@@ -243,6 +243,7 @@ pub async fn get_supplier_invoice_payments_resource(
 
 pub async fn list_supplier_invoice_payments_resource(
     configuration: &configuration::Configuration<'_>,
+    invoice_number: i32,
 ) -> Result<
     crate::http::models::SupplierInvoicePaymentListItemList,
     Error<ListSupplierInvoicePaymentsResourceError>,
@@ -254,8 +255,8 @@ pub async fn list_supplier_invoice_payments_resource(
     let local_var_client = &local_var_configuration.client;
 
     let local_var_uri_str = format!(
-        "{}/3/supplierinvoicepayments/",
-        local_var_configuration.base_path
+        "{}/3/supplierinvoicepayments/?invoicenumber={}",
+        local_var_configuration.base_path, invoice_number
     );
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());

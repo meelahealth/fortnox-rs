@@ -423,12 +423,14 @@ impl Client {
 
     pub async fn list_invoice_payment(
         &self,
+        invoice_number: &str,
     ) -> Result<Vec<InvoicePaymentListItem>, Error<ListInvoicePaymentsResourceError>> {
         self.check_bearer_token().await?;
 
         fortnox_ratelimit_wait().await;
         let result = http::apis::invoice_payments_resource_api::list_invoice_payments_resource(
             &self.config().await,
+            invoice_number,
         )
         .await?;
 
@@ -437,6 +439,7 @@ impl Client {
 
     pub async fn list_supplier_invoice_payment(
         &self,
+        invoice_number: i32,
     ) -> Result<Vec<SupplierInvoicePaymentListItem>, Error<ListSupplierInvoicePaymentsResourceError>>
     {
         self.check_bearer_token().await?;
@@ -444,6 +447,7 @@ impl Client {
         fortnox_ratelimit_wait().await;
         let result = http::apis::supplier_invoice_payments_resource_api::list_supplier_invoice_payments_resource(
             &self.config().await,
+            invoice_number,
         )
         .await?;
 
