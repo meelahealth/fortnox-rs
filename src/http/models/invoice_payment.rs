@@ -11,6 +11,8 @@
 //"InvoiceCustomerName":"Real Comapny AB","InvoiceCustomerNumber":"T-7VVS009VVVVVVVVVVVVVVVVVVV",
 //"InvoiceNumber":"11","InvoiceDueDate":"2024-11-18","InvoiceOCR":"1149","InvoiceTotal":1563,"ModeOfPayment":"","ModeOfPaymentAccount":2420,"Number":9,"PaymentDate":"2024-10-20","VoucherNumber":null,"VoucherSeries":null,"VoucherYear":null,"Source":"manual","WriteOffs":[]}}
 
+use rust_decimal::Decimal;
+
 use crate::http::deserialize_integer_from_string;
 use crate::http::deserialize_number_from_string;
 use crate::http::deserialize_string_from_number;
@@ -21,9 +23,9 @@ pub struct InvoicePayment {
     #[serde(rename = "@url", skip_serializing_if = "Option::is_none")]
     pub at_url: Option<String>,
     #[serde(rename = "Amount", skip_serializing_if = "Option::is_none")]
-    pub amount: Option<f64>,
+    pub amount: Option<Decimal>,
     #[serde(rename = "AmountCurrency", skip_serializing_if = "Option::is_none")]
-    pub amount_currency: Option<f64>,
+    pub amount_currency: Option<Decimal>,
     #[serde(rename = "Booked", skip_serializing_if = "Option::is_none")]
     pub booked: Option<bool>,
     #[serde(rename = "Currency", skip_serializing_if = "Option::is_none")]

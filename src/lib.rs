@@ -492,7 +492,7 @@ impl Client {
                 supplier_invoice_payment: SupplierInvoicePaymentWrap {
                     supplier_invoice_payment: SupplierInvoicePayment {
                         invoice_number: invoice_payment.invoice_number,
-                        amount_currency: Some(invoice_payment.amount),
+                        amount: Some(invoice_payment.amount),
                         mode_of_payment: Some(invoice_payment.mode_of_payment),
                         ..Default::default()
                     }
@@ -1131,7 +1131,7 @@ pub struct CreateSupplierInvoice {
 #[derive(Debug, Clone)]
 pub struct CreateInvoicePayment {
     pub invoice_number: String,
-    pub amount: f64,
+    pub amount: Decimal,
     pub mode_of_payment: String,
 }
 
