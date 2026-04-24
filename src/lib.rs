@@ -492,7 +492,7 @@ impl Client {
                 supplier_invoice_payment: SupplierInvoicePaymentWrap {
                     supplier_invoice_payment: SupplierInvoicePayment {
                         invoice_number: invoice_payment.invoice_number,
-                        amount: Some(invoice_payment.amount),
+                        amount_currency: Some(invoice_payment.amount),
                         mode_of_payment: Some(invoice_payment.mode_of_payment),
                         ..Default::default()
                     }
