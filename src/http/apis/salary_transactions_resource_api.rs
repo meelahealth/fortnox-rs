@@ -102,8 +102,10 @@ pub async fn create_salary_transactions_resource(
         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
 
     if let Some(ref local_var_access_token) = local_var_configuration.access_token {
-        local_var_req_builder = local_var_req_builder
-            .header(reqwest::header::AUTHORIZATION, format!("Bearer {}", local_var_access_token.secret()));
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&salary_transaction);
 
@@ -149,8 +151,10 @@ pub async fn delete_salary_transactions_resource(
         local_var_client.request(reqwest::Method::DELETE, local_var_uri_str.as_str());
 
     if let Some(ref local_var_access_token) = local_var_configuration.access_token {
-        local_var_req_builder = local_var_req_builder
-            .header(reqwest::header::AUTHORIZATION, format!("Bearer {}", local_var_access_token.secret()));
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -194,8 +198,10 @@ pub async fn get_salary_transactions_resource(
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
     if let Some(ref local_var_access_token) = local_var_configuration.access_token {
-        local_var_req_builder = local_var_req_builder
-            .header(reqwest::header::AUTHORIZATION, format!("Bearer {}", local_var_access_token.secret()));
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -248,8 +254,10 @@ pub async fn list_salary_transactions_resource(
             local_var_req_builder.query(&[("date", &local_var_str.to_string())]);
     }
     if let Some(ref local_var_access_token) = local_var_configuration.access_token {
-        local_var_req_builder = local_var_req_builder
-            .header(reqwest::header::AUTHORIZATION, format!("Bearer {}", local_var_access_token.secret()));
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -295,8 +303,10 @@ pub async fn update_salary_transactions_resource(
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());
 
     if let Some(ref local_var_access_token) = local_var_configuration.access_token {
-        local_var_req_builder = local_var_req_builder
-            .header(reqwest::header::AUTHORIZATION, format!("Bearer {}", local_var_access_token.secret()));
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::AUTHORIZATION,
+            format!("Bearer {}", local_var_access_token.secret()),
+        );
     }
     local_var_req_builder = local_var_req_builder.json(&salary_transaction);
 

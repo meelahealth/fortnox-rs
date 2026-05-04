@@ -70,7 +70,7 @@ use crate::http::apis::supplier_invoices_resource_api::{
 };
 use crate::http::apis::suppliers_resource_api::{
     CreateSuppliersResourceError, CreateSuppliersResourceParams, GetSuppliersResourceError,
-    GetSuppliersResourceParams,
+    GetSuppliersResourceParams, UpdateSuppliersResourceError, UpdateSuppliersResourceParams,
 };
 use crate::http::models::{
     InvoicePaymentListItem, Supplier, SupplierInvoice, SupplierInvoicePayment,
@@ -280,7 +280,7 @@ impl Client {
         details: UpdateCustomer,
     ) -> Result<Customer, Error<CreateCustomersResourceError>> {
         match self
-            .update_customer(customer_id.as_ref(), details.clone())
+            .update_customer_special(customer_id.as_ref(), details.clone())
             .await
         {
             Ok(v) => return Ok(v),
@@ -525,7 +525,7 @@ impl Client {
     pub async fn create_customer(
         &self,
         customer_id: impl ToString,
-        customer: CreateCustomer,
+        customer: CustomerDetails,
     ) -> Result<Customer, Error<CreateCustomersResourceError>> {
         self.check_bearer_token().await?;
 
@@ -566,10 +566,55 @@ impl Client {
         Ok(*result.customer)
     }
 
+    pub async fn update_customer(
+        &self,
+        customer_id: impl ToString,
+        customer: CustomerDetails,
+    ) -> Result<Customer, Error<UpdateCustomersResourceError>> {
+        self.check_bearer_token().await?;
+
+        let vat_type = match customer.vat_type {
+            VatType::Sweden => http::models::customer::VatType::Sevat,
+            VatType::ReverseEu => http::models::customer::VatType::Eureversedvat,
+            VatType::Export => http::models::customer::VatType::Export,
+        };
+
+        fortnox_ratelimit_wait().await;
+        let result = http::apis::customers_resource_api::update_customers_resource(
+            &self.config().await,
+            UpdateCustomersResourceParams {
+                customer_number: customer_id.to_string(),
+                customer: CustomerWrap {
+                    customer: Box::new(Customer {
+                        customer_number: Some(customer_id.to_string()),
+
+                        organisation_number: Some(customer.org_nr),
+                        vat_type: Some(vat_type),
+                        currency: Some(customer.currency),
+                        country_code: Some(customer.country_code),
+                        external_reference: Some(customer.external_reference),
+                        active: Some(customer.active),
+                        email: Some(customer.email),
+                        email_invoice: Some(customer.email_invoice),
+                        name: Some(customer.name),
+                        address1: customer.address1,
+                        address2: customer.address2,
+                        city: customer.city,
+                        zip_code: customer.post_code,
+                        ..Default::default()
+                    }),
+                },
+            },
+        )
+        .await?;
+
+        Ok(*result.customer)
+    }
+
     pub async fn create_supplier(
         &self,
         supplier_id: impl ToString,
-        supplier: CreateSupplier,
+        supplier: SupplierDetails,
     ) -> Result<Supplier, Error<CreateSuppliersResourceError>> {
         self.check_bearer_token().await?;
 
@@ -583,6 +628,54 @@ impl Client {
         let result = http::apis::suppliers_resource_api::create_suppliers_resource(
             &self.config().await,
             CreateSuppliersResourceParams {
+                supplier: Some(SupplierWrap {
+                    supplier: Box::new(Supplier {
+                        supplier_number: Some(supplier_id.to_string()),
+                        organisation_number: Some(supplier.org_nr),
+                        vat_type: Some(vat_type),
+                        currency: Some(supplier.currency),
+                        country_code: Some(supplier.country_code),
+                        active: Some(supplier.active),
+                        email: Some(supplier.email),
+                        name: supplier.name,
+                        address1: supplier.address1,
+                        address2: supplier.address2,
+                        city: supplier.city,
+                        zip_code: supplier.post_code,
+                        clearing_number: supplier.clearing_number,
+                        bank_account_number: supplier.bank_account_number,
+                        bg: supplier.bank_giro,
+                        pg: supplier.post_giro,
+                        bic: supplier.bic,
+                        iban: supplier.iban,
+                        ..Default::default()
+                    }),
+                }),
+            },
+        )
+        .await?;
+
+        Ok(*result.supplier)
+    }
+
+    pub async fn update_supplier(
+        &self,
+        supplier_id: impl ToString,
+        supplier: SupplierDetails,
+    ) -> Result<Supplier, Error<UpdateSuppliersResourceError>> {
+        self.check_bearer_token().await?;
+
+        let vat_type = match supplier.vat_type {
+            VatType::Sweden => "0".to_string(),
+            VatType::ReverseEu => "0".to_string(),
+            VatType::Export => "0".to_string(),
+        };
+
+        fortnox_ratelimit_wait().await;
+        let result = http::apis::suppliers_resource_api::update_suppliers_resource(
+            &self.config().await,
+            UpdateSuppliersResourceParams {
+                supplier_number: supplier_id.to_string(),
                 supplier: Some(SupplierWrap {
                     supplier: Box::new(Supplier {
                         supplier_number: Some(supplier_id.to_string()),
@@ -672,7 +765,7 @@ impl Client {
         Ok(*result.supplier_invoice)
     }
 
-    pub async fn update_customer(
+    async fn update_customer_special(
         &self,
         id: impl AsRef<str>,
         details: UpdateCustomer,
@@ -1066,7 +1159,7 @@ pub struct UpdateCustomer {
 }
 
 #[derive(Debug, Default)]
-pub struct CreateCustomer {
+pub struct CustomerDetails {
     pub org_nr: String,
     pub vat_type: VatType,
     pub currency: String,
@@ -1083,7 +1176,7 @@ pub struct CreateCustomer {
 }
 
 #[derive(Debug, Default)]
-pub struct CreateSupplier {
+pub struct SupplierDetails {
     pub name: String,
     pub org_nr: String,
     pub vat_type: VatType,
