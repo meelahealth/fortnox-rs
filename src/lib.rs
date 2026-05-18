@@ -644,8 +644,8 @@ impl Client {
                         zip_code: supplier.post_code,
                         clearing_number: supplier.clearing_number,
                         bank_account_number: supplier.bank_account_number,
-                        bg: supplier.bank_giro,
-                        pg: supplier.post_giro,
+                        bg: supplier.bankgiro,
+                        pg: supplier.plusgiro,
                         bic: supplier.bic,
                         iban: supplier.iban,
                         ..Default::default()
@@ -692,8 +692,8 @@ impl Client {
                         zip_code: supplier.post_code,
                         clearing_number: supplier.clearing_number,
                         bank_account_number: supplier.bank_account_number,
-                        bg: supplier.bank_giro,
-                        pg: supplier.post_giro,
+                        bg: supplier.bankgiro,
+                        pg: supplier.plusgiro,
                         bic: supplier.bic,
                         iban: supplier.iban,
                         ..Default::default()
@@ -1192,8 +1192,8 @@ pub struct SupplierDetails {
 
     pub clearing_number: Option<String>,
     pub bank_account_number: Option<String>,
-    pub bank_giro: Option<String>,
-    pub post_giro: Option<String>,
+    pub bankgiro: Option<String>,
+    pub plusgiro: Option<String>,
     pub bic: Option<String>,
     pub iban: Option<String>,
 }
