@@ -107,6 +107,7 @@ pub struct ListInvoicesResourceParams {
     pub credit: Option<String>,
     /// field to sort returned list on
     pub sortby: Option<String>,
+    pub page: u32,
 }
 
 /// struct for passing parameters to the method [`preview`]
@@ -704,6 +705,7 @@ pub async fn list_invoices_resource(
     let yourordernumber = params.yourordernumber;
     let credit = params.credit;
     let sortby = params.sortby;
+    let page = params.page;
 
     let local_var_client = &local_var_configuration.client;
 
@@ -822,6 +824,7 @@ pub async fn list_invoices_resource(
         local_var_req_builder =
             local_var_req_builder.query(&[("sortby", &local_var_str.to_string())]);
     }
+    local_var_req_builder = local_var_req_builder.query(&[("page", page)]);
     if let Some(ref local_var_access_token) = local_var_configuration.access_token {
         local_var_req_builder = local_var_req_builder.header(
             reqwest::header::AUTHORIZATION,

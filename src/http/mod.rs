@@ -12,7 +12,8 @@ where
     T: Deserialize<'de>,
 {
     let jd = &mut serde_json::Deserializer::from_str(j);
-    let result: T = serde_path_to_error::deserialize(jd)?;
+    let result: T = serde_path_to_error::deserialize(jd)
+        .inspect_err(|_| tracing::trace!("Failed to parse '{j}'"))?;
     Ok(result)
 }
 

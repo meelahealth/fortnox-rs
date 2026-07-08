@@ -18,6 +18,13 @@ pub struct InvoiceListItem {
     pub cancelled: Option<bool>,
     #[serde(rename = "CostCenter", skip_serializing_if = "Option::is_none")]
     pub cost_center: Option<String>,
+    #[serde(rename = "Credit", skip_serializing_if = "Option::is_none")]
+    pub credit: Option<String>,
+    #[serde(
+        rename = "CreditInvoiceReference",
+        skip_serializing_if = "Option::is_none"
+    )]
+    pub credit_invoice_reference: Option<String>,
     #[serde(rename = "Currency", skip_serializing_if = "Option::is_none")]
     pub currency: Option<String>,
     #[serde(rename = "CurrencyRate", skip_serializing_if = "Option::is_none")]
@@ -68,40 +75,6 @@ pub struct InvoiceListItem {
     pub total: Option<f64>,
     #[serde(rename = "FinalPayDate", skip_serializing_if = "Option::is_none")]
     pub final_pay_date: Option<String>,
-}
-
-impl InvoiceListItem {
-    pub fn new() -> InvoiceListItem {
-        InvoiceListItem {
-            at_url: None,
-            balance: None,
-            booked: None,
-            cancelled: None,
-            cost_center: None,
-            currency: None,
-            currency_rate: None,
-            currency_unit: None,
-            customer_name: None,
-            customer_number: None,
-            document_number: None,
-            due_date: None,
-            external_invoice_reference1: None,
-            external_invoice_reference2: None,
-            invoice_date: None,
-            invoice_type: None,
-            nox_finans: None,
-            ocr: None,
-            voucher_number: None,
-            voucher_series: None,
-            voucher_year: None,
-            way_of_delivery: None,
-            terms_of_payment: None,
-            project: None,
-            sent: None,
-            total: None,
-            final_pay_date: None,
-        }
-    }
 }
 
 ///

@@ -28,7 +28,11 @@ pub struct SupplierInvoice {
     pub balance: Option<f64>,
     #[serde(rename = "Booked", skip_serializing_if = "Option::is_none")]
     pub booked: Option<bool>,
-    #[serde(rename = "Cancelled", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "Cancelled",
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "deserialize_bool_from_string"
+    )]
     pub cancelled: Option<bool>,
     #[serde(rename = "Comments", skip_serializing_if = "Option::is_none")]
     pub comments: Option<String>,
@@ -40,8 +44,13 @@ pub struct SupplierInvoice {
         deserialize_with = "deserialize_bool_from_string"
     )]
     pub credit: Option<bool>,
-    #[serde(rename = "CreditReference", skip_serializing_if = "Option::is_none")]
-    pub credit_reference: Option<i32>,
+    #[serde(
+        rename = "CreditReference",
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "deserialize_string_from_number",
+        default
+    )]
+    pub credit_reference: Option<String>,
     #[serde(rename = "Currency", skip_serializing_if = "Option::is_none")]
     pub currency: Option<String>,
     #[serde(

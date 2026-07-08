@@ -67,15 +67,17 @@ use crate::http::apis::supplier_invoices_resource_api::{
     BookkeepSupplierInvoicesResourceError, BookkeepSupplierInvoicesResourceParams,
     CreateSupplierInvoicesResourceError, CreateSupplierInvoicesResourceParams,
     GetSupplierInvoicesResourceError, GetSupplierInvoicesResourceParams,
+    ListSupplierInvoicesResourceError, ListSupplierInvoicesResourceParams,
 };
 use crate::http::apis::suppliers_resource_api::{
     CreateSuppliersResourceError, CreateSuppliersResourceParams, GetSuppliersResourceError,
     GetSuppliersResourceParams, UpdateSuppliersResourceError, UpdateSuppliersResourceParams,
 };
+use crate::http::apis::ResponseContent;
 use crate::http::models::{
-    InvoicePaymentListItem, Supplier, SupplierInvoice, SupplierInvoicePayment,
-    SupplierInvoicePaymentListItem, SupplierInvoicePaymentWrap, SupplierInvoiceSupplierInvoiceRow,
-    SupplierInvoiceWrap, SupplierWrap,
+    InvoicePaymentListItem, Supplier, SupplierInvoice, SupplierInvoiceListItem,
+    SupplierInvoicePayment, SupplierInvoicePaymentListItem, SupplierInvoicePaymentWrap,
+    SupplierInvoiceSupplierInvoiceRow, SupplierInvoiceWrap, SupplierWrap,
 };
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -383,6 +385,52 @@ impl Client {
             .await?;
 
         Ok(*result.supplier_invoice)
+    }
+
+    pub async fn list_supplier_invoices(
+        &self,
+        supplier_id: Option<&str>,
+        invoice_date_from: Option<NaiveDate>,
+        invoice_date_to: Option<NaiveDate>,
+    ) -> Result<Vec<SupplierInvoiceListItem>, Error<ListSupplierInvoicesResourceError>> {
+        self.check_bearer_token().await?;
+
+        let mut results = Vec::new();
+        let mut page = 0;
+        loop {
+            debug_assert!(page < 1000, "Unreasonable amount of pages found");
+            fortnox_ratelimit_wait().await;
+            let result =
+                http::apis::supplier_invoices_resource_api::list_supplier_invoices_resource(
+                    &self.config().await,
+                    ListSupplierInvoicesResourceParams {
+                        suppliernumber: supplier_id.map(|s| s.to_string()),
+                        fromdate: invoice_date_from.map(|d| d.format("%Y-%m-%d").to_string()),
+                        todate: invoice_date_to.map(|d| d.format("%Y-%m-%d").to_string()),
+                        page,
+                        ..Default::default()
+                    },
+                )
+                .await;
+            let result = match result {
+                Ok(result) => result,
+                Err(Error::ResponseError(ResponseContent { status, .. }))
+                    if status == reqwest::StatusCode::BAD_REQUEST && page > 0 =>
+                {
+                    // Last page indicated by error
+                    break;
+                }
+                Err(err) => return Err(err)?,
+            };
+
+            if result.supplier_invoices.is_empty() {
+                break;
+            }
+            results.extend(result.supplier_invoices);
+            page += 1;
+        }
+
+        Ok(results)
     }
 
     pub async fn invoice_payment(
@@ -905,35 +953,49 @@ impl Client {
 
     pub async fn list_invoices(
         &self,
-        customer_id: &str,
+        customer_id: Option<&str>,
         external_invoice_reference1: Option<&str>,
+        invoice_date_from: Option<NaiveDate>,
+        invoice_date_to: Option<NaiveDate>,
     ) -> Result<Vec<InvoiceListItem>, Error<ListInvoicesResourceError>> {
         self.check_bearer_token().await?;
 
-        fortnox_ratelimit_wait().await;
-        let result = http::apis::invoices_resource_api::list_invoices_resource(
-            &self.config().await,
-            ListInvoicesResourceParams {
-                customernumber: Some(customer_id.to_string()),
-                externalinvoicereference1: external_invoice_reference1.map(str::to_string),
-                ..Default::default()
-            },
-        )
-        .await?;
-
-        let mut invoices = result.invoices;
-
-        invoices.sort_by(|a, b| {
-            if a.invoice_date == b.invoice_date {
-                if let (Some(x), Some(y)) = (a.total, b.total) {
-                    return x.total_cmp(&y);
+        let mut results = Vec::new();
+        let mut page = 0;
+        loop {
+            debug_assert!(page < 1000, "Unreasonable amount of pages found");
+            fortnox_ratelimit_wait().await;
+            let result = http::apis::invoices_resource_api::list_invoices_resource(
+                &self.config().await,
+                ListInvoicesResourceParams {
+                    customernumber: customer_id.map(|c| c.to_string()),
+                    externalinvoicereference1: external_invoice_reference1.map(str::to_string),
+                    fromdate: invoice_date_from.map(|d| d.format("%Y-%m-%d").to_string()),
+                    todate: invoice_date_to.map(|d| d.format("%Y-%m-%d").to_string()),
+                    page,
+                    ..Default::default()
+                },
+            )
+            .await;
+            let result = match result {
+                Ok(result) => result,
+                Err(Error::ResponseError(ResponseContent { status, .. }))
+                    if status == reqwest::StatusCode::BAD_REQUEST && page > 0 =>
+                {
+                    // Last page indicated by error
+                    break;
                 }
+                Err(err) => return Err(err)?,
+            };
+
+            if result.invoices.is_empty() {
+                break;
             }
+            results.extend(result.invoices);
+            page += 1;
+        }
 
-            a.invoice_date.cmp(&b.invoice_date)
-        });
-
-        Ok(invoices)
+        Ok(results)
     }
 
     pub async fn send_invoice(&self, invoice_id: &str) -> Result<Invoice, Error<EmailError>> {

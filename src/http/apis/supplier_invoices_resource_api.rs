@@ -63,8 +63,22 @@ pub struct GetSupplierInvoicesResourceParams {
 /// struct for passing parameters to the method [`list_supplier_invoices_resource`]
 #[derive(Clone, Debug, Default)]
 pub struct ListSupplierInvoicesResourceParams {
-    /// possibility to filter supplier invoices
+    /// possibility to filter invoices
     pub filter: Option<String>,
+    pub costcenter: Option<String>,
+    pub suppliername: Option<String>,
+    pub suppliernumber: Option<String>,
+    pub invoicenumber: Option<String>,
+    pub fromdate: Option<String>,
+    pub todate: Option<String>,
+    pub fromfinalpaydate: Option<String>,
+    pub tofinalpaydate: Option<String>,
+    pub lastmodified: Option<String>,
+    pub ocr: Option<String>,
+    pub ourreference: Option<String>,
+    pub project: Option<String>,
+    pub yourreference: Option<String>,
+    pub page: u32,
 }
 
 /// struct for passing parameters to the method [`update_supplier_invoices_resource`]
@@ -478,6 +492,17 @@ pub async fn list_supplier_invoices_resource(
 
     // unbox the parameters
     let filter = params.filter;
+    let costcenter = params.costcenter;
+    let fromdate = params.fromdate;
+    let todate = params.todate;
+    let fromfinalpaydate = params.fromfinalpaydate;
+    let tofinalpaydate = params.tofinalpaydate;
+    let lastmodified = params.lastmodified;
+    let ocr = params.ocr;
+    let ourreference = params.ourreference;
+    let project = params.project;
+    let yourreference = params.yourreference;
+    let page = params.page;
 
     let local_var_client = &local_var_configuration.client;
 
@@ -489,6 +514,46 @@ pub async fn list_supplier_invoices_resource(
         local_var_req_builder =
             local_var_req_builder.query(&[("filter", &local_var_str.to_string())]);
     }
+    if let Some(ref local_var_str) = costcenter {
+        local_var_req_builder =
+            local_var_req_builder.query(&[("costcenter", &local_var_str.to_string())]);
+    }
+    if let Some(ref local_var_str) = fromdate {
+        local_var_req_builder =
+            local_var_req_builder.query(&[("fromdate", &local_var_str.to_string())]);
+    }
+    if let Some(ref local_var_str) = todate {
+        local_var_req_builder =
+            local_var_req_builder.query(&[("todate", &local_var_str.to_string())]);
+    }
+    if let Some(ref local_var_str) = fromfinalpaydate {
+        local_var_req_builder =
+            local_var_req_builder.query(&[("fromfinalpaydate", &local_var_str.to_string())]);
+    }
+    if let Some(ref local_var_str) = tofinalpaydate {
+        local_var_req_builder =
+            local_var_req_builder.query(&[("tofinalpaydate", &local_var_str.to_string())]);
+    }
+    if let Some(ref local_var_str) = lastmodified {
+        local_var_req_builder =
+            local_var_req_builder.query(&[("lastmodified", &local_var_str.to_string())]);
+    }
+    if let Some(ref local_var_str) = ocr {
+        local_var_req_builder = local_var_req_builder.query(&[("ocr", &local_var_str.to_string())]);
+    }
+    if let Some(ref local_var_str) = ourreference {
+        local_var_req_builder =
+            local_var_req_builder.query(&[("ourreference", &local_var_str.to_string())]);
+    }
+    if let Some(ref local_var_str) = project {
+        local_var_req_builder =
+            local_var_req_builder.query(&[("project", &local_var_str.to_string())]);
+    }
+    if let Some(ref local_var_str) = yourreference {
+        local_var_req_builder =
+            local_var_req_builder.query(&[("yourreference", &local_var_str.to_string())]);
+    }
+    local_var_req_builder = local_var_req_builder.query(&[("page", page)]);
     if let Some(ref local_var_access_token) = local_var_configuration.access_token {
         local_var_req_builder = local_var_req_builder.header(
             reqwest::header::AUTHORIZATION,
@@ -503,8 +568,7 @@ pub async fn list_supplier_invoices_resource(
     let local_var_content = local_var_resp.text().await?;
 
     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        tracing::trace!("Response: {}", local_var_content);
-        serde_json::from_str(&local_var_content).map_err(Error::from)
+        parse_json(&local_var_content).map_err(Error::from)
     } else {
         let local_var_entity: Option<ListSupplierInvoicesResourceError> =
             serde_json::from_str(&local_var_content).ok();
