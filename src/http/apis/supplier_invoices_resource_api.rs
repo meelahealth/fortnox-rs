@@ -66,7 +66,6 @@ pub struct ListSupplierInvoicesResourceParams {
     /// possibility to filter invoices
     pub filter: Option<String>,
     pub costcenter: Option<String>,
-    pub suppliername: Option<String>,
     pub suppliernumber: Option<String>,
     pub invoicenumber: Option<String>,
     pub fromdate: Option<String>,
@@ -493,6 +492,8 @@ pub async fn list_supplier_invoices_resource(
     // unbox the parameters
     let filter = params.filter;
     let costcenter = params.costcenter;
+    let suppliernumber = params.suppliernumber;
+    let invoicenumber = params.invoicenumber;
     let fromdate = params.fromdate;
     let todate = params.todate;
     let fromfinalpaydate = params.fromfinalpaydate;
@@ -517,6 +518,14 @@ pub async fn list_supplier_invoices_resource(
     if let Some(ref local_var_str) = costcenter {
         local_var_req_builder =
             local_var_req_builder.query(&[("costcenter", &local_var_str.to_string())]);
+    }
+    if let Some(ref local_var_str) = suppliernumber {
+        local_var_req_builder =
+            local_var_req_builder.query(&[("suppliernumber", &local_var_str.to_string())]);
+    }
+    if let Some(ref local_var_str) = invoicenumber {
+        local_var_req_builder =
+            local_var_req_builder.query(&[("invoicenumber", &local_var_str.to_string())]);
     }
     if let Some(ref local_var_str) = fromdate {
         local_var_req_builder =

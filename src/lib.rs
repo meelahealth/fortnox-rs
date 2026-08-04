@@ -390,6 +390,7 @@ impl Client {
     pub async fn list_supplier_invoices(
         &self,
         supplier_id: Option<&str>,
+        invoice_number: Option<&str>,
         invoice_date_from: Option<NaiveDate>,
         invoice_date_to: Option<NaiveDate>,
     ) -> Result<Vec<SupplierInvoiceListItem>, Error<ListSupplierInvoicesResourceError>> {
@@ -407,6 +408,7 @@ impl Client {
                         suppliernumber: supplier_id.map(|s| s.to_string()),
                         fromdate: invoice_date_from.map(|d| d.format("%Y-%m-%d").to_string()),
                         todate: invoice_date_to.map(|d| d.format("%Y-%m-%d").to_string()),
+                        invoicenumber: invoice_number.map(|s| s.to_string()),
                         page,
                         ..Default::default()
                     },
