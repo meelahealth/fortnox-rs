@@ -775,7 +775,6 @@ impl Client {
                 supplier_invoice: Some(SupplierInvoiceWrap {
                     supplier_invoice: Box::new(SupplierInvoice {
                         supplier_number: supplier_id.to_string(),
-                        given_number: Some(invoice.given_number.to_string()),
                         invoice_number: Some(invoice.invoice_number),
                         ocr: invoice.ocr,
                         due_date: invoice.due_date.map(|d| d.format("%Y-%m-%d").to_string()),
@@ -1270,7 +1269,6 @@ pub enum SalesType {
 
 #[derive(Debug, Clone)]
 pub struct CreateSupplierInvoice {
-    pub given_number: i32,
     pub invoice_number: String,
     pub ocr: Option<String>,
     pub due_date: Option<NaiveDate>,
