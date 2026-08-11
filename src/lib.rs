@@ -38,12 +38,11 @@ use http::models::{
     InvoicePayload, InvoicePayloadInvoiceRow, InvoicePayloadWrap, InvoicePayment,
     InvoicePaymentWrap,
 };
-use oauth2::basic::{BasicClient, BasicErrorResponseType, BasicTokenType};
-use oauth2::reqwest::async_http_client;
+use oauth2::basic::{BasicClient, BasicTokenType};
 use oauth2::{
     AccessToken, AuthUrl, AuthorizationCode, ClientId, ClientSecret, CsrfToken,
-    EmptyExtraTokenFields, RedirectUrl, RefreshToken, RequestTokenError, Scope as OAuth2Scope,
-    StandardErrorResponse, StandardTokenResponse, TokenResponse as _, TokenUrl,
+    EmptyExtraTokenFields, EndpointNotSet, EndpointSet, RedirectUrl, RefreshToken,
+    Scope as OAuth2Scope, StandardTokenResponse, TokenResponse as _, TokenUrl,
 };
 use rust_decimal::Decimal;
 use tokio::sync::{Mutex, MutexGuard};
@@ -108,23 +107,27 @@ impl From<Scope> for OAuth2Scope {
 }
 
 type TokenResponse = StandardTokenResponse<EmptyExtraTokenFields, BasicTokenType>;
-type TokenError = RequestTokenError<
-    oauth2::reqwest::Error<reqwest::Error>,
-    StandardErrorResponse<BasicErrorResponseType>,
+type TokenError = oauth2::RequestTokenError<
+    oauth2::HttpClientError<reqwest::Error>,
+    oauth2::StandardErrorResponse<oauth2::basic::BasicErrorResponseType>,
 >;
 
-pub struct OAuthClient(BasicClient);
+pub struct OAuthClient(
+    BasicClient<EndpointSet, EndpointNotSet, EndpointNotSet, EndpointNotSet, EndpointSet>,
+);
 
 impl OAuthClient {
     pub fn new(client_id: &str, client_secret: &str, redirect_url: Url) -> Self {
-        let client = BasicClient::new(
-            ClientId::new(client_id.to_string()),
-            Some(ClientSecret::new(client_secret.to_string())),
-            AuthUrl::new("https://apps.fortnox.se/oauth-v1/auth".to_string()).unwrap(),
-            Some(TokenUrl::new("https://apps.fortnox.se/oauth-v1/token".to_string()).unwrap()),
-        )
-        .set_redirect_uri(RedirectUrl::new(redirect_url.to_string()).unwrap())
-        .set_auth_type(oauth2::AuthType::BasicAuth);
+        let client = BasicClient::new(ClientId::new(client_id.to_string()))
+            .set_client_secret(ClientSecret::new(client_secret.to_string()))
+            .set_auth_uri(
+                AuthUrl::new("https://apps.fortnox.se/oauth-v1/auth".to_string()).unwrap(),
+            )
+            .set_redirect_uri(RedirectUrl::new(redirect_url.to_string()).unwrap())
+            .set_auth_type(oauth2::AuthType::BasicAuth)
+            .set_token_uri(
+                TokenUrl::new("https://apps.fortnox.se/oauth-v1/token".to_string()).unwrap(),
+            );
 
         Self(client)
     }
@@ -145,10 +148,14 @@ impl OAuthClient {
 
     pub async fn exchange_code(&self, code: &str) -> Result<TokenResponse, TokenError> {
         fortnox_ratelimit_wait().await;
+        let http_client = oauth2::reqwest::ClientBuilder::new()
+            .redirect(oauth2::reqwest::redirect::Policy::none())
+            .build()
+            .unwrap();
         let token_result = self
             .0
             .exchange_code(AuthorizationCode::new(code.to_string()))
-            .request_async(async_http_client)
+            .request_async(&http_client)
             .await?;
 
         Ok(token_result)
@@ -159,10 +166,14 @@ impl OAuthClient {
         refresh_token: &RefreshToken,
     ) -> Result<TokenResponse, TokenError> {
         fortnox_ratelimit_wait().await;
+        let http_client = oauth2::reqwest::ClientBuilder::new()
+            .redirect(oauth2::reqwest::redirect::Policy::none())
+            .build()
+            .unwrap();
         let result = self
             .0
             .exchange_refresh_token(refresh_token)
-            .request_async(async_http_client)
+            .request_async(&http_client)
             .await?;
         Ok(result)
     }
