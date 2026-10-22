@@ -209,6 +209,8 @@ pub enum Language {
     Sv,
     #[serde(rename = "EN")]
     En,
+    #[serde(rename = "Nb")]
+    Nb,
 }
 
 impl Default for Language {
